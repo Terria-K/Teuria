@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
@@ -21,7 +22,7 @@ public class TeuriaEngine : Game
         } 
     }
     private static TeuriaEngine instance;
-    private RenderProperties renderProperties;
+    private SceneRenderer renderer;
 
     public static int screenHeight;
     public static int screenWidth;
@@ -35,7 +36,7 @@ public class TeuriaEngine : Game
         IsMouseVisible = true;
     }
 
-    protected virtual void Init() {}
+    protected virtual SceneRenderer Init() { throw new NotImplementedException(); }
     protected virtual void Load() {}
     protected virtual void Process(GameTime gameTime) {}
     protected virtual void CleanUp() {}
@@ -45,8 +46,7 @@ public class TeuriaEngine : Game
     {
         screenHeight = graphics.PreferredBackBufferHeight;
         screenWidth = graphics.PreferredBackBufferWidth;
-        Init();
-        renderProperties = Render();
+        renderer = Init();
         scene.Initialize();
 
         base.Initialize();
@@ -85,10 +85,11 @@ public class TeuriaEngine : Game
 
     protected override void Draw(GameTime gameTime)
     {
-        GraphicsDevice.Clear(Color.Black);
-        spriteBatch.Begin(transformMatrix: renderProperties.Camera);
-        scene.Draw(spriteBatch);
-        spriteBatch.End();
+        GraphicsDevice.Clear(renderer.EnvironmentColor);
+        renderer.Draw(spriteBatch);
+        // spriteBatch.Begin(transformMatrix: renderProperties.Camera);
+        // scene.Draw(spriteBatch);
+        // spriteBatch.End();
 
         base.Draw(gameTime);
     }

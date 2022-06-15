@@ -9,6 +9,7 @@ public class Scene
     private List<Entity> entityList = new List<Entity>();
     protected ContentManager Content;
     protected Camera Camera;
+    public SceneRenderer SceneRenderer;
 
     public Scene(ContentManager content, Camera camera) 
     {
