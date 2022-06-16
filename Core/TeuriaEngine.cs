@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace Teuria;
 
@@ -54,6 +55,7 @@ public class TeuriaEngine : Game
 
     protected override void LoadContent()
     {
+        Canvas.Initialize(graphics.GraphicsDevice);
         spriteBatch = new SpriteBatch(GraphicsDevice);
         Load();
         
@@ -70,6 +72,10 @@ public class TeuriaEngine : Game
     {   
         DeltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
         Process(gameTime);
+
+#if DEBUG
+        Hitbox.DebugRender = Keyboard.GetState().IsKeyDown(Keys.F1);
+#endif
         
         if (scene != nextScene) 
         {
