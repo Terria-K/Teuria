@@ -49,7 +49,7 @@ public class MainScene : Scene
 	{
 		/** Load Content Here */
 		// We need the font first, but we can use the built-in font
-		var font = Content.Load<SpriteFont>("Rubik-Regular");
+		var font = FontText.Create("Rubik-Regular");
 		
 		/** Instance any Entity here */
 		var helloWorld = new Label(font);
