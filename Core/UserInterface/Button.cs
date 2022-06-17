@@ -7,20 +7,20 @@ namespace Teuria;
 
 public class Button : Entity
 {
-    public event Action OnHover;
-    public event Action OnClick;
+    public Action OnHover;
+    public Action OnClick;
 
     private Sprite sprite;
-    private bool isHovered;
-    private bool isClicked;
+    private bool isHovered;    
+    private Hitbox hitbox;
 
     public Button(Texture2D texture) 
     {
         sprite = new Sprite(texture);
+        hitbox = new Hitbox(sprite.texture.Width, sprite.texture.Height, Position);
         AddComponent(sprite);
+        AddComponent(hitbox);
     }
-
-    public override Rectangle Rectangle { get => SpriteFixedRectangle(sprite); }
 
     public override void Update()
     {
@@ -35,18 +35,20 @@ public class Button : Entity
         if (isHovered) 
         {
             OnHover?.Invoke();
-        }
-        if (Rectangle.Contains(point)) 
-        {
-            isHovered = true;
-            if (mouseState.LeftButton == ButtonState.Pressed && !isClicked) 
+            
+            if (TInput.Mouse.JustLeftClicked()) 
             {
-                isClicked = true;
                 OnClick?.Invoke();
             }
+        }
+        if (hitbox.Collide(point) && !isHovered) 
+        {
+            isHovered = true;
             return;
         }
-        isHovered = false;
-        isClicked = false;
+        if (!hitbox.Collide(point)) 
+        {
+            isHovered = false;
+        }
     }
 }

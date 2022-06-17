@@ -7,17 +7,24 @@ namespace Teuria;
 public class Entity 
 {
     private List<Component> components = new List<Component>();
+    private Scene scene;
     public bool Active { get; set; } = true;
     public Vector2 Position;
-    public virtual Rectangle Rectangle { get; set; }
     public Color Modulate = Color.White;
+    public int ZIndex;
+    public PauseMode PauseMode = PauseMode.Inherit;
 
-    public Rectangle SpriteFixedRectangle(Sprite sprite) 
+    public virtual void EnterScene(Scene scene) 
     {
-        return new Rectangle((int)Position.X, (int)Position.Y, sprite.texture.Width, sprite.texture.Height); 
+        this.scene = scene;
     }
-
-    public virtual void EnterScene() {}
+    public virtual void ExitScene() 
+    {
+        for (int i = 0; i < components.Count; i++) 
+        {
+            components[i].Removed();
+        }
+    }
     public virtual void Ready() {}
     public virtual void Update() 
     {
@@ -40,5 +47,16 @@ public class Entity
     {
         components.Add(comp);
         comp.Added(this);
+    }
+
+    public void RemoveComponent(Component comp) 
+    {
+        components.Remove(comp);
+        comp.Removed();
+    }
+
+    public void Free() 
+    {
+        scene.Remove(this);
     }
 }

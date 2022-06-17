@@ -6,6 +6,6 @@ public static class TransformUtils
 {
     public static Vector2 Center(float offsetX = 0, float offsetY = 0) 
     {
-        return new Vector2((TeuriaEngine.screenWidth / 2) - offsetX, (TeuriaEngine.screenHeight / 2) - offsetY);
+        return new Vector2((TeuriaEngine.ScreenWidth / 2) - offsetX, (TeuriaEngine.ScreenHeight / 2) - offsetY);
     }
 }

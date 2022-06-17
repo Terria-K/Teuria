@@ -126,4 +126,13 @@ public class Hitbox : Component
     {
         return Left < x + width && Right > x && Bottom > y && Top < y + height;
     }
+
+    public bool Collide(Point value)
+    {
+        if (X <= value.X && value.X < X + Width && Y <= value.Y)
+        {
+            return value.Y < Y + Height;
+        }
+        return false;
+    }
 }

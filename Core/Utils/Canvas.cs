@@ -9,7 +9,7 @@ public static class Canvas
     private static Rectangle rectangle;
     private static Texture2D pixel;
 
-    public static void Initialize(GraphicsDevice device) 
+    internal static void Initialize(GraphicsDevice device) 
     {
         pixel = new Texture2D(device, 1, 1);
         pixel.SetData(new[] { Color.White });

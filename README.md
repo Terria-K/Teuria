@@ -49,7 +49,7 @@ public class MainScene : Scene
 	{
 		/** Load Content Here */
 		// We need the font first, but we can use the built-in font
-		var font = Content.Load<SpriteFont>("Teuria/Rubik");
+		var font = Content.Load<SpriteFont>("Rubik-Regular");
 		
 		/** Instance any Entity here */
 		var helloWorld = new Label(font);
@@ -118,6 +118,34 @@ public class MainScene : Scene
         Camera.Zoom = new Vector2(1.2f, 1.2f);
         // Change Offset
         Camera.Offset = new Vector2(65f, 65f);
+		base.Ready(device);
+	}
+}
+```
+
+**Loading an image**
+
+There is two ways to load an image, Content ways or TextureImporter ways. The TextureImporter will just use the `Texture2D.FromStream()` to load an image from stream, but this is also managed by the engine and will be freed automatically when the program is terminated or freed by Sprite when cleanup is enabled.
+
+```csharp
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+using Teuria;
+
+public class MainScene : Scene 
+{
+	public MainScene(ContentManager content, Camera camera) : base(content, camera) {}
+	
+	public override void Ready(GraphicsDevice device) 
+	{
+		// This is loaded using MGCB Editor
+        var mgcbImg = Content.Load<Texture2D>("bat");
+		// This is loaded using TextureImporter Load Image
+		var texImpImg = TextureImporter.LoadImage(device, "bat.png");
+
+		// Manually Dispose an image loaded with TextureImporter
+		TextureImporter.CleanUp(texImpImg);
 		base.Ready(device);
 	}
 }

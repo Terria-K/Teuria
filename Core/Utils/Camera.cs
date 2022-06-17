@@ -21,7 +21,7 @@ public class Camera
         Viewport = new Viewport() { Width = width, Height = height };
     }
 
-    public Camera() : this(TeuriaEngine.screenHeight, TeuriaEngine.screenWidth) {}
+    public Camera() : this(TeuriaEngine.ScreenHeight, TeuriaEngine.ScreenWidth) {}
 
 
     public void UpdateMatrix() 

@@ -5,8 +5,8 @@ namespace Teuria;
 
 public class SceneRenderer 
 {
-    public Camera Camera;
-    public Scene Scene;
+    private Camera Camera;
+    private Scene Scene;
     public Color EnvironmentColor;
 
     public SceneRenderer(Scene scene) 

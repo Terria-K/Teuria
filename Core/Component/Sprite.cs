@@ -13,6 +13,7 @@ public class Sprite : Component
     public Vector2 Scale = Vector2.One;
     public Texture2D texture;
     private bool isFlipped = false;
+    public bool cleanUpTexture = false;
     public Color Modulate = Color.White;
     public bool FlipH
     {
@@ -38,14 +39,24 @@ public class Sprite : Component
     }
 
 
-    public Sprite(Texture2D texture)
+    public Sprite(Texture2D texture, bool cleanUp = false)
     {
         this.texture = texture;
+        cleanUpTexture = cleanUp;
     }
     public override void Update() {}
     public override void Draw(SpriteBatch spriteBatch)
     {
         spriteBatch.Draw(texture, Entity.Position, null, Modulate, 0, Vector2.Zero, Scale, spriteEffects, 1);
+    }
+
+    public override void Removed()
+    {
+        if (cleanUpTexture) 
+        {
+            TextureImporter.CleanUp(texture);
+        }
+        base.Removed();
     }
 }
 

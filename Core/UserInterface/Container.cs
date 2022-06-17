@@ -9,6 +9,18 @@ where T : Entity
 {
     private List<T> items = new List<T>();
     private readonly float offset = 0;
+    public new bool Active 
+    { 
+        get => base.Active; 
+        set 
+        {
+            foreach(var entity in items) 
+            {
+                entity.Active = value;
+            }
+            base.Active = value;
+        } 
+    }
 
     public Container(Vector2 position, float alignOffset = 0) 
     {
