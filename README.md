@@ -14,12 +14,12 @@
  - [x] Coroutines
  - [x] Draw Images
  - [x] Camera
- - [] Physics
- - [] Audio
- - [] User Interfaces
+ - [ ] Physics
+ - [ ] Audio
+ - [ ] User Interfaces
  
 
-**Getting Started**
+### Getting Started
 
 We first need to create a game class that is inherits to Engine, and instance the game in `Program.cs`
 ```csharp
@@ -76,7 +76,7 @@ public static class Program
 }
 ```
 
-**Switching through Scene**
+### Switching through Scene
 Switching scene is also very simple, you just need to replace the current scene from the game using SceneRenderer.
 
 ```csharp
@@ -100,7 +100,7 @@ public class MainScene : Scene
 }
 ```
 
-**Moving the Camera**
+### Moving the Camera
 Here is how you can move the camera, allowing you to make a cutscene, shake effects and more possibilities!
 
 ```csharp
@@ -127,7 +127,7 @@ public class MainScene : Scene
 }
 ```
 
-**Loading an image**
+### Loading an image
 
 There is two ways to load an image, Content ways or TextureImporter ways. The TextureImporter will just use the `Texture2D.FromStream()` to load an image from stream, but this is also managed by the engine and will be freed automatically when the program is terminated or freed by Sprite when cleanup is enabled.
 
