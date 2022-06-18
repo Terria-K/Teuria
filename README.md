@@ -6,16 +6,17 @@
  This engine is still work-in-progress and still needs more improvements. It is heavily inspired from Monocle and Godot Engine. It is not usable for larger projects, but it is useful for starters who wants to get in to Monogame.
 
  Monocle: https://github.com/JamesMcMahon/monocle-engine
+
  Godot Engine: https://godotengine.org/
  
- [x] ECS
- [x] Scenes
- [x] Coroutines
- [x] Draw Images
- [x] Camera
- [] Physics
- [] Audio
- [] User Interfaces
+ - [x] ECS
+ - [x] Scenes
+ - [x] Coroutines
+ - [x] Draw Images
+ - [x] Camera
+ - [] Physics
+ - [] Audio
+ - [] User Interfaces
  
 
 **Getting Started**
