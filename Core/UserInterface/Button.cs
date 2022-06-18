@@ -30,8 +30,7 @@ public class Button : Entity
 
     private void Hovering() 
     {
-        var mouseState = Mouse.GetState();
-        var point = new Point(mouseState.X, mouseState.Y);
+        var mousePos = TInput.Mouse.Position;
         if (isHovered) 
         {
             OnHover?.Invoke();
@@ -41,12 +40,12 @@ public class Button : Entity
                 OnClick?.Invoke();
             }
         }
-        if (hitbox.Collide(point) && !isHovered) 
+        if (hitbox.Collide(mousePos) && !isHovered) 
         {
             isHovered = true;
             return;
         }
-        if (!hitbox.Collide(point)) 
+        if (!hitbox.Collide(mousePos)) 
         {
             isHovered = false;
         }

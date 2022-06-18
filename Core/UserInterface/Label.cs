@@ -1,5 +1,3 @@
-using Microsoft.Xna.Framework.Graphics;
-
 namespace Teuria;
 
 public class Label : Entity 

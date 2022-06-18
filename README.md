@@ -3,7 +3,10 @@
  
  This game engine includes a basic functionality you need for 2D game development such as ECS.
  
- This engine is still work-in-progress and still needs more improvements. It is not usable for larger projects, but it is useful for starters who wants to get in to Monogame.
+ This engine is still work-in-progress and still needs more improvements. It is heavily inspired from Monocle and Godot Engine. It is not usable for larger projects, but it is useful for starters who wants to get in to Monogame.
+
+ Monocle: https://github.com/JamesMcMahon/monocle-engine
+ Godot Engine: https://godotengine.org/
  
  [x] ECS
  [x] Scenes

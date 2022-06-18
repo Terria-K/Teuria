@@ -47,7 +47,8 @@ public class Sprite : Component
     public override void Update() {}
     public override void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(texture, Entity.Position, null, Modulate, 0, Vector2.Zero, Scale, spriteEffects, 1);
+        
+        spriteBatch.Draw(texture, Entity.Position, new Rectangle(0, 0, texture.Width, texture.Height), Modulate, 0, Vector2.Zero, Scale, spriteEffects, 1);
     }
 
     public override void Removed()

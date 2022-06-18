@@ -135,4 +135,13 @@ public class Hitbox : Component
         }
         return false;
     }
+
+    public bool Collide(Vector2 value)
+    {
+        if (X <= value.X && value.X < X + Width && Y <= value.Y)
+        {
+            return value.Y < Y + Height;
+        }
+        return false;
+    }
 }

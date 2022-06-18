@@ -14,6 +14,9 @@ public class TeuriaEngine : Game
     private int fpsCounter;
     private TimeSpan counterElapsed = TimeSpan.Zero;
     private string title;
+    public static Matrix ScreenMatrix;
+    public static Viewport Viewport { get => viewport; private set => viewport = value; }
+    private static Viewport viewport;
     
     public static int FPS { get; private set; }
     public static float DeltaTime { get; private set; }
@@ -29,55 +32,124 @@ public class TeuriaEngine : Game
     }
     private static TeuriaEngine instance;
     private SceneRenderer renderer;
+    private Resolution res;
+    private bool resizing;
+    private static int padding = 0;
+    public static int Padding 
+    {
+        get => padding;
+        set 
+        {
+            padding = value;
+            // Instance.UpdateView();
+        }
+    }
 
-    public static int ScreenHeight;
-    public static int ScreenWidth;
+    public static int ScreenHeight { get; private set; }
+    public static int ScreenWidth { get; private set; }
+    public static int ViewWidth { get; private set; }
+    public static int ViewHeight { get; private set; }
+    public static bool Fullscreen { get; set; }
 
     public TeuriaEngine(int width, int height, int screenWidth, int screenHeight, string windowTitle, bool fullScreen)
     {
         instance = this;
         Window.Title = windowTitle;
         title = windowTitle;
-        // ScreenHeight = screenHeight;
-        // ScreenWidth = screenWidth;
+        ViewHeight = screenHeight;
+        ViewWidth = screenWidth;
+        Fullscreen = fullScreen;
+        Window.AllowUserResizing = true;
+        Window.ClientSizeChanged += OnClientSizeChanged;
         graphics = new GraphicsDeviceManager(this);
+        graphics.HardwareModeSwitch = false;
+        graphics.IsFullScreen = fullScreen;
+
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
-        Window.AllowUserResizing = true;
-        // SetFullscreen(fullScreen);
     }
 
-    private void SetFullscreen(bool fullscreen) 
+    private void OnClientSizeChanged(object sender, EventArgs e) 
     {
-        if (fullscreen) 
+        if ((GraphicsDevice.Viewport.Width != graphics.PreferredBackBufferWidth || 
+            GraphicsDevice.Viewport.Height != graphics.PreferredBackBufferHeight) && !resizing) 
         {
-            graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-            graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-            graphics.IsFullScreen = true;
+            resizing = true;
+            if (Window.ClientBounds.Width == 0)  
+            {
+                resizing = false;
+                return;
+            }
+            graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
+            graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
+            graphics.ApplyChanges();
+            res.ScreenResolution = new Point(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
+            UpdateView();
+            resizing = false;
+        }
+    }
+
+    private void UpdateView() 
+    {
+        var screen = new Vector2(
+            GraphicsDevice.PresentationParameters.BackBufferWidth, 
+            GraphicsDevice.PresentationParameters.BackBufferHeight);
+
+        ViewSize(ref screen);
+        var aspect = ViewHeight / (float)ViewWidth;
+        ViewWidth -= Padding * 2;
+        ViewHeight -= (int)(aspect * Padding * 2);
+
+        ScreenMatrix = Matrix.CreateScale(ViewWidth / (float)ScreenWidth);
+
+        Viewport = new Viewport() 
+        {
+            X = (int)(screen.X / 2 - ViewWidth / 2),
+            Y = (int)(screen.Y / 2 - ViewHeight / 2),
+            Width = ViewWidth,
+            Height = ViewHeight,
+            MinDepth = 0,
+            MaxDepth = 1
+        };
+        res.UpdateResolution(ref viewport);
+
+    }
+
+    private void ViewSize(ref Vector2 screen) 
+    {
+        if (screen.X / ScreenWidth > screen.Y / ScreenHeight) 
+        {
+            ViewWidth = (int)(screen.Y / ScreenHeight * ScreenWidth);
+            ViewHeight = (int)screen.Y;
             return;
         }
-        graphics.PreferredBackBufferHeight = ScreenWidth;
-        graphics.PreferredBackBufferHeight = ScreenHeight;
-        graphics.IsFullScreen = false;
+        ViewWidth = (int)screen.X;
+        ViewHeight = (int)(screen.X / ScreenWidth * ScreenHeight);
     }
 
     protected virtual SceneRenderer Init() { throw new NotImplementedException(); }
     protected virtual void Load() {}
     protected virtual void Process(GameTime gameTime) {}
     protected virtual void CleanUp() {}
-    protected virtual RenderProperties Render() { return default; }
 
-    protected override void Initialize()
+    protected override sealed void Initialize()
     {
+        graphics.PreferredBackBufferWidth = ViewWidth;
+        graphics.PreferredBackBufferHeight = ViewHeight;
+        graphics.ApplyChanges();
         ScreenHeight = graphics.PreferredBackBufferHeight;
         ScreenWidth = graphics.PreferredBackBufferWidth;
         renderer = Init();
+        res = new Resolution(new Point(ViewWidth, ViewHeight), GraphicsDevice, renderer.EnvironmentColor);
+        res.ScreenResolution = new Point(ViewWidth, ViewHeight);
+        UpdateView();
+        // ScreenMatrix = Matrix.CreateScale(ViewWidth / (float)ScreenHeight);
         scene.Initialize();
 
         base.Initialize();
     }
 
-    protected override void LoadContent()
+    protected override sealed void LoadContent()
     {
         Canvas.Initialize(graphics.GraphicsDevice);
         TInput.Initialize();
@@ -87,7 +159,7 @@ public class TeuriaEngine : Game
         scene.Ready(graphics.GraphicsDevice);
     }
 
-    protected override void UnloadContent()
+    protected override sealed void UnloadContent()
     {
         Scene.Exit();
         CleanUp();
@@ -98,7 +170,7 @@ public class TeuriaEngine : Game
         base.UnloadContent();
     }
 
-    protected override void Update(GameTime gameTime)
+    protected override sealed void Update(GameTime gameTime)
     {   
         DeltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
         TInput.Update();
@@ -123,7 +195,10 @@ public class TeuriaEngine : Game
     protected override void Draw(GameTime gameTime)
     {
         GraphicsDevice.Clear(renderer.EnvironmentColor);
+        GraphicsDevice.Viewport = Viewport;
+        res.Begin();
         renderer.Draw(spriteBatch);
+        res.End();
 
         base.Draw(gameTime);
 

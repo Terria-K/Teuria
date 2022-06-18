@@ -1,3 +1,5 @@
+using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace Teuria;
@@ -15,6 +17,16 @@ public class MouseInput : BaseInput
 
     public int Scroll => CurrentState.ScrollWheelValue - PreviousState.ScrollWheelValue;
     public int ScrollValue => CurrentState.ScrollWheelValue;
+
+    public Vector2 Position 
+    {
+        get => Vector2.Transform(new Vector2(CurrentState.X, CurrentState.Y), Matrix.Invert(TeuriaEngine.ScreenMatrix));
+        set 
+        {
+            var vector = Vector2.Transform(value, TeuriaEngine.ScreenMatrix);
+            Mouse.SetPosition((int)Math.Round(vector.X), (int)Math.Round(vector.Y));  
+        } 
+    }
 
 
     public bool LeftClicked() => CurrentState.LeftButton == ButtonState.Pressed;
