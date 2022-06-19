@@ -22,6 +22,21 @@ public class FontText : Component
         return new FontText(font);
     }
 
+    public ref SpriteFont ShareSpriteFont() 
+    {
+        return ref spriteFont;
+    }
+
+    public float MeasureString() 
+    {
+        return spriteFont.MeasureString(Text).Length();
+    }
+
+    public float MeasureStringHalf() 
+    {
+        return spriteFont.MeasureString(Text).Length() / 2;
+    }
+
     public override void Draw(SpriteBatch spriteBatch)
     {
         spriteBatch.DrawString(spriteFont, Text, Entity.Position, Entity.Modulate, 0, Vector2.Zero, Size, SpriteEffects.None, Entity.ZIndex);

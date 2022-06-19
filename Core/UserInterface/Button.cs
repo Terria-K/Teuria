@@ -1,10 +1,9 @@
 using System;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace Teuria;
 
+[Obsolete("This Button Entity has some major issues from Mouse Input. Please use the KeyboardButton for now")]
 public class Button : Entity
 {
     public Action OnHover;

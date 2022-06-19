@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
 
-public class Resolution 
+public class SubViewport 
 {
     public Point ViewResolution 
     { 
@@ -34,12 +34,11 @@ public class Resolution
     private SpriteBatch spriteBatch;
     private RenderTargetBinding[] prevTargets;
 
-    public Resolution(Point viewResolution, GraphicsDevice device, Color environmentColor) 
+    public SubViewport(Point viewResolution, GraphicsDevice device, Color environmentColor) 
     {
         this.device = device;
         this.viewResolution = viewResolution;
-        screenResolution.X = device.Viewport.Width;
-        screenResolution.Y = device.Viewport.Height;
+        screenResolution = new Point(device.Viewport.Width, device.Viewport.Height);
         this.environmentColor = environmentColor;
 
         spriteBatch = new SpriteBatch(device);
@@ -69,6 +68,7 @@ public class Resolution
 
         prevTargets = device.GetRenderTargets();
         device.SetRenderTarget(rt);
+        device.Clear(environmentColor);
     }
 
     public void End() 
@@ -78,8 +78,8 @@ public class Resolution
 
         device.SetRenderTargets(prevTargets);
         device.Clear(environmentColor);
-        spriteBatch.Begin();
-        spriteBatch.Draw(rt, pos, null, Color.White, 0 ,origin, scale, SpriteEffects.None, 0);
+        spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, blendState: BlendState.AlphaBlend);
+        spriteBatch.Draw(rt, pos, null, Color.White, 0, origin, scale, SpriteEffects.None, 0);
         spriteBatch.End();
     }
 }

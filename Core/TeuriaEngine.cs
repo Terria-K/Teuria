@@ -31,9 +31,10 @@ public class TeuriaEngine : Game
         } 
     }
     private static TeuriaEngine instance;
-    private SceneRenderer renderer;
-    private Resolution res;
+    private SceneRenderer sceneRenderer;
+    private SubViewport subViewport;
     private bool resizing;
+    private static bool fullscreen;
     private static int padding = 0;
     public static int Padding 
     {
@@ -41,7 +42,7 @@ public class TeuriaEngine : Game
         set 
         {
             padding = value;
-            // Instance.UpdateView();
+            Instance.UpdateView();
         }
     }
 
@@ -49,23 +50,32 @@ public class TeuriaEngine : Game
     public static int ScreenWidth { get; private set; }
     public static int ViewWidth { get; private set; }
     public static int ViewHeight { get; private set; }
-    public static bool Fullscreen { get; set; }
+    public static bool Fullscreen 
+    { 
+        get => fullscreen;
+        set 
+        {
+            fullscreen = value;
+            Instance.graphics.HardwareModeSwitch = !fullscreen;
+        }
+    }
 
     public TeuriaEngine(int width, int height, int screenWidth, int screenHeight, string windowTitle, bool fullScreen)
     {
         instance = this;
         Window.Title = windowTitle;
         title = windowTitle;
-        ViewHeight = screenHeight;
-        ViewWidth = screenWidth;
-        Fullscreen = fullScreen;
-        Window.AllowUserResizing = true;
+        ScreenWidth = screenWidth;
+        ScreenHeight = screenHeight;
+        ViewWidth = width;
+        ViewHeight = height;
         Window.ClientSizeChanged += OnClientSizeChanged;
         graphics = new GraphicsDeviceManager(this);
-        graphics.HardwareModeSwitch = false;
+        graphics.HardwareModeSwitch = !fullScreen;
         graphics.IsFullScreen = fullScreen;
 
         Content.RootDirectory = "Content";
+        Window.AllowUserResizing = false;
         IsMouseVisible = true;
     }
 
@@ -83,7 +93,9 @@ public class TeuriaEngine : Game
             graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
             graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
             graphics.ApplyChanges();
-            res.ScreenResolution = new Point(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
+            subViewport.ScreenResolution = new Point(
+                graphics.PreferredBackBufferWidth, 
+                graphics.PreferredBackBufferHeight);
             UpdateView();
             resizing = false;
         }
@@ -93,16 +105,18 @@ public class TeuriaEngine : Game
     {
         var screen = new Vector2(
             GraphicsDevice.PresentationParameters.BackBufferWidth, 
-            GraphicsDevice.PresentationParameters.BackBufferHeight);
+            GraphicsDevice.PresentationParameters.BackBufferHeight
+        );
 
         ViewSize(ref screen);
         var aspect = ViewHeight / (float)ViewWidth;
         ViewWidth -= Padding * 2;
         ViewHeight -= (int)(aspect * Padding * 2);
 
-        ScreenMatrix = Matrix.CreateScale(ViewWidth / (float)ScreenWidth);
+        ScreenMatrix = Matrix.CreateScale(
+            ViewWidth / (float)ScreenWidth);
 
-        Viewport = new Viewport() 
+        viewport = new Viewport() 
         {
             X = (int)(screen.X / 2 - ViewWidth / 2),
             Y = (int)(screen.Y / 2 - ViewHeight / 2),
@@ -111,7 +125,6 @@ public class TeuriaEngine : Game
             MinDepth = 0,
             MaxDepth = 1
         };
-        res.UpdateResolution(ref viewport);
 
     }
 
@@ -127,22 +140,15 @@ public class TeuriaEngine : Game
         ViewHeight = (int)(screen.X / ScreenWidth * ScreenHeight);
     }
 
-    protected virtual SceneRenderer Init() { throw new NotImplementedException(); }
-    protected virtual void Load() {}
-    protected virtual void Process(GameTime gameTime) {}
-    protected virtual void CleanUp() {}
-
     protected override sealed void Initialize()
     {
-        graphics.PreferredBackBufferWidth = ViewWidth;
-        graphics.PreferredBackBufferHeight = ViewHeight;
+        graphics.PreferredBackBufferWidth = ScreenWidth;
+        graphics.PreferredBackBufferHeight = ScreenHeight;
         graphics.ApplyChanges();
-        ScreenHeight = graphics.PreferredBackBufferHeight;
-        ScreenWidth = graphics.PreferredBackBufferWidth;
-        renderer = Init();
-        res = new Resolution(new Point(ViewWidth, ViewHeight), GraphicsDevice, renderer.EnvironmentColor);
-        res.ScreenResolution = new Point(ViewWidth, ViewHeight);
+        sceneRenderer = Init();
         UpdateView();
+        subViewport = new SubViewport(new Point(ViewWidth, ViewHeight), GraphicsDevice, sceneRenderer.EnvironmentColor);
+        subViewport.ScreenResolution = new Point(ScreenWidth, ScreenHeight);
         // ScreenMatrix = Matrix.CreateScale(ViewWidth / (float)ScreenHeight);
         scene.Initialize();
 
@@ -154,6 +160,7 @@ public class TeuriaEngine : Game
         Canvas.Initialize(graphics.GraphicsDevice);
         TInput.Initialize();
         spriteBatch = new SpriteBatch(GraphicsDevice);
+        sceneRenderer.Obtain(spriteBatch);
         Load();
         
         scene.Ready(graphics.GraphicsDevice);
@@ -194,11 +201,11 @@ public class TeuriaEngine : Game
 
     protected override void Draw(GameTime gameTime)
     {
-        GraphicsDevice.Clear(renderer.EnvironmentColor);
-        GraphicsDevice.Viewport = Viewport;
-        res.Begin();
-        renderer.Draw(spriteBatch);
-        res.End();
+        GraphicsDevice.Clear(sceneRenderer.EnvironmentColor);
+        GraphicsDevice.Viewport = viewport;
+        subViewport.Begin();
+        sceneRenderer.Draw();
+        subViewport.End();
 
         base.Draw(gameTime);
 
@@ -218,5 +225,11 @@ public class TeuriaEngine : Game
     {
         Exit();
     }
+
+    protected virtual SceneRenderer Init() { throw new Exception(@"
+    You don't have a game initialize yet! Make a game class first before you proceed."); }
+    protected virtual void Load() {}
+    protected virtual void Process(GameTime gameTime) {}
+    protected virtual void CleanUp() {}
 }
 

@@ -19,7 +19,8 @@ public class Scene
         set
         {
             paused = value;
-            OnPause?.Invoke();
+            if (paused)
+                OnPause?.Invoke();
         }
     }
 
@@ -52,7 +53,7 @@ public class Scene
     {
         foreach(var entity in entityList) 
         {
-            entity.EnterScene(this);
+            entity.EnterScene(this, Content);
             entity.Ready();
         }
     }

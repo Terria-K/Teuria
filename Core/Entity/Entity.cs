@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
@@ -14,7 +15,7 @@ public class Entity
     public int ZIndex;
     public PauseMode PauseMode = PauseMode.Inherit;
 
-    public virtual void EnterScene(Scene scene) 
+    public virtual void EnterScene(Scene scene, ContentManager content) 
     {
         this.scene = scene;
     }

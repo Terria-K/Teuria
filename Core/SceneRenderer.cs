@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
 
-public class SceneRenderer 
+public class SceneRenderer : Renderer
 {
     private Camera Camera;
     private Scene Scene;
@@ -22,6 +22,14 @@ public class SceneRenderer
         this.Scene.SceneRenderer = this;
     }
 
+    public SceneRenderer(Scene scene, Camera camera, Color environemntColor) 
+    {
+        this.Scene = scene;
+        this.Camera = camera;
+        this.EnvironmentColor = environemntColor;
+        this.Scene.SceneRenderer = this;
+    }
+
     public void ChangeScene(Scene scene) 
     {
         this.Scene = scene;
@@ -29,10 +37,10 @@ public class SceneRenderer
         TeuriaEngine.Instance.Scene = scene;
     }
 
-    public void Draw(SpriteBatch spriteBatch) 
+    public override void Draw() 
     {
-        spriteBatch.Begin(transformMatrix: Camera?.Transform);
-        Scene.Draw(spriteBatch);
-        spriteBatch.End();
+        SpriteBatch.Begin(transformMatrix: Camera?.Transform, sortMode: SpriteSortMode.Immediate, blendState: BlendState.AlphaBlend);
+        Scene.Draw(SpriteBatch);
+        SpriteBatch.End();
     }
 }
