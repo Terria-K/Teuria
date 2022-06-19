@@ -12,32 +12,25 @@ public class Sprite : Component
     private SpriteEffects spriteEffects = SpriteEffects.None;
     public Vector2 Scale = Vector2.One;
     public Texture2D texture;
-    private bool isFlipped = false;
     private int width;
     private int height;
     public bool cleanUpTexture = false;
     public Color Modulate { get => Entity.Modulate; set => Entity.Modulate = value;  }
     public bool FlipH
     {
-        get 
-        {
-            return isFlipped;
-        }
-        set 
-        {
-            isFlipped = value;
-            if (isFlipped) 
-            {
-                spriteEffects = SpriteEffects.FlipHorizontally;
-                return;
-            }
-            spriteEffects = SpriteEffects.None;
-        }
+        get => (spriteEffects & SpriteEffects.FlipHorizontally) == SpriteEffects.FlipHorizontally;
+        
+        set => spriteEffects = value 
+                ? spriteEffects | SpriteEffects.FlipHorizontally 
+                : spriteEffects & ~SpriteEffects.FlipHorizontally;
+        
     }
     public bool FlipV
     {
-        get => spriteEffects == SpriteEffects.FlipVertically;
-        set => spriteEffects = SpriteEffects.FlipVertically;
+        get => (spriteEffects & SpriteEffects.FlipVertically) == SpriteEffects.FlipVertically;
+        set => spriteEffects = value 
+                ? spriteEffects | SpriteEffects.FlipVertically 
+                : spriteEffects & ~SpriteEffects.FlipVertically;
     }
 
 

@@ -35,7 +35,8 @@ public class Camera
         var origXy = new Vector2((int)Math.Floor(origin.X), (int)Math.Floor(origin.Y));
         var orig = new Vector3(origXy, 0);
 
-        transform = Matrix.Identity       *
+        transform = 
+            Matrix.Identity               *
             Matrix.CreateTranslation(pos) * 
             Matrix.CreateRotationZ(angle) *
             Matrix.CreateScale(zooming)   *
