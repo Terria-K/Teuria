@@ -31,7 +31,7 @@ public class TeuriaEngine : Game
         } 
     }
     private static TeuriaEngine instance;
-    private SceneRenderer sceneRenderer;
+    private SceneCanvas sceneRenderer;
     private SubViewport subViewport;
     private bool resizing;
     private static bool fullscreen;
@@ -75,7 +75,7 @@ public class TeuriaEngine : Game
         graphics.IsFullScreen = fullScreen;
 
         Content.RootDirectory = "Content";
-        Window.AllowUserResizing = false;
+        Window.AllowUserResizing = true;
         IsMouseVisible = true;
     }
 
@@ -162,7 +162,7 @@ public class TeuriaEngine : Game
         spriteBatch = new SpriteBatch(GraphicsDevice);
         sceneRenderer.Obtain(spriteBatch);
         Load();
-        
+        scene.Activate(spriteBatch);
         scene.Ready(graphics.GraphicsDevice);
     }
 
@@ -191,6 +191,7 @@ public class TeuriaEngine : Game
         {
             scene.Exit();
             scene = nextScene;
+            scene?.Activate(spriteBatch);
             scene?.Ready(graphics.GraphicsDevice);
         }
         scene.Update();
@@ -226,7 +227,7 @@ public class TeuriaEngine : Game
         Exit();
     }
 
-    protected virtual SceneRenderer Init() { throw new Exception(@"
+    protected virtual SceneCanvas Init() { throw new Exception(@"
     You don't have a game initialize yet! Make a game class first before you proceed."); }
     protected virtual void Load() {}
     protected virtual void Process(GameTime gameTime) {}

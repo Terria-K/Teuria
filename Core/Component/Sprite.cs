@@ -1,9 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Teuria;
 
@@ -11,7 +8,7 @@ public class Sprite : Component
 {
     private SpriteEffects spriteEffects = SpriteEffects.None;
     public Vector2 Scale = Vector2.One;
-    public Texture2D texture;
+    public SpriteTexture texture;
     private int width;
     private int height;
     public bool cleanUpTexture = false;
@@ -34,7 +31,7 @@ public class Sprite : Component
     }
 
 
-    public Sprite(Texture2D texture, bool cleanUp = false)
+    public Sprite(SpriteTexture texture, bool cleanUp = false)
     {
         this.texture = texture;
         width = texture.Width;
@@ -42,7 +39,7 @@ public class Sprite : Component
         cleanUpTexture = cleanUp;
     }
 
-    public Sprite(Texture2D texture, int width, int height, bool cleanUp = false)
+    public Sprite(SpriteTexture texture, int width, int height, bool cleanUp = false)
     {
         this.texture = texture;
         this.width = width;
@@ -51,17 +48,17 @@ public class Sprite : Component
     }
 
     public override void Update() {}
+    
     public override void Draw(SpriteBatch spriteBatch)
     {
-        
-        spriteBatch.Draw(texture, Entity.Position, new Rectangle(0, 0, width, height), Modulate, 0, Vector2.Zero, Scale, spriteEffects, Entity.ZIndex);
+        texture.DrawTexture(spriteBatch, Entity.Position, Modulate, 0, Scale, spriteEffects, Entity.ZIndex);
     }
 
     public override void Removed()
     {
         if (cleanUpTexture) 
         {
-            TextureImporter.CleanUp(texture);
+            TextureImporter.CleanUp(texture.Texture);
         }
         base.Removed();
     }

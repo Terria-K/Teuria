@@ -8,6 +8,7 @@ public class Label : Entity
     public Label(FontText fontText)
     {
         this.fontText = fontText;
+        fontText.Text = "";
         AddComponent(fontText);
     }
 }

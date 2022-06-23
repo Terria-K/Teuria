@@ -2,10 +2,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
 
-public abstract class Renderer 
+public abstract class CanvasLayer 
 {
     protected SpriteBatch SpriteBatch;
-    // protected GraphicsDevice GraphicsDevice;
+    
 
     public abstract void Draw();
 

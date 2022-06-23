@@ -3,44 +3,44 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
 
-public class SceneRenderer : Renderer
+public class SceneCanvas : CanvasLayer
 {
     private Camera Camera;
     private Scene Scene;
     public Color EnvironmentColor;
 
-    public SceneRenderer(Scene scene) 
+    public SceneCanvas(Scene scene, SpriteBatch spriteBatch) 
     {
         this.Scene = scene;
-        this.Scene.SceneRenderer = this;
+        this.Scene.MainCanvas = this;
     }
 
-    public SceneRenderer(Scene scene, Camera camera) 
+    public SceneCanvas(Scene scene, Camera camera, SpriteBatch spriteBatch) 
     {
         this.Scene = scene;
         this.Camera = camera;
-        this.Scene.SceneRenderer = this;
+        this.Scene.MainCanvas = this;
     }
 
-    public SceneRenderer(Scene scene, Camera camera, Color environemntColor) 
+    public SceneCanvas(Scene scene, Camera camera, Color environemntColor) 
     {
         this.Scene = scene;
         this.Camera = camera;
         this.EnvironmentColor = environemntColor;
-        this.Scene.SceneRenderer = this;
+        this.Scene.MainCanvas = this;
     }
 
     public void ChangeScene(Scene scene) 
     {
         this.Scene = scene;
-        this.Scene.SceneRenderer = this;
+        this.Scene.MainCanvas = this;
         TeuriaEngine.Instance.Scene = scene;
     }
 
     public override void Draw() 
     {
         SpriteBatch.Begin(transformMatrix: Camera?.Transform, sortMode: SpriteSortMode.Immediate, blendState: BlendState.AlphaBlend);
-        Scene.Draw(SpriteBatch);
+        Scene.Draw();
         SpriteBatch.End();
     }
 }

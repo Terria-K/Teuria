@@ -8,10 +8,12 @@ namespace Teuria;
 public class Scene 
 {
     private List<Entity> entityList = new List<Entity>();
+    private List<CanvasLayer> layers = new List<CanvasLayer>();
     protected ContentManager Content;
     protected Camera Camera;
+    protected SpriteBatch SpriteBatch;
     public event Action OnPause;
-    public SceneRenderer SceneRenderer;
+    public SceneCanvas MainCanvas;
     private bool paused;
     public bool Paused 
     {
@@ -22,6 +24,11 @@ public class Scene
             if (paused)
                 OnPause?.Invoke();
         }
+    }
+
+    public List<Entity> Entities 
+    {
+        get => entityList;
     }
 
     public Scene(ContentManager content, Camera camera) 
@@ -35,10 +42,26 @@ public class Scene
         Content = content;
     }
 
+    internal void Activate(SpriteBatch spriteBatch) 
+    {
+        this.SpriteBatch = spriteBatch;
+    }
+
     public void Add(Entity entity, PauseMode pauseMode = PauseMode.Inherit) 
     {
         entity.PauseMode = pauseMode;
         entityList.Add(entity);
+    }
+
+    public void Add(CanvasLayer layer) 
+    {
+        layer.Obtain(SpriteBatch);
+        layers.Add(layer);
+    }
+
+    public void Remove(CanvasLayer layer) 
+    {
+        layers.Remove(layer);
     }
 
     public void Remove(Entity entity) 
@@ -81,12 +104,17 @@ public class Scene
         }
     }
 
-    public virtual void Draw(SpriteBatch spriteBatch) 
+    public virtual void Draw() 
     {
         foreach(var entity in entityList) 
         {
             if (!entity.Active) continue;
-            entity.Draw(spriteBatch);
+            entity.Draw(SpriteBatch);
+        }
+
+        foreach(var layer in layers) 
+        {
+            layer.Draw();
         }
     }
 

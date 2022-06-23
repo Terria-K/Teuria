@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -8,6 +9,7 @@ public class Hitbox : Component
     private float width;
     private float height;
     private Vector2 position;
+    private AABB boundingBox;
 #if DEBUG
     public static bool DebugRender = false;
 #endif
@@ -17,6 +19,13 @@ public class Hitbox : Component
         this.width = width;
         this.height = height;
         position = pos;        
+        boundingBox = new AABB(pos.X, pos.Y, width, height);
+    }
+
+    public AABB BoundingArea 
+    {
+        get => boundingBox;
+        set => boundingBox = value;
     }
 
     
@@ -84,6 +93,11 @@ public class Hitbox : Component
         get => Entity.Position.Y + Position.Y;
     }
 
+    public Vector2 GlobalPosition 
+    {
+        get => new Vector2(GlobalX, GlobalY);
+    }
+
     public float GlobalLeft 
     {
         get => Left + Entity.Position.X;
@@ -132,6 +146,15 @@ public class Hitbox : Component
         if (X <= value.X && value.X < X + Width && Y <= value.Y)
         {
             return value.Y < Y + Height;
+        }
+        return false;
+    }
+
+    public bool Collide(EntityPoint entityPoint) 
+    {
+        if (X <= entityPoint.X && entityPoint.X < X + Width && Y <= entityPoint.Y) 
+        {
+            return entityPoint.Y < Y + height;
         }
         return false;
     }

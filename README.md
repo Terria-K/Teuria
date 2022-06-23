@@ -53,7 +53,7 @@ public class MainScene : Scene
 	{
 		/** Load Content Here */
 		// We need the font first, but we can use the built-in font
-		var font = FontText.Create("Rubik-Regular");
+		var font = FontText.Create("Teuria/Rubik-Regular");
 		
 		/** Instance any Entity here */
 		var helloWorld = new Label(font);
@@ -148,7 +148,8 @@ public class MainScene : Scene
 		// This is loaded using TextureImporter Load Image
 		var texImpImg = TextureImporter.LoadImage(device, "bat.png");
 
-		// Manually Dispose an image loaded with TextureImporter
+		// Manually Dispose an image loaded
+		mgcbImg.Dispose();
 		TextureImporter.CleanUp(texImpImg);
 		base.Ready(device);
 	}

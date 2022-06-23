@@ -13,7 +13,7 @@ public class Button : Entity
     private bool isHovered;    
     private Hitbox hitbox;
 
-    public Button(Texture2D texture) 
+    public Button(SpriteTexture texture) 
     {
         sprite = new Sprite(texture);
         hitbox = new Hitbox(sprite.texture.Width, sprite.texture.Height, Position);
