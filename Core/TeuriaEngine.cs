@@ -62,6 +62,13 @@ public class TeuriaEngine : Game
 
     public TeuriaEngine(int width, int height, int screenWidth, int screenHeight, string windowTitle, bool fullScreen)
     {
+#if DEBUG
+#if SYSTEMTEXTJSON
+        Console.WriteLine("Using SYSTEMTEXTJSON");
+#else
+        Console.WriteLine("Using Newtonsoft.JSON");
+#endif
+#endif
         instance = this;
         Window.Title = windowTitle;
         title = windowTitle;
@@ -170,6 +177,7 @@ public class TeuriaEngine : Game
     {
         Scene.Exit();
         CleanUp();
+        Canvas.Dispose();
         foreach(var textures in TextureImporter.cleanupCache) 
         {
             textures?.Dispose();

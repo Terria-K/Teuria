@@ -124,5 +124,10 @@ public class Scene
         {
             entity.ExitScene();
         }
+
+        foreach(var canvas in layers) 
+        {
+            canvas.Unload();
+        }
     }
 }

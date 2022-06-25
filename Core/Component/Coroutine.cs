@@ -29,7 +29,7 @@ public class Coroutine : Component
         return coroutines.Contains(coroutine);
     }
 
-    public bool IsYielding(RefCoroutine coroutine) 
+    public bool IsYielding(in RefCoroutine coroutine) 
     {
         return coroutine.IsRunning;
     }

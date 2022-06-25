@@ -5,7 +5,7 @@ namespace Teuria;
 
 public class Tileset 
 {
-    private SpriteTexture[,] tiles;
+    private readonly SpriteTexture[,] tiles;
     public SpriteTexture Texture { get; private set; }
     public int TileWidth { get; private set; }
     public int TileHeight { get; private set; }

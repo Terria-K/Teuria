@@ -1,13 +1,11 @@
-using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 
 namespace Teuria;
 
 public interface IPhysicsEntity 
 {
-    Hitbox Hitbox { get; }
+    Collider Collider { get; set; }
     AABB BoundingArea { get; }
 
-    bool Collide(Hitbox hitbox);
-
-    bool Collide(Rectangle boundingBox);
+    void Detect(HashSet<IPhysicsEntity> entity);
 }

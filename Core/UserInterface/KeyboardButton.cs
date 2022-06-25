@@ -55,30 +55,30 @@ public abstract class KeyboardButton : Entity
             return;
         }
         if (!selected) return;
-        if (TInput.Keyboard.JustPressed(Keys.C)) 
+        if (TInput.IsKeyJustPressed(Keys.C)) 
         {
             OnEnter();
             return;
         }
-        if (TInput.Keyboard.JustPressed(Keys.Up) && UpFocus != null) 
+        if (TInput.IsKeyJustPressed(Keys.Up) && UpFocus != null) 
         {
             UpFocus.Selected = true;
             Selected = false;
             return;
         }
-        if (TInput.Keyboard.JustPressed(Keys.Down) && DownFocus != null) 
+        if (TInput.IsKeyJustPressed(Keys.Down) && DownFocus != null) 
         {
             DownFocus.Selected = true;
             Selected = false;
             return;
         }
-        if (TInput.Keyboard.JustPressed(Keys.Left) && LeftFocus != null) 
+        if (TInput.IsKeyJustPressed(Keys.Left) && LeftFocus != null) 
         {
             LeftFocus.Selected = true;
             Selected = false;
             return;
         }
-        if (TInput.Keyboard.JustPressed(Keys.Right) && RightFocus != null) 
+        if (TInput.IsKeyJustPressed(Keys.Right) && RightFocus != null) 
         {
             RightFocus.Selected = true;
             Selected = false;

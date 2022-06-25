@@ -7,7 +7,7 @@ namespace Teuria;
 
 public class Entity 
 {
-    private List<Component> components = new List<Component>();
+    private List<IComponent> components = new List<IComponent>();
     private Scene scene;
     public bool Active { get; set; } = true;
     public Vector2 Position;

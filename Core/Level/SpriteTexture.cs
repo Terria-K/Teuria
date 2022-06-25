@@ -67,11 +67,22 @@ public class SpriteTexture
 
     public void DrawTexture(SpriteBatch spriteBatch, Vector2 position) 
     {
-        spriteBatch.Draw(Texture, position, Clip, Color.White, 0, -Origin, 1f, SpriteEffects.None, 0);
+        var color = Color.White;
+#if DEBUG
+        if (Hitbox.DebugRender)
+            color = color * 0.5f;
+#endif
+
+        spriteBatch.Draw(Texture, position, Clip, color, 0, -Origin, 1f, SpriteEffects.None, 0);
     }
 
     public void DrawTexture(SpriteBatch spriteBatch, Vector2 position, Color color, float rotation, Vector2 scale, SpriteEffects spriteEffects, int zIndex) 
     {
-        spriteBatch.Draw(Texture, position, Clip, color, rotation, -Origin, scale, spriteEffects, zIndex);
+        var col = color;
+#if DEBUG
+        if (Hitbox.DebugRender)
+            col = color * 0.5f;
+#endif
+        spriteBatch.Draw(Texture, position, Clip, col, rotation, -Origin, scale, spriteEffects, zIndex);
     }
 }

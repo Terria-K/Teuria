@@ -2,10 +2,10 @@ using System.Collections;
 
 namespace Teuria;
 
-public struct RefCoroutine 
+public readonly struct RefCoroutine 
 {
-    public IEnumerator Corou { get; private set; }
-    public Coroutine Handler { get; private set; }
+    public IEnumerator Corou { get; init; }
+    public Coroutine Handler { get; init; }
 
     public bool IsRunning => Corou != null && Handler.IsYielding(Corou);
 

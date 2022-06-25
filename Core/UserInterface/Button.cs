@@ -1,24 +1,52 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
 
 [Obsolete("This Button Entity has some major issues from Mouse Input. Please use the KeyboardButton for now")]
-public class Button : Entity
+public class Button : Entity, IPhysicsEntity
 {
     public Action OnHover;
     public Action OnClick;
 
     private Sprite sprite;
     private bool isHovered;    
-    private Hitbox hitbox;
+    private Collider collider;
 
     public Button(SpriteTexture texture) 
     {
         sprite = new Sprite(texture);
-        hitbox = new Hitbox(sprite.texture.Width, sprite.texture.Height, Position);
+        collider = new Hitbox(sprite.Texture.Width, sprite.Texture.Height, Position);
         AddComponent(sprite);
-        AddComponent(hitbox);
+    }
+
+    public Collider Collider 
+    { 
+        get => collider; 
+        set 
+        {
+            if (value == collider) return;
+#if DEBUG
+            if (value.Entity != null)
+                throw new Exception("This collider has been used by another Entity");
+#endif
+            collider?.Removed();
+            collider = value;
+            collider?.Added(this);
+        }
+    }
+
+    public AABB BoundingArea => throw new NotImplementedException();
+
+    public void Detect(IPhysicsEntity entity)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Detect(HashSet<IPhysicsEntity> entity)
+    {
+        throw new NotImplementedException();
     }
 
     public override void Update()
@@ -39,12 +67,12 @@ public class Button : Entity
                 OnClick?.Invoke();
             }
         }
-        if (hitbox.Collide(mousePos) && !isHovered) 
+        if (collider.Collide(mousePos) && !isHovered) 
         {
             isHovered = true;
             return;
         }
-        if (!hitbox.Collide(mousePos)) 
+        if (!collider.Collide(mousePos)) 
         {
             isHovered = false;
         }

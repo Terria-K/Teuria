@@ -23,4 +23,9 @@ public static class Canvas
         rectangle.Height = (int)height;
         spriteBatch.Draw(pixel, rectangle, color);
     }
+
+    internal static void Dispose() 
+    {
+        pixel.Dispose();
+    }
 }

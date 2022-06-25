@@ -8,9 +8,16 @@ public abstract class CanvasLayer
     
 
     public abstract void Draw();
+    public virtual void Unload() {}
 
     internal void Obtain(SpriteBatch spriteBatch) 
     {
         SpriteBatch = spriteBatch;
+        Ready();
+    }
+
+    public virtual void Ready() 
+    {
+
     }
 }

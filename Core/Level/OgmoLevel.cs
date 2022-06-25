@@ -1,9 +1,7 @@
-// #define SystemTextJson
-
 using System.IO;
 using Microsoft.Xna.Framework;
 using Name = 
-#if SystemTextJson
+#if SYSTEMTEXTJSON
 System.Text.Json.Serialization.JsonPropertyNameAttribute;
 using System.Text.Json;
 #else
@@ -22,7 +20,7 @@ public class OgmoLevel
 
     public OgmoLevel(FileStream fs) 
     {
-#if SystemTextJson
+#if SYSTEMTEXTJSON
         var result = JsonSerializer.Deserialize<OgmoLevelData>(fs);
 #else
         using var sr = new StreamReader(fs);
@@ -83,7 +81,11 @@ public class OgmoLayer
     [Name("tileset")]
     public string Tileset { get; set; }
     [Name("data2D")]
+#if !SYSTEMTEXTJSON
     public int[,] Data { get; set; }
+#else
+    public int[][] Data { get; set; }
+#endif
     [Name("entities")]
     public OgmoEntity[] Entities { get; set; }
 }

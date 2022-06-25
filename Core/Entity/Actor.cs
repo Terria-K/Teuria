@@ -1,52 +1,28 @@
-using Microsoft.Xna.Framework;
+using System;
+using System.Collections.Generic;
 
 namespace Teuria;
 
 public class Actor : Entity, IPhysicsEntity
 {
-    public Hitbox Hitbox { get; private set; }
+    public HashSet<IPhysicsEntity> Collided = new HashSet<IPhysicsEntity>();
+    public Collider Collider { get; set; }
 
-    public AABB BoundingArea => new AABB(Hitbox.GlobalX, Hitbox.GlobalY, Hitbox.Width, Hitbox.Height);
+    public PhysicsBody Body;
 
-    protected bool highlight;
-
-
-    public bool Highlight 
-    {
-        get => highlight;
-        set => highlight = value;
-    }
+    public AABB BoundingArea => new AABB(Collider.GlobalX, Collider.GlobalY, Collider.Width, Collider.Height);
 
     protected void SetupHitbox(Hitbox hitbox) 
     {
-        Hitbox = hitbox;
-        AddComponent(this.Hitbox);
-        // BoundingArea = new AABB(hitbox.X, hitbox.Y, hitbox.Width, hitbox.Height);
+        Collider = hitbox;
+        Body = new PhysicsBody(Collider, true);
+        AddComponent(Body);
     }
-
     
-    public bool Intersects(AABB hitbox) 
+    public void Detect(HashSet<IPhysicsEntity> entity)
     {
-        return BoundingArea.Contains(hitbox);
-    }
-
-    public bool Collide(Hitbox hitbox)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public bool Collide(Rectangle boundingBox)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public int Width 
-    {
-        get => (int)Hitbox.Width;
-    }
-
-    public int Height 
-    {
-        get => (int)Hitbox.Height;
+        Collided = entity;
+        // Collided.Add(entity);
+        // Collision?.Invoke(entity);
     }
 }

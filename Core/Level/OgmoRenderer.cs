@@ -38,7 +38,7 @@ public class OgmoRenderer : CanvasLayer
             }
         }
     }
-
+#if !SYSTEMTEXTJSON
     private void DrawMap(int[,] data) 
     {
         for (int y = 0; y < level.LevelSize.X; y++) 
@@ -54,6 +54,23 @@ public class OgmoRenderer : CanvasLayer
             }
         }
     }
+#else
+    private void DrawMap(int[][] data) 
+    {
+        for (int y = 0; y < level.LevelSize.X; y++) 
+        {
+            for (int x = 0; x < level.LevelSize.Y; x++) 
+            {
+                var gid = data[x][y];
+                if (gid >= 0) 
+                {
+                    var texture = tileset[gid];
+                    texture.DrawTexture(SpriteBatch, FixedPosition(x * tileset.TileHeight, y * tileset.TileHeight));
+                }
+            }
+        }
+    }
+#endif
 
     private void SummonEntity(OgmoEntity[] entities) 
     {

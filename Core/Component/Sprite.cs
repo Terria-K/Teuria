@@ -8,7 +8,7 @@ public class Sprite : Component
 {
     private SpriteEffects spriteEffects = SpriteEffects.None;
     public Vector2 Scale = Vector2.One;
-    public SpriteTexture texture;
+    public SpriteTexture Texture;
     private int width;
     private int height;
     public bool cleanUpTexture = false;
@@ -33,7 +33,7 @@ public class Sprite : Component
 
     public Sprite(SpriteTexture texture, bool cleanUp = false)
     {
-        this.texture = texture;
+        this.Texture = texture;
         width = texture.Width;
         height = texture.Height;
         cleanUpTexture = cleanUp;
@@ -41,7 +41,7 @@ public class Sprite : Component
 
     public Sprite(SpriteTexture texture, int width, int height, bool cleanUp = false)
     {
-        this.texture = texture;
+        this.Texture = texture;
         this.width = width;
         this.height = height;
         cleanUpTexture = cleanUp;
@@ -51,14 +51,14 @@ public class Sprite : Component
     
     public override void Draw(SpriteBatch spriteBatch)
     {
-        texture.DrawTexture(spriteBatch, Entity.Position, Modulate, 0, Scale, spriteEffects, Entity.ZIndex);
+        Texture.DrawTexture(spriteBatch, Entity.Position, Modulate, 0, Scale, spriteEffects, Entity.ZIndex);
     }
 
     public override void Removed()
     {
         if (cleanUpTexture) 
         {
-            TextureImporter.CleanUp(texture.Texture);
+            TextureImporter.CleanUp(Texture.Texture);
         }
         base.Removed();
     }

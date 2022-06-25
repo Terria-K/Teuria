@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -7,20 +6,15 @@ namespace Teuria;
 
 public class QuadTree<T> where T : IPhysicsEntity
 {
-    private const int MaxObjects = 4;
+    private const int MaxObjects = 10;
     private const int MaxLevels = 7;
 
     private int level;
     private List<T> entities = new List<T>();
-    private List<T> returnEntities = new List<T>();
     private AABB bounds;
     private QuadTree<T>[] nodes = new QuadTree<T>[4];
-    public Action<T> Modify;
 
-    public List<T> VisibleEntities 
-    {
-        get => returnEntities;
-    }
+    public bool HasNodes => nodes[0] != null;
 
     public QuadTree(int level, AABB bounds) 
     {
@@ -43,7 +37,7 @@ public class QuadTree<T> where T : IPhysicsEntity
 
     private Quadrant GetQuadrant(AABB rect) 
     {
-        Quadrant quad = Quadrant.None;
+        var quad = Quadrant.None;
         float verticalMidpoint = bounds.X + (bounds.Width / 2);
         float horizontalMidpoint = bounds.Y + (bounds.Height / 2);
 
@@ -77,80 +71,75 @@ public class QuadTree<T> where T : IPhysicsEntity
         return quad;
     }
 
-    public void Insert(IEnumerable<T> entities) 
+    public void Insert(IEnumerable<T> colliders) 
     {
-        foreach (var entity in entities) 
+        foreach (var collider in colliders) 
         {
-            Insert(entity);
+            Insert(collider);
         }
     }
 
-    public void Insert(T entity) 
+    public void Insert(T physicsEntity)
     {
-        if (nodes[0] != null)
+        if (HasNodes)
         {
-            var quadrant = GetQuadrant(entity.BoundingArea);
+            var quadrant = GetQuadrant(physicsEntity.Collider.BoundingArea);
             if (quadrant != Quadrant.None)
             {
-                nodes[(int)quadrant].Insert(entity);
+                nodes[(int)quadrant].Insert(physicsEntity);
                 return;
             }
         }
 
-        entities.Add(entity);
+        entities.Add(physicsEntity);
 
-        if (entities.Count > MaxObjects && level < MaxLevels) 
+        if (entities.Count <= MaxObjects || level >= MaxLevels) { return; }
+        if (!HasNodes)
         {
-            if (nodes[0] == null) 
-            {
-                Split();
-            }
+            Split();
+        }
 
-            int i = 0;
-            while (i < entities.Count) 
+        for (int i = 0; i < entities.Count; i++) 
+        {
+            var col = entities[i];
+            var boundingArea = col.Collider.BoundingArea;
+            var quadrant = GetQuadrant(boundingArea);
+
+            if (quadrant != Quadrant.None) 
             {
-                T ent = entities[i];
-                var quadrant = GetQuadrant(ent.BoundingArea);
-                if (quadrant != Quadrant.None) 
-                {
-                    nodes[(int)quadrant].Insert(ent);
-                    entities.RemoveAt(i);
-                }
-                else {
-                    i++;
-                }
+                nodes[(int)quadrant].Insert(col);
+                entities.Remove(col);
             }
         }
     }
 
-    public void Retrieve(List<T> returnedEntities, T entity)
+    public IEnumerable<T> Retrieve(T entity) 
     {
-        if (nodes[0] != null)
-            NodeRetrieve(returnedEntities, entity);
-        returnedEntities.AddRange(entities);
+        return Retrieve(entity.Collider.BoundingArea);
     }
 
-    private void NodeRetrieve(List<T> returnedEntities, T entity)
+    public IEnumerable<T> Retrieve(AABB boundingBox) 
     {
-        var quadrant = GetQuadrant(entity.BoundingArea);
-        if (quadrant != Quadrant.None)
+        var col = new List<T>(entities);
+        if (HasNodes) 
         {
-            nodes[(int)quadrant].Retrieve(returnedEntities, entity);
-            return;
+            var quadrant = GetQuadrant(boundingBox);
+            if (quadrant != Quadrant.None) 
+            {
+                col.AddRange(nodes[(int)quadrant].Retrieve(boundingBox));
+            }
         }
-        foreach (var node in nodes)
-        {
-            node.Retrieve(returnedEntities, entity);
-        }
+        return col;
     }
 
     public void Clear() 
     {
         entities.Clear();
 
+        if (!HasNodes) return;
         foreach (var node in nodes) 
         {
-            node?.Clear();
+            node.Clear();
         }
     }
 
@@ -164,29 +153,6 @@ public class QuadTree<T> where T : IPhysicsEntity
                 (texture2D, new Rectangle((int)node.bounds.Left - 1, (int)node.bounds.Top - 1, (int)node.bounds.Width + 2, 1), color);
             spriteBatch.Draw
                 (texture2D, new Rectangle((int)node.bounds.Left - 1, (int)node.bounds.Top - 1, 1, (int)node.bounds.Height + 2), color);
-        }
-    }
-
-    public void Insertion(List<T> entities) 
-    {
-        Clear();
-        Insert(entities);
-
-        for (int i1 = 0; i1 < entities.Count; i1++) 
-        {
-            T entity = entities[i1];
-            returnEntities.Clear();
-            Retrieve(returnEntities, entity);
-
-            for (int i = 0; i < returnEntities.Count; i++) 
-            {
-                T returnEntity = returnEntities[i];
-                if (entity.BoundingArea.Equals(returnEntity.BoundingArea)) { continue; }
-                if (entity.BoundingArea.Contains(returnEntity.BoundingArea)) 
-                {
-                    Modify?.Invoke(entity);
-                }
-            }
         }
     }
 }
