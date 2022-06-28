@@ -4,6 +4,8 @@ using Name =
 #if SYSTEMTEXTJSON
 System.Text.Json.Serialization.JsonPropertyNameAttribute;
 using System.Text.Json;
+using System.Collections.Generic;
+using System;
 #else
 Newtonsoft.Json.JsonPropertyAttribute;
 using Newtonsoft.Json;
@@ -90,6 +92,19 @@ public class OgmoLayer
     public OgmoEntity[] Entities { get; set; }
 }
 
+public class OgmoNode 
+{
+    [Name("x")]
+    public float X { get; set; }
+    [Name("y")]
+    public float Y { get; set; }
+
+    public Vector2 ToVector2() 
+    {
+        return new Vector2(X, Y);
+    }
+}
+
 public class OgmoEntity
 {
     [Name("name")]
@@ -108,4 +123,64 @@ public class OgmoEntity
     public int Width { get; set; }
     [Name("height")]
     public int Height { get; set; }
+    [Name("nodes")]
+    public OgmoNode[] Nodes { get; set; }
+    [Name("values")]
+#if SYSTEMTEXTJSON
+    public Dictionary<string, JsonElement> Values { get; set; }
+#else
+    public Dictionary<string, object> Values { get; set; }
+#endif
+
+#if SYSTEMTEXTJSON
+    public int GetValueInt(string valueName) 
+    {
+        return Values[valueName].GetInt32();
+    }
+
+    public bool GetValueBoolean(string valueName) 
+    {
+        return Values[valueName].GetBoolean();
+    }
+
+    public float GetValueFloat(string valueName) 
+    {
+        return Values[valueName].GetSingle();
+    }
+
+    public Vector2 GetValueVector2(string x, string y) 
+    {
+        return new Vector2(Values[x].GetSingle(), Values[y].GetSingle());
+    }
+
+    public string GetValueString(string valueName) 
+    {
+        return Values[valueName].GetString();
+    }
+#else
+    public int GetValueInt(string valueName) 
+    {
+        return (int)Values[valueName];
+    }
+
+    public bool GetValueBoolean(string valueName) 
+    {
+        return (bool)Values[valueName];
+    }
+
+    public float GetValueFloat(string valueName) 
+    {
+        return Convert.ToSingle(Values[valueName]);
+    }
+
+    public Vector2 GetValueVector2(string x, string y) 
+    {
+        return new Vector2(GetValueFloat(x), GetValueFloat(y));
+    }
+
+    public string GetValueString(string valueName) 
+    {
+        return Values[valueName].ToString();
+    }
+#endif
 }

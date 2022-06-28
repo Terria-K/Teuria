@@ -3,14 +3,14 @@ using Microsoft.Xna.Framework;
 
 namespace Teuria.Level;
 
-public class OgmoRenderer : CanvasLayer
+public class OgmoCanvas : CanvasLayer
 {
     private OgmoLevel level;
     private Tileset tileset;
     public Action<OgmoEntity> SummoningEntity;
     
 
-    public OgmoRenderer(OgmoLevel level, Tileset tileset) 
+    public OgmoCanvas(OgmoLevel level, Tileset tileset) 
     {
         this.level = level;
         this.tileset = tileset;

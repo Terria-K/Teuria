@@ -6,41 +6,52 @@ namespace Teuria;
 
 public class PhysicsCanvas : CanvasLayer
 {
-    private readonly HashSet<IPhysicsEntity> entities;
-    private readonly QuadTree<IPhysicsEntity> quadTree;
+    private readonly HashSet<PhysicsComponent> physicsComponents = new HashSet<PhysicsComponent>();
+    private readonly QuadTree<PhysicsComponent> quadTree;
     private Texture2D Quad;
     private bool showDebug;
+    private bool isClearing;
 
     public PhysicsCanvas(AABB bounds, bool showDebug = false) 
     {
         this.showDebug = showDebug;
-        quadTree = new QuadTree<IPhysicsEntity>(0, bounds);
-        entities = new HashSet<IPhysicsEntity>();
+        quadTree = new QuadTree<PhysicsComponent>(0, bounds);
     }
 
     public void Add(IPhysicsEntity entity) 
     {
-        entities.Add(entity);
+        entity.Collider.IsInTheWorld = true;
+        Add(entity.PhysicsComponent);
+    }
+
+    public void Add(PhysicsComponent component) 
+    {
+        physicsComponents.Add(component);
     }
 
     public void UpdatePhysics() 
     {
+        if (isClearing) return;
         quadTree.Clear();
-        quadTree.Insert(entities);
-        foreach (var entity in entities) 
+        quadTree.Insert(physicsComponents);
+        foreach (var physicsComponent in physicsComponents) 
         {
-            var total = quadTree.Retrieve(entity);
-            entity.Detect(new HashSet<IPhysicsEntity>(total));
-            // foreach (var retEntity in total) 
-            // {
-            //     if (entity.Collider.BoundingArea.Equals(retEntity.Collider.BoundingArea)) 
-            //         { continue; }
-            //     if (entity.Collider.BoundingArea.Contains(retEntity.Collider.BoundingArea)) 
-            //     {
-            //         entity.Detect(retEntity);
-            //     }
-            // }
+            if (physicsComponent.Entity == null) 
+            {
+                physicsComponents.Remove(physicsComponent);
+                continue;
+            }
+            var total = quadTree.Retrieve(physicsComponent);
+            physicsComponent.Detect(new HashSet<PhysicsComponent>(total));
         }
+    }
+
+    public void ClearAll() 
+    {
+        isClearing = true;
+        quadTree.Clear();
+        physicsComponents.Clear();
+        isClearing = false;
     }
 
     public override void Ready()

@@ -7,6 +7,7 @@ namespace Teuria;
 
 public class Scene 
 {
+    internal Queue<Entity> QueueToFree = new Queue<Entity>();
     private List<Entity> entityList = new List<Entity>();
     private List<CanvasLayer> layers = new List<CanvasLayer>();
     protected ContentManager Content;
@@ -26,7 +27,7 @@ public class Scene
         }
     }
 
-    public List<Entity> Entities 
+    public IEnumerable<Entity> Entities 
     {
         get => entityList;
     }
@@ -42,15 +43,26 @@ public class Scene
         Content = content;
     }
 
+    public bool HasCanvas(CanvasLayer canvas) 
+    {
+        return layers.Contains(canvas);
+    }
+
     internal void Activate(SpriteBatch spriteBatch) 
     {
         this.SpriteBatch = spriteBatch;
+    }
+
+    internal void AddToQueue(Entity entity) 
+    {
+        QueueToFree.Enqueue(entity);
     }
 
     public void Add(Entity entity, PauseMode pauseMode = PauseMode.Inherit) 
     {
         entity.PauseMode = pauseMode;
         entityList.Add(entity);
+        entity.EnterScene(this, Content);
     }
 
     public void Add(CanvasLayer layer) 
@@ -71,17 +83,26 @@ public class Scene
         entityList.Remove(entity);
     }
 
+    public void RemoveAllEntities() 
+    {
+        foreach (var entity in Entities) 
+        {
+            entity.QueueFree();
+        }
+    }
+
     public virtual void Initialize() {}
     public virtual void Ready(GraphicsDevice device) 
     {
         foreach(var entity in entityList) 
         {
-            entity.EnterScene(this, Content);
             entity.Ready();
         }
     }
     public virtual void Update() 
     {
+        if (QueueToFree.Count > 0)
+            QueueToFree.Dequeue().Free();
         if (Paused) 
         {
             ProcessEntityInPauseMode();

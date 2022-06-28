@@ -9,6 +9,9 @@ public abstract class Collider
     private float width;
     private float height;
     private Vector2 position;
+    private string groupName;
+    internal bool IsInTheWorld;
+    public string GroupName { get => groupName; set => groupName = value; }
 
     internal virtual void Added(Component component) 
     {
@@ -90,20 +93,34 @@ public abstract class Collider
         set => position.Y = value;
     }
 
-    public float GlobalX 
+    public Vector2 TopLeft 
     {
-        get => Entity.Position.X + Position.X;
+        get => new Vector2(Left, Top);
+        set 
+        {
+            Left = value.X;
+            Top = value.Y;
+        }
     }
 
-    public float GlobalY
+    public Vector2 BottomRight 
     {
-        get => Entity.Position.Y + Position.Y;
+        get => new Vector2(Right, Bottom);
+        set 
+        {
+            Right = value.X;
+            Bottom = value.Y;
+        }
     }
 
-    public Vector2 GlobalPosition 
-    {
-        get => new Vector2(GlobalX, GlobalY);
-    }
+    public float GlobalX => Entity.Position.X + Position.X;
+    
+
+    public float GlobalY => Entity.Position.Y + Position.Y;
+    
+
+    public Vector2 GlobalPosition => new Vector2(GlobalX, GlobalY);
+    
 
     public float GlobalLeft 
     {

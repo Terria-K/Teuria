@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Teuria;
 
 [Obsolete("This Button Entity has some major issues from Mouse Input. Please use the KeyboardButton for now")]
-public class Button : Entity, IPhysicsEntity
+public class Button : Entity 
 {
     public Action OnHover;
     public Action OnClick;

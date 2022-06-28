@@ -20,10 +20,15 @@ public class Hitbox : Collider
     
 
 #if DEBUG
+    public void Draw(SpriteBatch spriteBatch, Color color)
+    {
+        if (!DebugRender || !IsInTheWorld) return;
+        Canvas.DrawRectangle(spriteBatch, GlobalX, GlobalY, Width, Height, color);
+    }
+
     public void Draw(SpriteBatch spriteBatch)
     {
-        if (!DebugRender) return;
-        Canvas.DrawRectangle(spriteBatch, GlobalX, GlobalY, Width, Height, Color.Red);
+        Draw(spriteBatch, Color.Red);
     }
 #endif
 

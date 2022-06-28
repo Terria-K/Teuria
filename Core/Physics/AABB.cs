@@ -35,6 +35,26 @@ public struct AABB : IEqualityComparer<AABB>
         set => Y = value - Height;
     }
 
+    public Vector2 Position 
+    {
+        get => new Vector2(X, Y);
+        set 
+        {
+            X = value.X;
+            Y = value.Y;
+        }
+    }
+
+    public Vector2 Size 
+    {
+        get => new Vector2(Width, Height);
+        set 
+        {
+            Width = value.X;
+            Height = value.Y;
+        }
+    }
+
     public AABB(float x, float y, float width, float height)
     {
         X = x;

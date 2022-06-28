@@ -4,7 +4,7 @@ namespace Teuria;
 
 public class Component : IComponent
 {
-    protected Entity Entity;
+    public Entity Entity;
     public bool Active { get; set; }
 
     public virtual void Added(Entity entity) 

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -22,6 +23,34 @@ public static class Canvas
         rectangle.Width = (int)width;
         rectangle.Height = (int)height;
         spriteBatch.Draw(pixel, rectangle, color);
+    }
+
+    public static void DrawRect(SpriteBatch spriteBatch, Rectangle rect, int thickness, Color color) 
+    {
+        spriteBatch.Draw(pixel, new Rectangle(rect.X, rect.Y, rect.Width, thickness), color);
+        spriteBatch.Draw(pixel, new Rectangle(rect.X, rect.Y, thickness, rect.Height), color);
+        spriteBatch.Draw(pixel, new Rectangle((rect.X + rect.Width - thickness), rect.Y, thickness, rect.Height), color);
+        spriteBatch.Draw(pixel, new Rectangle(rect.X, (rect.Y + rect.Height - thickness), rect.Width, thickness), color);
+    }
+
+    public static void DrawGrid<T>(SpriteBatch spriteBatch, int width, int height, int cellSize, List<T>[,] grid) 
+    {
+        // for (int i = 0; i < grid.GetLength(0); i++) 
+        // {
+        //     if (grid[i].Count > 0) 
+        //     {
+        //         float x = (float)((decimal)(i % width) * cellSize);
+        //         float y = (float)(Math.Floor((decimal)i / width) * cellSize);
+
+        //         Color color;
+        //         if (grid[i].Count == 1)
+        //             color = new Color(0.4f, 0.4f, 0.4f, 0.4f);
+        //         else
+        //             color = new Color(0.7f, 0.4f, 0.4f, 0.6f);
+                
+        //         DrawRect(spriteBatch, new Rectangle((int)x, (int)y, cellSize,cellSize), 1, color);
+        //     }
+        // }
     }
 
     internal static void Dispose() 

@@ -60,4 +60,9 @@ public class Entity
     {
         scene.Remove(this);
     }
+
+    public void QueueFree() 
+    {
+        scene.AddToQueue(this);
+    }
 }

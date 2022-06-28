@@ -4,13 +4,13 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
 
-public class QuadTree<T> where T : IPhysicsEntity
+public class QuadTree<T> where T : PhysicsComponent 
 {
     private const int MaxObjects = 10;
-    private const int MaxLevels = 7;
+    private const int MaxLevels = 1;
 
     private int level;
-    private List<T> entities = new List<T>();
+    private List<T> physicsComponents = new List<T>();
     private AABB bounds;
     private QuadTree<T>[] nodes = new QuadTree<T>[4];
 
@@ -38,37 +38,40 @@ public class QuadTree<T> where T : IPhysicsEntity
     private Quadrant GetQuadrant(AABB rect) 
     {
         var quad = Quadrant.None;
-        float verticalMidpoint = bounds.X + (bounds.Width / 2);
-        float horizontalMidpoint = bounds.Y + (bounds.Height / 2);
+        var verticalMidpoint = bounds.X + (bounds.Width * 0.5f);
+        var horizontalMidpoint = bounds.Y + (bounds.Height * 0.5f);
 
-        bool topQuadrant = 
-            rect.Y < horizontalMidpoint && 
-            rect.Y + rect.Height < horizontalMidpoint;
-        bool bottomQuadrant = rect.Y > horizontalMidpoint;
+        var bottomQuadrant = rect.Y < verticalMidpoint && rect.Y + rect.Height < verticalMidpoint;
+        var topQuadrant = rect.Y > verticalMidpoint;
 
-        if (rect.X < verticalMidpoint && bounds.X + rect.Width < verticalMidpoint) 
+        if (rect.X < horizontalMidpoint && rect.X + rect.Width < horizontalMidpoint) 
         {
-            if (topQuadrant) 
-            {
-                quad = Quadrant.BottomRight;
-            }
-            else if (bottomQuadrant) 
-            {
-                quad = Quadrant.TopLeft;
-            }
-        }
-        else if (rect.X > verticalMidpoint) 
-        {
-            if (topQuadrant) 
-            {
+            if (bottomQuadrant) 
                 quad = Quadrant.BottomLeft;
-            }
-            else if (bottomQuadrant) 
-            {
+            else if (topQuadrant)
+                quad = Quadrant.TopLeft;
+        }
+        else if (rect.X > horizontalMidpoint) 
+        {
+            if (bottomQuadrant)
+                quad = Quadrant.BottomRight;
+            else if (topQuadrant)
                 quad = Quadrant.TopRight;
-            }
         }
         return quad;
+    }
+
+    public void Insert(HashSet<T> colliders) 
+    {
+        foreach (var collider in colliders) 
+        {
+            if (collider.Entity == null) 
+            {
+                colliders.Remove(collider);
+                continue;
+            }
+            Insert(collider);
+        }
     }
 
     public void Insert(IEnumerable<T> colliders) 
@@ -79,48 +82,49 @@ public class QuadTree<T> where T : IPhysicsEntity
         }
     }
 
-    public void Insert(T physicsEntity)
+    public void Insert(T physicsComponent)
     {
         if (HasNodes)
         {
-            var quadrant = GetQuadrant(physicsEntity.Collider.BoundingArea);
+            var bArea = physicsComponent.BoundingArea;
+            var quadrant = GetQuadrant(bArea);
             if (quadrant != Quadrant.None)
             {
-                nodes[(int)quadrant].Insert(physicsEntity);
+                nodes[(int)quadrant].Insert(physicsComponent);
                 return;
             }
         }
 
-        entities.Add(physicsEntity);
+        physicsComponents.Add(physicsComponent);
 
-        if (entities.Count <= MaxObjects || level >= MaxLevels) { return; }
+        if (physicsComponents.Count <= MaxObjects || level >= MaxLevels) { return; }
         if (!HasNodes)
         {
             Split();
         }
 
-        for (int i = 0; i < entities.Count; i++) 
+        for (int i = 0; i < physicsComponents.Count; i++) 
         {
-            var col = entities[i];
-            var boundingArea = col.Collider.BoundingArea;
+            var col = physicsComponents[i];
+            var boundingArea = col.BoundingArea;
             var quadrant = GetQuadrant(boundingArea);
 
             if (quadrant != Quadrant.None) 
             {
                 nodes[(int)quadrant].Insert(col);
-                entities.Remove(col);
+                physicsComponents.Remove(col);
             }
         }
     }
 
-    public IEnumerable<T> Retrieve(T entity) 
+    public IEnumerable<T> Retrieve(T physicsComponent) 
     {
-        return Retrieve(entity.Collider.BoundingArea);
+        return Retrieve(physicsComponent.BoundingArea);
     }
 
     public IEnumerable<T> Retrieve(AABB boundingBox) 
     {
-        var col = new List<T>(entities);
+        var col = new List<T>(physicsComponents);
         if (HasNodes) 
         {
             var quadrant = GetQuadrant(boundingBox);
@@ -134,7 +138,7 @@ public class QuadTree<T> where T : IPhysicsEntity
 
     public void Clear() 
     {
-        entities.Clear();
+        physicsComponents.Clear();
 
         if (!HasNodes) return;
         foreach (var node in nodes) 
@@ -150,9 +154,9 @@ public class QuadTree<T> where T : IPhysicsEntity
             if (node == null) return;
             node.ShowBoundaries(spriteBatch, texture2D, color);
             spriteBatch.Draw
-                (texture2D, new Rectangle((int)node.bounds.Left - 1, (int)node.bounds.Top - 1, (int)node.bounds.Width + 2, 1), color);
+                (texture2D, new Rectangle((int)node.bounds.Left, (int)node.bounds.Top, 1, (int)node.bounds.Height), color);
             spriteBatch.Draw
-                (texture2D, new Rectangle((int)node.bounds.Left - 1, (int)node.bounds.Top - 1, 1, (int)node.bounds.Height + 2), color);
+                (texture2D, new Rectangle((int)node.bounds.Left, (int)node.bounds.Top, (int)node.bounds.Width, 1), color);
         }
     }
 }
