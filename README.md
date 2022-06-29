@@ -14,7 +14,7 @@
  - [x] Coroutines
  - [x] Draw Images
  - [x] Camera
- - [ ] Physics
+ - [x] Physics
  - [ ] Audio
  - [ ] User Interfaces
  
@@ -80,51 +80,22 @@ public static class Program
 Switching scene is also very simple, you just need to replace the current scene from the game using SceneRenderer.
 
 ```csharp
-// MainScene.cs
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-using Teuria;
+// We need to change the scene using the SceneRenderer built-in to Scene
+var scene = new NewScene(Content, null);
+SceneRenderer.ChangeScene(scene);
 
-public class MainScene : Scene 
-{
-	public MainScene(ContentManager content, Camera camera) : base(content, camera) {}
-	
-	public override void Ready(GraphicsDevice device) 
-	{
-		var scene = new NewScene(Content, null);
-        // We need to change the scene using the SceneRenderer built-in to Scene
-        SceneRenderer.ChangeScene(scene);
-		base.Ready(device);
-	}
-}
 ```
 
 ### Moving the Camera
 Here is how you can move the camera, allowing you to make a cutscene, shake effects and more possibilities!
 
 ```csharp
-// MainScene.cs
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-using Teuria;
-
-public class MainScene : Scene 
-{
-	public MainScene(ContentManager content, Camera camera) : base(content, camera) {}
-	
-	public override void Ready(GraphicsDevice device) 
-	{
-        // Change the position
-        Camera.Position = new Vector2(45f, 45f);
-        // Change Zoom
-        Camera.Zoom = new Vector2(1.2f, 1.2f);
-        // Change Offset
-        Camera.Offset = new Vector2(65f, 65f);
-		base.Ready(device);
-	}
-}
+// Change the position
+Camera.Position = new Vector2(45f, 45f);
+// Change Zoom
+Camera.Zoom = new Vector2(1.2f, 1.2f);
+// Change Offset
+Camera.Offset = new Vector2(65f, 65f);
 ```
 
 ### Loading an image
@@ -132,26 +103,17 @@ public class MainScene : Scene
 There is two ways to load an image, Content ways or TextureImporter ways. The TextureImporter will just use the `Texture2D.FromStream()` to load an image from stream, but this is also managed by the engine and will be freed automatically when the program is terminated or freed by Sprite when cleanup is enabled.
 
 ```csharp
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-using Teuria;
-
-public class MainScene : Scene 
+// Remember to always load image in 'Ready'.
+public override void Ready(GraphicsDevice device) 
 {
-	public MainScene(ContentManager content, Camera camera) : base(content, camera) {}
-	
-	public override void Ready(GraphicsDevice device) 
-	{
-		// This is loaded using MGCB Editor
-        var mgcbImg = Content.Load<Texture2D>("bat");
-		// This is loaded using TextureImporter Load Image
-		var texImpImg = TextureImporter.LoadImage(device, "bat.png");
+	// This is loaded using MGCB Editor
+	var mgcbImg = Content.Load<Texture2D>("bat");
+	// This is loaded using TextureImporter Load Image
+	var texImpImg = TextureImporter.LoadImage(device, "bat.png");
 
-		// Manually Dispose an image loaded
-		mgcbImg.Dispose();
-		TextureImporter.CleanUp(texImpImg);
-		base.Ready(device);
-	}
+	// Manually Dispose an image loaded
+	mgcbImg.Dispose();
+	TextureImporter.CleanUp(texImpImg);
+	base.Ready(device);
 }
 ```
