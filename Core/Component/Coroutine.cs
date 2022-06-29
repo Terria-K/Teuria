@@ -5,7 +5,7 @@ namespace Teuria;
 
 public class Coroutine : Component 
 {
-    private Stack<IEnumerator> coroutines = new Stack<IEnumerator>(5);
+    private Stack<IEnumerator> coroutines = new Stack<IEnumerator>();
     private float timer;
     private bool done;
 
@@ -20,6 +20,7 @@ public class Coroutine : Component
     {
         Active = true;
         timer = 0f;
+        coroutines.Clear();
         coroutines.Push(coroutine);
         return new RefCoroutine(this, coroutine);
     }
@@ -44,25 +45,32 @@ public class Coroutine : Component
 
     public override void Update()
     {
+        UpdateCoroutine();
+        base.Update();
+    }
+
+    private void UpdateCoroutine() 
+    {
+        done = false;
+
         if (timer > 0) 
         {
             timer -= TeuriaEngine.DeltaTime;
             return;
         }
         if (coroutines.Count == 0) return;
-        var current = coroutines.Peek();
-        if (current.MoveNext() && !done) 
+        IEnumerator current = coroutines.Peek();
+        if (current != null && current.MoveNext() && !done) 
         {
-            CheckReturnType(current);
+            CheckReturnType(ref current);
             return;
         }
-        Final();
-        base.Update();
+        if (!done)
+            Final();   
     }
 
     private void Final() 
     {
-        if (done) return;
         coroutines.Pop();
         if (coroutines.Count == 0) 
         {
@@ -70,7 +78,7 @@ public class Coroutine : Component
         }
     }
 
-    private void CheckReturnType(IEnumerator current) 
+    private void CheckReturnType(ref IEnumerator current) 
     {
         if (current.Current is float single) 
         {

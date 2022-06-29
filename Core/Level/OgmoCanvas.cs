@@ -6,11 +6,11 @@ namespace Teuria.Level;
 public class OgmoCanvas : CanvasLayer
 {
     private OgmoLevel level;
-    private Tileset tileset;
+    private TextureAtlas tileset;
     public Action<OgmoEntity> SummoningEntity;
     
 
-    public OgmoCanvas(OgmoLevel level, Tileset tileset) 
+    public OgmoCanvas(OgmoLevel level, TextureAtlas tileset) 
     {
         this.level = level;
         this.tileset = tileset;

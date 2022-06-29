@@ -8,10 +8,13 @@ namespace Teuria;
 public class SpriteTexture 
 {
     public Texture2D Texture { get; private set; }
+    public int X { get; private set; }
+    public int Y { get; private set; }
     public int Width { get; private set; }
     public int Height { get; private set; }
     public Rectangle Clip { get; private set; }
     public Vector2 Origin { get; private set; }
+    public string AtlasPath { get; private set; }
     
     public SpriteTexture(Texture2D texture) 
     {
@@ -22,10 +25,31 @@ public class SpriteTexture
         Height = Clip.Height;
     }
 
+    public SpriteTexture(Texture2D texture, Point regionPos, int width, int height) 
+    {
+        Texture = texture;
+        X = regionPos.X;
+        Y = regionPos.Y;
+        Clip = new Rectangle(X, Y, width, height);
+        Origin = Vector2.Zero;
+        Width = Clip.Width;
+        Height = Clip.Height;
+    }
+
+    public SpriteTexture(SpriteTexture spriteTexture, string atlasPath, Rectangle clip, Vector2 offset, int width, int height) 
+    {
+        Texture = spriteTexture.Texture;
+        AtlasPath = atlasPath;
+        Clip = clip;
+        Origin = offset;
+        Width = width;
+        Height = height;
+    }
+
     public SpriteTexture(SpriteTexture spriteTexture, Rectangle rect) 
     {
         Texture = spriteTexture.Texture;
-        Clip = spriteTexture.GetRelativeRect(rect);
+        Clip = spriteTexture.GetRelativeRect(ref rect);
         var origX = Math.Min(rect.X - spriteTexture.Origin.X, 0);
         var origY = Math.Min(rect.Y - spriteTexture.Origin.Y, 0);
         Origin = new Vector2(-origX, -origY);
@@ -33,7 +57,7 @@ public class SpriteTexture
         Height = rect.Height;
     }
 
-    public Rectangle GetRelativeRect(Rectangle rectangle) 
+    public Rectangle GetRelativeRect(ref Rectangle rectangle) 
     {
         return GetRelativeRect(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
     }
@@ -84,5 +108,25 @@ public class SpriteTexture
             col = color * 0.5f;
 #endif
         spriteBatch.Draw(Texture, position, Clip, col, rotation, -Origin, scale, spriteEffects, zIndex);
+    }
+
+    public void DrawTexture(SpriteBatch spriteBatch, Vector2 position, Color color, float rotation, Vector2 offset, Vector2 scale, SpriteEffects spriteEffects, int zIndex) 
+    {
+        var col = color;
+#if DEBUG
+        if (Hitbox.DebugRender)
+            col = color * 0.5f;
+#endif
+        spriteBatch.Draw(Texture, position, Clip, col, rotation, offset, scale, spriteEffects, zIndex);
+    }
+
+    public void DrawTexture(SpriteBatch spriteBatch, Vector2 position, Rectangle rectangle, Color color, float rotation, Vector2 offset, Vector2 scale, SpriteEffects spriteEffects, int zIndex) 
+    {
+        var col = color;
+#if DEBUG
+        if (Hitbox.DebugRender)
+            col = color * 0.5f;
+#endif
+        spriteBatch.Draw(Texture, position, rectangle, col, rotation, offset, scale, spriteEffects, zIndex);
     }
 }

@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
 
-public class Tileset 
+public class TextureAtlas 
 {
     private readonly SpriteTexture[,] tiles;
     public SpriteTexture Texture { get; private set; }
@@ -13,7 +13,7 @@ public class Tileset
     public SpriteTexture this[int x, int y] => tiles[x, y];
     public SpriteTexture this[int gid] => gid >= 0 ? tiles[gid % tiles.GetLength(0), gid / tiles.GetLength(0)] : null;
 
-    public Tileset(SpriteTexture texture, int tileWidth, int tileHeight) 
+    public TextureAtlas(SpriteTexture texture, int tileWidth, int tileHeight) 
     {
         Texture = texture;
         TileWidth = tileWidth;

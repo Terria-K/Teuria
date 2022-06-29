@@ -17,10 +17,24 @@ public static class TextureImporter
         cleanupCache.Add(tex);
         return tex;
     }
+    public static Texture2D LoadImageFar(GraphicsDevice device, ReadOnlySpan<char> path) 
+    {
+        using var fs = File.OpenRead($"{path}");
+        var tex = Texture2D.FromStream(device, fs);
+        cleanupCache.Add(tex);
+        return tex;
+    }
 #else
     public static Texture2D LoadImage(GraphicsDevice device, string path) 
     {
         using var fs = File.OpenRead("Content/" + path);
+        var tex = Texture2D.FromStream(device, fs);
+        cleanupCache.Add(tex);
+        return tex;
+    }
+    public static Texture2D LoadImageFar(GraphicsDevice device, string path) 
+    {
+        using var fs = File.OpenRead(path);
         var tex = Texture2D.FromStream(device, fs);
         cleanupCache.Add(tex);
         return tex;

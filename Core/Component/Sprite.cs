@@ -30,6 +30,9 @@ public class Sprite : Component
                 : spriteEffects & ~SpriteEffects.FlipVertically;
     }
 
+    public Vector2 PivotOffset { get; set; }
+
+    public float Rotation { get; set; }
 
     public Sprite(SpriteTexture texture, bool cleanUp = false)
     {
@@ -51,7 +54,7 @@ public class Sprite : Component
     
     public override void Draw(SpriteBatch spriteBatch)
     {
-        Texture.DrawTexture(spriteBatch, Entity.Position, Modulate, 0, Scale, spriteEffects, Entity.ZIndex);
+        Texture.DrawTexture(spriteBatch, Entity.Position + PivotOffset, Modulate, Rotation, PivotOffset, Scale, spriteEffects, Entity.ZIndex);
     }
 
     public override void Removed()

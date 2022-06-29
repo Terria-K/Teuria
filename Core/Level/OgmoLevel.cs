@@ -1,11 +1,10 @@
 using System.IO;
 using Microsoft.Xna.Framework;
-using Name = 
+using System.Collections.Generic;
+using Name =
 #if SYSTEMTEXTJSON
 System.Text.Json.Serialization.JsonPropertyNameAttribute;
 using System.Text.Json;
-using System.Collections.Generic;
-using System;
 #else
 Newtonsoft.Json.JsonPropertyAttribute;
 using Newtonsoft.Json;

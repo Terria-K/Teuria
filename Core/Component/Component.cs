@@ -18,4 +18,14 @@ public class Component : IComponent
     {
         Entity = null;
     }
+
+    public void Add(Component component) 
+    {
+        Entity.AddComponent(component);
+    }
+
+    public void Remove(Component component) 
+    {
+        Entity.RemoveComponent(component);
+    }
 }
