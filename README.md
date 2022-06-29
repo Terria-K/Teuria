@@ -117,3 +117,24 @@ public override void Ready(GraphicsDevice device)
 	base.Ready(device);
 }
 ```
+
+### Loading a level
+
+Originally, the level were loaded with Ogmo Editor. But you can make your own if you wanted. The example shown below is the way to load a level with Ogmo Editor
+
+```csharp
+var texture = SpriteTexture.FromContent(Content, "Jungle");
+var tileset = new TextureAtlas(texture, 32, 32);
+var levelRenderer = new OgmoCanvas(ogmoLevels[this.level], tileset);
+levelRenderer.SummoningEntity = OnSummonEntity;
+
+Add(levelRenderer)
+
+void OnSummonEntity(OgmoEntity entity) 
+{
+	switch (entity.Name) 
+	{
+		// Your entity name and logics here. All of your entity variables were put in entity.
+	}
+}
+```
