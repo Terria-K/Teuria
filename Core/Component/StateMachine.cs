@@ -2,20 +2,20 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Teuria;
 
 
-public class StateMachine<T> : Component 
+public class StateMachine : Component 
 {
-    private Func<Task>[] coroutineList;
+    private Func<IEnumerator>[] coroutineList;
     private Action[] readyList;
     private Func<int>[] updateList;
     private Action[] endList;
-
-    private Task coroutineRunning;
+    private Coroutine coroutine;
+    // private TeuriTask task;
+    // private Task coroutineRunning;
 
     public int CurrentState 
     {
@@ -31,7 +31,7 @@ public class StateMachine<T> : Component
             endList[currentState]?.Invoke();
             if (coroutineList[currentState] != null) 
             {
-                coroutineRunning = coroutineList[currentState]();
+                coroutine.Run(coroutineList[currentState]());
             }
         }
     }
@@ -41,11 +41,12 @@ public class StateMachine<T> : Component
 
     public StateMachine(int amount) 
     {
+        coroutine = new Coroutine();
         previousState = -1;
         totalStates = amount;
         readyList = new Action[amount];
         updateList = new Func<int>[amount];
-        coroutineList = new Func<Task>[amount];
+        coroutineList = new Func<IEnumerator>[amount];
         endList = new Action[amount];
     }
 
@@ -53,9 +54,10 @@ public class StateMachine<T> : Component
     {
         CurrentState = 0;
         base.Added(entity);
+        Add(coroutine);
     }
 
-    public void AddState(int id, Func<int> update = null, Action ready = null, Func<Task> coroutine = null, Action end = null) 
+    public void AddState(int id, Func<int> update = null, Action ready = null, Func<IEnumerator> coroutine = null, Action end = null) 
     {
         updateList[id] = update;
         readyList[id] = ready;

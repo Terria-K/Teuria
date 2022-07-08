@@ -41,7 +41,7 @@ public abstract class PhysicsComponent : Component
         Collided = components;
     }
     
-    public bool CheckWallCollision(IPhysicsEntity entity, Vector2 offset) 
+    public bool Check(IPhysicsEntity entity, Vector2 offset) 
     {
         foreach (var wall in Collided) 
         {
@@ -54,7 +54,24 @@ public abstract class PhysicsComponent : Component
         return false;
     }
 
-    public bool CheckWallCollision(IPhysicsEntity entity, string groupName, Vector2 offset) 
+    public bool Check<T>(IPhysicsEntity entity, Vector2 offset) 
+    {
+        foreach (var wall in Collided) 
+        {
+            if (entity.Collider.Equals(wall.Collider)) { continue; }
+            if (entity.Collider.Collide(wall.BoundingArea, offset)) 
+            {
+                if (wall.Entity is T) 
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public bool Check(IPhysicsEntity entity, string groupName, Vector2 offset) 
     {
         foreach (var wall in Collided) 
         {
@@ -68,7 +85,8 @@ public abstract class PhysicsComponent : Component
         return false;
     }
 
-    public bool CheckWallCollision(IPhysicsEntity entity, string groupName, Vector2 offset, out IPhysicsEntity ent) 
+    public bool Check<T>(IPhysicsEntity entity, string groupName, Vector2 offset, out T ent) 
+    where T : IPhysicsEntity
     {
         foreach (var wall in Collided) 
         {
@@ -77,13 +95,13 @@ public abstract class PhysicsComponent : Component
             {
                 if (wall.Collider.GroupName == groupName) 
                 {
-                    ent = wall.PhysicsEntity;
+                    ent = (T)wall.PhysicsEntity;
                     return true;
                 }
                 continue;
             }
         }
-        ent = null;
+        ent = default;
         return false;
     }
 

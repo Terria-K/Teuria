@@ -62,11 +62,11 @@ public class OgmoCanvas : CanvasLayer
             for (int x = 0; x < level.LevelSize.Y; x++) 
             {
                 var gid = data[x][y];
-                if (gid >= 0) 
-                {
-                    var texture = tileset[gid];
-                    texture.DrawTexture(SpriteBatch, FixedPosition(x * tileset.TileHeight, y * tileset.TileHeight));
-                }
+                if (gid < 0) 
+                    continue;
+                var texture = tileset[gid];
+                texture.DrawTexture(SpriteBatch, FixedPosition(x * tileset.TileHeight, y * tileset.TileHeight));
+                
             }
         }
     }

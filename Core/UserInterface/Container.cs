@@ -48,9 +48,4 @@ where T : Entity
     {
         items.Remove(item);
     }
-
-    public override void Draw(SpriteBatch spriteBatch)
-    {
-        base.Draw(spriteBatch);
-    }
 }

@@ -8,6 +8,7 @@ public class SceneCanvas : CanvasLayer
     private Camera Camera;
     private Scene Scene;
     public Color EnvironmentColor;
+    public SamplerState SamplerState = SamplerState.PointClamp;
 
     public SceneCanvas(Scene scene, SpriteBatch spriteBatch) 
     {
@@ -39,7 +40,7 @@ public class SceneCanvas : CanvasLayer
 
     public override void Draw() 
     {
-        SpriteBatch.Begin(transformMatrix: Camera?.Transform, sortMode: SpriteSortMode.Immediate, blendState: BlendState.AlphaBlend);
+        SpriteBatch.Begin(transformMatrix: Camera?.Transform, samplerState: SamplerState, sortMode: SpriteSortMode.Immediate, blendState: BlendState.AlphaBlend);
         Scene.Draw();
         SpriteBatch.End();
     }

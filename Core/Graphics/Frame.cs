@@ -13,16 +13,16 @@ using Newtonsoft.Json;
 
 namespace Teuria;
 
-public class SpriteFrameLoader 
+public readonly ref struct SpriteFrameLoader 
 {
-    public TextureAtlas Atlas { get; private set; }
-    public SpriteTexture Texture { get; private set; }
-    public Vector2 Size { get; private set; }
-    public Dictionary<string, SFCyclesFrame> CycleFrame { get; private set; }
+    public TextureAtlas Atlas { get; init; }
+    public SpriteTexture Texture { get; init; }
+    public Vector2 Size { get; init; }
+    public Dictionary<string, SFCyclesFrame> CycleFrame { get; init; }
     
-    public SpriteFrameLoader(string spriteFramePath, string texturePath, ContentManager content) 
+    public SpriteFrameLoader(string contentTexturePath, ContentManager content) 
     {
-        using var fs = new FileStream(spriteFramePath, FileMode.Open, FileAccess.Read);
+        using var fs = new FileStream("Content/" + contentTexturePath + ".sf", FileMode.Open, FileAccess.Read);
 
 #if SYSTEMTEXTJSON
         var result = JsonSerializer.Deserialize<SpriteFactory>(fs);
@@ -32,7 +32,7 @@ public class SpriteFrameLoader
         var serializer = new JsonSerializer();
         var result = serializer.Deserialize<SpriteFactory>(jst);
 #endif   
-        Texture = SpriteTexture.FromContent(content, texturePath);
+        Texture = SpriteTexture.FromContent(content, contentTexturePath);
         var atlas = result.SFAtlas;
         Atlas = new TextureAtlas(Texture, atlas.RegionWidth, atlas.RegionHeight);
         Size = new Vector2(atlas.RegionWidth, atlas.RegionHeight);
@@ -65,11 +65,3 @@ public struct SFCyclesFrame
     [Name("isLooping")]
     public bool IsLooping { get; set; }
 }
-
-/**
-- Create a texture atlas
-- Create a Region row per row
-- Create a Frame class
-- Get all texture by index
-- Animate all texture by index
-*/

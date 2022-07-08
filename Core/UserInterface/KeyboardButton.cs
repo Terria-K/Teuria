@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
 
-public abstract class KeyboardButton : Entity 
+public class KeyboardButton : Entity 
 {
     public Action OnConfirm;
     public KeyboardButton UpFocus;

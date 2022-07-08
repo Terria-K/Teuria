@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -7,13 +8,40 @@ public class AnimatedSprite : Component
 {
     public float FPS { get; set; } = 0.09f;
     public bool IsFinished { get; private set; } = true;
+    public bool Loop { get; set; }
     public string Animation { get => currentAnimation;  }
-    private SpriteFrameLoader frameLoader;
+    public float Rotation { get; set; }
     private float timer;
+    private TextureAtlas atlas;
+    private Dictionary<string, SFCyclesFrame> cycleFrame;
     private string currentAnimation;
     private int index;
     private int frameCount;
     private int frameIndex;
+    private Vector2 position;
+    private SpriteEffects spriteEffects = SpriteEffects.None;
+
+    public bool FlipH
+    {
+        get => (spriteEffects & SpriteEffects.FlipHorizontally) == SpriteEffects.FlipHorizontally;
+        
+        set => spriteEffects = value 
+                ? spriteEffects | SpriteEffects.FlipHorizontally 
+                : spriteEffects & ~SpriteEffects.FlipHorizontally;
+        
+    }
+    public bool FlipV
+    {
+        get => (spriteEffects & SpriteEffects.FlipVertically) == SpriteEffects.FlipVertically;
+        set => spriteEffects = value 
+                ? spriteEffects | SpriteEffects.FlipVertically 
+                : spriteEffects & ~SpriteEffects.FlipVertically;
+    }
+
+    public SpriteTexture Texture 
+    {
+        get => atlas.Texture;
+    }
 
     public Vector2 Position 
     {
@@ -29,11 +57,12 @@ public class AnimatedSprite : Component
             position = Entity.Position + value;
         }
     }
-    private Vector2 position;
 
-    public AnimatedSprite(SpriteFrameLoader loader, int frameCount) 
+    // Since SpriteFrameLoader is readonly ref struct, we can use 'in' here
+    public AnimatedSprite(in SpriteFrameLoader loader, int frameCount) 
     {
-        frameLoader = loader;
+        atlas = loader.Atlas;
+        cycleFrame = loader.CycleFrame;
         this.frameCount = frameCount;
     }
 
@@ -69,7 +98,7 @@ public class AnimatedSprite : Component
         {
             return;
         }
-        var animation = frameLoader.CycleFrame[currentAnimation];
+        var animation = cycleFrame[currentAnimation];
         frameIndex = animation.Frames[index];
         timer = 0f;
         index++;
@@ -78,7 +107,7 @@ public class AnimatedSprite : Component
         {
             return;
         }
-        if (animation.IsLooping)
+        if (animation.IsLooping || Loop)
         {
             index = 0;
             return;
@@ -88,7 +117,7 @@ public class AnimatedSprite : Component
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        frameLoader.Atlas[frameIndex].DrawTexture(spriteBatch, GlobalPosition, Color.White, 0f, Vector2.One, SpriteEffects.None, 1);
+        atlas[frameIndex].DrawTexture(spriteBatch, GlobalPosition, Color.White, Rotation, Vector2.One, spriteEffects, Entity.ZIndex);
         base.Draw(spriteBatch);
     }
 }

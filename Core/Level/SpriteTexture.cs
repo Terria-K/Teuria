@@ -129,4 +129,14 @@ public class SpriteTexture
 #endif
         spriteBatch.Draw(Texture, position, rectangle, col, rotation, offset, scale, spriteEffects, zIndex);
     }
+
+    public void DrawTexture(SpriteBatch spriteBatch, Vector2 position, Rectangle rectangle, Color color, float rotation, Vector2 offset, float scale, SpriteEffects spriteEffects, int zIndex) 
+    {
+        var col = color;
+#if DEBUG
+        if (Hitbox.DebugRender)
+            col = color * 0.5f;
+#endif
+        spriteBatch.Draw(Texture, position, rectangle, col, rotation, offset, scale, spriteEffects, zIndex);
+    }
 }

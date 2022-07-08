@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
 
-public class Component : IComponent
+public class Component
 {
     public Entity Entity;
     public bool Active { get; set; }
@@ -12,6 +12,7 @@ public class Component : IComponent
         Entity = entity;
         Active = true;
     }
+    
     public virtual void Update() {}
     public virtual void Draw(SpriteBatch spriteBatch) {}
     public virtual void Removed() 

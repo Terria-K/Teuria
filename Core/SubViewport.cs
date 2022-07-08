@@ -33,6 +33,7 @@ public class SubViewport
     private RenderTarget2D rt;
     private SpriteBatch spriteBatch;
     private RenderTargetBinding[] prevTargets;
+    internal SamplerState SamplerState;
 
     public SubViewport(Point viewResolution, GraphicsDevice device, Color environmentColor) 
     {
@@ -78,7 +79,7 @@ public class SubViewport
 
         device.SetRenderTargets(prevTargets);
         device.Clear(environmentColor);
-        spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, blendState: BlendState.AlphaBlend);
+        spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState, blendState: BlendState.AlphaBlend);
         spriteBatch.Draw(rt, pos, null, Color.White, 0, origin, scale, SpriteEffects.None, 0);
         spriteBatch.End();
     }

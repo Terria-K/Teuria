@@ -1,14 +1,32 @@
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+
 namespace Teuria;
 
 public class Label : Entity 
 {
-    protected FontText fontText;
-    public string Text { get => fontText.Text; set => fontText.Text = value; }
+    public SpriteFont SpriteFont { get; private set; }
+    public string Text { get; set; }
+    public int Size { get; set; }
 
-    public Label(FontText fontText)
+    public Label(SpriteFont spriteFont)
     {
-        this.fontText = fontText;
-        fontText.Text = "";
-        AddComponent(fontText);
+        this.SpriteFont = spriteFont;
+    }
+
+    public float MeasureString() 
+    {
+        return SpriteFont.MeasureString(Text).Length();
+    }
+
+    public float MeasureStringHalf() 
+    {
+        return SpriteFont.MeasureString(Text).Length() / 2;
+    }
+
+    public override void Draw(SpriteBatch spriteBatch)
+    {
+        spriteBatch.DrawString(SpriteFont, Text, Position, Modulate, Rotation, Vector2.Zero, Scale, SpriteEffects.None, ZIndex);
+        base.Draw(spriteBatch);
     }
 }

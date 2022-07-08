@@ -154,7 +154,8 @@ public class TeuriaEngine : Game
         graphics.ApplyChanges();
         sceneRenderer = Init();
         UpdateView();
-        subViewport = new SubViewport(new Point(ViewWidth, ViewHeight), GraphicsDevice, sceneRenderer.EnvironmentColor);
+        subViewport = new SubViewport(new Point(540, 320), GraphicsDevice, sceneRenderer.EnvironmentColor);
+        subViewport.SamplerState = sceneRenderer.SamplerState;
         subViewport.ScreenResolution = new Point(ScreenWidth, ScreenHeight);
         // ScreenMatrix = Matrix.CreateScale(ViewWidth / (float)ScreenHeight);
         scene.Initialize();
