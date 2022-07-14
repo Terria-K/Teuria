@@ -7,8 +7,8 @@ namespace Teuria;
 
 public class Scene 
 {
-    internal Queue<Entity> QueueToFree = new Queue<Entity>();
-    private List<Entity> entityList = new List<Entity>();
+    internal Queue<Node> QueueToFree = new Queue<Node>();
+    private List<Node> nodeList = new List<Node>();
     private List<CanvasLayer> layers = new List<CanvasLayer>();
     protected ContentManager Content;
     protected Camera Camera;
@@ -27,9 +27,9 @@ public class Scene
         }
     }
 
-    public IEnumerable<Entity> Entities 
+    public IEnumerable<Node> Entities 
     {
-        get => entityList;
+        get => nodeList;
     }
 
     public Scene(ContentManager content, Camera camera) 
@@ -48,20 +48,25 @@ public class Scene
         return layers.Contains(canvas);
     }
 
+    public bool HasEntity(Entity entity) 
+    {
+        return nodeList.Contains(entity);
+    }
+
     internal void Activate(SpriteBatch spriteBatch) 
     {
         this.SpriteBatch = spriteBatch;
     }
 
-    internal void AddToQueue(Entity entity) 
+    internal void AddToQueue(Node entity) 
     {
         QueueToFree.Enqueue(entity);
     }
 
-    public void Add(Entity entity, PauseMode pauseMode = PauseMode.Inherit) 
+    public void Add(Node entity, PauseMode pauseMode = PauseMode.Inherit) 
     {
         entity.PauseMode = pauseMode;
-        entityList.Add(entity);
+        nodeList.Add(entity);
         entity.EnterScene(this, Content);
     }
 
@@ -76,11 +81,11 @@ public class Scene
         layers.Remove(layer);
     }
 
-    public void Remove(Entity entity) 
+    public void Remove(Node entity) 
     {
         entity.Active = false;
         entity.ExitScene();
-        entityList.Remove(entity);
+        nodeList.Remove(entity);
     }
 
     public void RemoveAllEntities() 
@@ -94,7 +99,7 @@ public class Scene
     public virtual void Initialize() {}
     public virtual void Ready(GraphicsDevice device) 
     {
-        foreach(var entity in entityList) 
+        foreach(var entity in nodeList) 
         {
             entity.Ready();
         }
@@ -108,7 +113,7 @@ public class Scene
             ProcessEntityInPauseMode();
             return;
         }
-        foreach(var entity in entityList) 
+        foreach(var entity in nodeList) 
         {
             if (!entity.Active) continue;
             entity.Update();
@@ -117,7 +122,7 @@ public class Scene
 
     private void ProcessEntityInPauseMode() 
     {
-        foreach(var entity in entityList) 
+        foreach(var entity in nodeList) 
         {
             if (!entity.Active) continue;
             if (entity.PauseMode == PauseMode.Single)
@@ -127,7 +132,7 @@ public class Scene
 
     public virtual void Draw() 
     {
-        foreach(var entity in entityList) 
+        foreach(var entity in nodeList) 
         {
             if (!entity.Active) continue;
             entity.Draw(SpriteBatch);
@@ -141,7 +146,7 @@ public class Scene
 
     public virtual void Exit() 
     {
-        foreach(var entity in entityList) 
+        foreach(var entity in nodeList) 
         {
             entity.ExitScene();
         }

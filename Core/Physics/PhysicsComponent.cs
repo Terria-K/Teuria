@@ -7,13 +7,13 @@ public abstract class PhysicsComponent : Component
 {
     private HashSet<PhysicsComponent> Collided = new HashSet<PhysicsComponent>();
     public bool Collideable;
-    private readonly Collider collider;
-    public Collider Collider => collider;
+    private readonly Shape collider;
+    public Shape Collider => collider;
     public AABB BoundingArea => collider.BoundingArea;    
 
     public IPhysicsEntity PhysicsEntity;
 
-    public PhysicsComponent(Collider collider, bool collidable = true) 
+    public PhysicsComponent(Shape collider, bool collidable = true) 
     {
         Collideable = collidable;
         this.collider = collider;

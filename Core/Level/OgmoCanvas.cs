@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace Teuria.Level;
 
+[Obsolete("Use TileMap entity instead")]
 public class OgmoCanvas : CanvasLayer
 {
     private OgmoLevel level;

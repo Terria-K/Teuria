@@ -93,7 +93,7 @@ public class SpriteTexture
     {
         var color = Color.White;
 #if DEBUG
-        if (Hitbox.DebugRender)
+        if (RectangleShape.DebugRender)
             color = color * 0.5f;
 #endif
 
@@ -104,7 +104,7 @@ public class SpriteTexture
     {
         var col = color;
 #if DEBUG
-        if (Hitbox.DebugRender)
+        if (RectangleShape.DebugRender)
             col = color * 0.5f;
 #endif
         spriteBatch.Draw(Texture, position, Clip, col, rotation, -Origin, scale, spriteEffects, zIndex);
@@ -114,7 +114,7 @@ public class SpriteTexture
     {
         var col = color;
 #if DEBUG
-        if (Hitbox.DebugRender)
+        if (RectangleShape.DebugRender)
             col = color * 0.5f;
 #endif
         spriteBatch.Draw(Texture, position, Clip, col, rotation, offset, scale, spriteEffects, zIndex);
@@ -124,7 +124,7 @@ public class SpriteTexture
     {
         var col = color;
 #if DEBUG
-        if (Hitbox.DebugRender)
+        if (RectangleShape.DebugRender)
             col = color * 0.5f;
 #endif
         spriteBatch.Draw(Texture, position, rectangle, col, rotation, offset, scale, spriteEffects, zIndex);
@@ -134,7 +134,7 @@ public class SpriteTexture
     {
         var col = color;
 #if DEBUG
-        if (Hitbox.DebugRender)
+        if (RectangleShape.DebugRender)
             col = color * 0.5f;
 #endif
         spriteBatch.Draw(Texture, position, rectangle, col, rotation, offset, scale, spriteEffects, zIndex);

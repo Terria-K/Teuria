@@ -12,16 +12,16 @@ public class Button : Entity
 
     private Sprite sprite;
     private bool isHovered;    
-    private Collider collider;
+    private Shape collider;
 
     public Button(SpriteTexture texture) 
     {
         sprite = new Sprite(texture);
-        collider = new Hitbox(sprite.Texture.Width, sprite.Texture.Height, Position);
+        collider = new RectangleShape(sprite.Texture.Width, sprite.Texture.Height, Position);
         AddComponent(sprite);
     }
 
-    public Collider Collider 
+    public Shape Collider 
     { 
         get => collider; 
         set 

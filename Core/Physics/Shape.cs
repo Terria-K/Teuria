@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework;
 
 namespace Teuria;
 
-public abstract class Collider
+public abstract class Shape
 {
     public Entity Entity;
     public Component Component;
@@ -30,7 +30,7 @@ public abstract class Collider
     }
 
     public abstract bool Collide(float x, float y, float width, float height, Vector2 offset = default);
-    public abstract bool Collide(Hitbox other, Vector2 offset = default);
+    public abstract bool Collide(RectangleShape other, Vector2 offset = default);
     public abstract bool Collide(Rectangle rect, Vector2 offset = default);
     public abstract bool Collide(AABB aabb, Vector2 offset = default);
     public abstract bool Collide(Point value);

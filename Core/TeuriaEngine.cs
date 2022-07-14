@@ -17,6 +17,8 @@ public class TeuriaEngine : Game
     public static Matrix ScreenMatrix;
     public static Viewport Viewport { get => viewport; private set => viewport = value; }
     private static Viewport viewport;
+
+    public static string ContentPath;
     
     public static int FPS { get; private set; }
     public static float DeltaTime { get; private set; }
@@ -60,6 +62,8 @@ public class TeuriaEngine : Game
         }
     }
 
+    public static int InternalID { get; internal set; }
+
     public TeuriaEngine(int width, int height, int screenWidth, int screenHeight, string windowTitle, bool fullScreen)
     {
 #if DEBUG
@@ -80,8 +84,10 @@ public class TeuriaEngine : Game
         graphics = new GraphicsDeviceManager(this);
         graphics.HardwareModeSwitch = !fullScreen;
         graphics.IsFullScreen = fullScreen;
+        ContentPath = "Content";
 
-        Content.RootDirectory = "Content";
+
+        Content.RootDirectory = ContentPath;
         Window.AllowUserResizing = true;
         IsMouseVisible = true;
     }
@@ -193,7 +199,7 @@ public class TeuriaEngine : Game
         Process(gameTime);
 
 #if DEBUG
-        Hitbox.DebugRender = Keyboard.GetState().IsKeyDown(Keys.F1);
+        RectangleShape.DebugRender = Keyboard.GetState().IsKeyDown(Keys.F1);
 #endif
         
         if (scene != nextScene) 

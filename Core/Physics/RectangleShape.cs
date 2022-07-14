@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
 
-public class Hitbox : Collider 
+public class RectangleShape : Shape 
 {
 #if DEBUG
     public static bool DebugRender = false;
@@ -11,7 +11,7 @@ public class Hitbox : Collider
     public override AABB BoundingArea => new AABB(GlobalX, GlobalY, Width, Height);
 #endif
 
-    public Hitbox(float width, float height, Vector2 pos) 
+    public RectangleShape(float width, float height, Vector2 pos) 
     {
         Width = width;
         Height = height;
@@ -32,7 +32,7 @@ public class Hitbox : Collider
     }
 #endif
 
-    public override bool Collide(Hitbox other, Vector2 offset = default) 
+    public override bool Collide(RectangleShape other, Vector2 offset = default) 
     {
         return GlobalLeft + offset.X < other.GlobalRight && 
             GlobalRight + offset.X > other.GlobalLeft 

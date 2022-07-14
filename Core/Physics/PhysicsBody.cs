@@ -8,7 +8,7 @@ public class PhysicsBody : PhysicsComponent
     private Vector2 velocity;
     private Vector2 remainder;
 
-    public PhysicsBody(Collider collider, bool collidable) : base(collider, collidable) {}
+    public PhysicsBody(Shape collider, bool collidable) : base(collider, collidable) {}
 
     public Vector2 MoveAndSlide(Vector2 motion, Vector2 direction) 
     {

@@ -6,31 +6,29 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
 
-public class Entity : IEnumerable<Component>
+public class Entity : Node, IEnumerable<Component>
 {
     private List<Component> components = new List<Component>();
-    private Scene scene;
-    public bool Active { get; set; } = true;
     public Vector2 Position;
     public float Rotation;
     public Vector2 Scale;
     public Color Modulate = Color.White;
-    public PauseMode PauseMode = PauseMode.Inherit;
     public int ZIndex;
 
-    public virtual void EnterScene(Scene scene, ContentManager content) 
+    public override void EnterScene(Scene scene, ContentManager content) 
     {
-        this.scene = scene;
+        base.EnterScene(scene, content);
     }
-    public virtual void ExitScene() 
+    public override void ExitScene() 
     {
         for (int i = 0; i < components.Count; i++) 
         {
             components[i].Removed();
         }
+        base.ExitScene();
     }
-    public virtual void Ready() {}
-    public virtual void Update() 
+    public override void Ready() {}
+    public override void Update() 
     {
         for (int i = 0; i < components.Count; i++) 
         {
@@ -38,7 +36,7 @@ public class Entity : IEnumerable<Component>
             components[i].Update();
         }
     }
-    public virtual void Draw(SpriteBatch spriteBatch) 
+    public override void Draw(SpriteBatch spriteBatch) 
     {
         for (int i = 0; i < components.Count; i++) 
         {
@@ -69,16 +67,6 @@ public class Entity : IEnumerable<Component>
     {
         components.Remove(comp);
         comp.Removed();
-    }
-
-    public void Free() 
-    {
-        scene.Remove(this);
-    }
-
-    public void QueueFree() 
-    {
-        scene.AddToQueue(this);
     }
 
     public IEnumerator<Component> GetEnumerator() => components.GetEnumerator();

@@ -4,6 +4,6 @@ namespace Teuria;
 
 public interface IPhysicsEntity 
 {
-    Collider Collider { get; }
+    Shape Collider { get; }
     PhysicsComponent PhysicsComponent { get; }
 }

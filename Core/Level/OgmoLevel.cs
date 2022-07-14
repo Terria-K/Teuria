@@ -19,7 +19,7 @@ public class OgmoLevel
     public Point TileSize { get; private set; }
     public Point LevelPixelSize { get; private set; }
 
-    public OgmoLevel(FileStream fs) 
+    private OgmoLevel(FileStream fs) 
     {
 #if SYSTEMTEXTJSON
         var result = JsonSerializer.Deserialize<OgmoLevelData>(fs);
@@ -81,11 +81,16 @@ public class OgmoLayer
     public int GridCellsY { get; set; }
     [Name("tileset")]
     public string Tileset { get; set; }
-    [Name("data2D")]
 #if !SYSTEMTEXTJSON
+    [Name("data2D")]
     public int[,] Data { get; set; }
+    [Name("grid2D")]
+    public char[,] Grid2D { get; set; }
 #else
+    [Name("data2D")]
     public int[][] Data { get; set; }
+    [Name("grid2D")]
+    public char[][] Grid2D { get; set; }
 #endif
     [Name("entities")]
     public OgmoEntity[] Entities { get; set; }
