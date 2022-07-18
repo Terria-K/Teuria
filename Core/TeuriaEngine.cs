@@ -174,10 +174,10 @@ public class TeuriaEngine : Game
         Canvas.Initialize(graphics.GraphicsDevice);
         TInput.Initialize();
         spriteBatch = new SpriteBatch(GraphicsDevice);
-        sceneRenderer.Obtain(spriteBatch);
+        sceneRenderer.Obtain(spriteBatch, scene);
         Load();
         scene.Activate(spriteBatch);
-        scene.Ready(graphics.GraphicsDevice);
+        scene.Hierarchy(graphics.GraphicsDevice);
     }
 
     protected override sealed void UnloadContent()
@@ -207,9 +207,9 @@ public class TeuriaEngine : Game
             scene.Exit();
             scene = nextScene;
             scene?.Activate(spriteBatch);
-            scene?.Ready(graphics.GraphicsDevice);
+            scene?.Hierarchy(graphics.GraphicsDevice);
         }
-        scene.Update();
+        scene.ProcessLoop();
 
 
         base.Update(gameTime);

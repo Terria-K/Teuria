@@ -113,32 +113,72 @@ public abstract class Shape
         }
     }
 
-    public float GlobalX => Entity.Position.X + Position.X;
-    
+    public float GlobalX 
+    { 
+        get 
+        {
+            if (Entity != null)
+                return Entity.Position.X + Position.X;
+            return Position.X;
+        }
+    }
 
-    public float GlobalY => Entity.Position.Y + Position.Y;
-    
 
-    public Vector2 GlobalPosition => new Vector2(GlobalX, GlobalY);
-    
+    public float GlobalY
+    {
+        get
+        {
+            if (Entity != null)
+                return Entity.Position.Y + Position.Y;
+            return Position.X;
+        }
+    }
+
+    public Vector2 GlobalPosition
+    {
+        get
+        {
+            return new Vector2(GlobalX, GlobalY);
+        }
+    }
 
     public float GlobalLeft 
     {
-        get => Left + Entity.Position.X;
+        get 
+        { 
+            if (Entity != null)
+                return Left + Entity.Position.X;
+            return Left + Position.X;
+        }
     }
 
-    public float GlobalRight 
+    public float GlobalRight
     {
-        get => Right + Entity.Position.X;
+        get
+        {
+            if (Entity != null)
+                return Right + Entity.Position.X;
+            return Right + Position.X;
+        }
     }
 
-    public float GlobalBottom 
+    public float GlobalBottom
     {
-        get => Bottom + Entity.Position.Y;
+        get
+        {
+            if (Entity != null)
+                return Bottom + Entity.Position.Y;
+            return Bottom + Position.Y;
+        }
     }
 
-    public float GlobalTop 
+    public float GlobalTop
     {
-        get => Top + Entity.Position.Y;
+        get
+        {
+            if (Entity != null)
+                return Top + Entity.Position.Y;
+            return Top + Position.Y;
+        }
     }
 }

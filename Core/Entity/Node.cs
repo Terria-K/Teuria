@@ -36,7 +36,6 @@ public class Node
     {
         var node = childs[nodePath];
         childs.Remove(nodePath);
-        node.Scene = null;
     }
 
     public T GetNode<T>(string nodePath) where T : Node
@@ -47,6 +46,10 @@ public class Node
     public void Free() 
     {
         Scene.Remove(this);
+        foreach (var child in childs) 
+        {
+            Scene.Remove(child.Value);
+        }
     }
 
     public void QueueFree() 

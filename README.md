@@ -1,9 +1,11 @@
 # Teuria
  A Simple Game Engine made from MonoGame
  
- This game engine includes a basic functionality you need for 2D game development such as ECS.
+ This game engine includes a basic functionality you need for 2D game development.
  
- This engine is still work-in-progress and still needs more improvements. It is heavily inspired from Monocle and Godot Engine. It is not usable for larger projects, but it is useful for starters who wants to get in to Monogame.
+ This engine is still work-in-progress and still needs more improvements. It is heavily inspired from Monocle and Godot Engine. 
+ This is has a Nodes and ECS system combined together to make things easy to use, and straightforward for beginners that has different game development experience whether they want ECS or Nodes.
+ It is not usable for larger projects, but it is useful for starters who wants to get in to Monogame.
 
  Monocle: https://github.com/JamesMcMahon/monocle-engine
 
@@ -49,7 +51,7 @@ public class MainScene : Scene
 {
 	public MainScene(ContentManager content, Camera camera) : base(content, camera) {}
 	
-	public override void Ready(GraphicsDevice device) 
+	public override void Hierarchy(GraphicsDevice device) 
 	{
 		/** Load Content Here */
 		// We need the font first, but we can use the built-in font
@@ -103,31 +105,30 @@ Camera.Offset = new Vector2(65f, 65f);
 There is two ways to load an image, Content ways or TextureImporter ways. The TextureImporter will just use the `Texture2D.FromStream()` to load an image from stream, but this is also managed by the engine and will be freed automatically when the program is terminated or freed by Sprite when cleanup is enabled.
 
 ```csharp
-// Remember to always load image in 'Ready'.
-public override void Ready(GraphicsDevice device) 
-{
-	// This is loaded using MGCB Editor
-	var mgcbImg = Content.Load<Texture2D>("bat");
-	// This is loaded using TextureImporter Load Image
-	var texImpImg = TextureImporter.LoadImage(device, "bat.png");
+/** Remember to always load image in the 'Hierarchy'. */
 
-	// Manually Dispose an image loaded
-	mgcbImg.Dispose();
-	TextureImporter.CleanUp(texImpImg);
-	base.Ready(device);
-}
+// This is loaded using MGCB Editor
+var mgcbImg = Content.Load<Texture2D>("bat");
+// This is loaded using TextureImporter Load Image
+var texImpImg = TextureImporter.LoadImage(device, "bat.png");
+
+// Manually Dispose an image loaded. (This is not required as the engine and Monogame Framework will handle all of those)
+mgcbImg.Dispose();
+TextureImporter.CleanUp(texImpImg);
+base.Ready(device);
+
 ```
 
 ### Loading a level
 
-Originally, the level were loaded with Ogmo Editor. But you can make your own if you wanted. The example shown below is the way to load a level with Ogmo Editor
+Originally, the level were loaded with Ogmo Editor. But you can make your own if you wanted. The example shown below is the way to load a level with Ogmo Editor.
 
 ```csharp
+/** Hierarchy */
 var texture = SpriteTexture.FromContent(Content, "Jungle");
 var tileset = new TextureAtlas(texture, 32, 32);
 var levelRenderer = new OgmoCanvas(ogmoLevels[this.level], tileset);
 levelRenderer.SummoningEntity = OnSummonEntity;
-
 Add(levelRenderer)
 
 void OnSummonEntity(OgmoEntity entity) 

@@ -72,7 +72,7 @@ public class Scene
 
     public void Add(CanvasLayer layer) 
     {
-        layer.Obtain(SpriteBatch);
+        layer.Obtain(SpriteBatch, this);
         layers.Add(layer);
     }
 
@@ -90,21 +90,21 @@ public class Scene
 
     public void RemoveAllEntities() 
     {
-        foreach (var entity in Entities) 
+        for (int i = 0; i < nodeList.Count; i++) 
         {
-            entity.QueueFree();
+            nodeList[i].Free();
         }
     }
 
     public virtual void Initialize() {}
-    public virtual void Ready(GraphicsDevice device) 
+    public virtual void Hierarchy(GraphicsDevice device) 
     {
         foreach(var entity in nodeList) 
         {
             entity.Ready();
         }
     }
-    public virtual void Update() 
+    public virtual void ProcessLoop() 
     {
         if (QueueToFree.Count > 0)
             QueueToFree.Dequeue().Free();
@@ -130,7 +130,7 @@ public class Scene
         }
     }
 
-    public virtual void Draw() 
+    public virtual void Render() 
     {
         foreach(var entity in nodeList) 
         {
