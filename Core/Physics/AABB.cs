@@ -71,11 +71,11 @@ public struct AABB : IEqualityComparer<AABB>
         Height = size.Y;
     }
 
-    public bool Contains(AABB other) => 
-        Left < other.Right &&
+    public bool Contains(AABB other, Vector2 offset = default) => 
+        Left + offset.X < other.Right &&
         Right > other.Left &&
         Bottom > other.Top &&
-        Top < other.Bottom;
+        Top + offset.Y < other.Bottom;
 
 
     public bool Contains(Vector2 value) => 

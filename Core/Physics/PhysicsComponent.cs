@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
@@ -10,6 +11,7 @@ public abstract class PhysicsComponent : Component
     private readonly Shape collider;
     public Shape Collider => collider;
     public AABB BoundingArea => collider.BoundingArea;    
+
 
     public IPhysicsEntity PhysicsEntity;
 
@@ -46,7 +48,7 @@ public abstract class PhysicsComponent : Component
         foreach (var wall in Collided) 
         {
             if (entity.Collider.Equals(wall.Collider)) { continue; }
-            if (entity.Collider.Collide(wall.BoundingArea, offset)) 
+            if (entity.Collider.Collide(wall.Collider, offset)) 
             {
                 return true;
             }
@@ -59,13 +61,25 @@ public abstract class PhysicsComponent : Component
         foreach (var wall in Collided) 
         {
             if (entity.Collider.Equals(wall.Collider)) { continue; }
-            if (entity.Collider.Collide(wall.BoundingArea, offset)) 
+            if (entity.Collider.Collide(wall.Collider, offset)) 
             {
                 if (wall.Entity is T) 
                 {
                     return true;
                 }
-                return false;
+            }
+        }
+        return false;
+    }
+
+    public bool Check(IPhysicsEntity entity, int tags, Vector2 offset) 
+    {
+        foreach (var wall in Collided) 
+        {
+            if (entity.Collider == wall.collider) { continue; }
+            if (entity.Collider.Collide(wall.collider, offset)) 
+            {
+                if ((wall.collider.Tags & tags) != 0) { return true; }
             }
         }
         return false;
@@ -75,11 +89,10 @@ public abstract class PhysicsComponent : Component
     {
         foreach (var wall in Collided) 
         {
-            if (entity.Collider.Equals(wall.Collider)) { continue; }
-            if (entity.Collider.Collide(wall.BoundingArea, offset)) 
+            if (entity.Collider == wall.Collider) { continue; }
+            if (entity.Collider.Collide(wall.Collider, offset)) 
             {
-                if (wall.Collider.GroupName == groupName) return true;
-                return false;
+                if (wall.Collider.GroupName == groupName) { return true; }
             }
         }
         return false;
@@ -91,11 +104,31 @@ public abstract class PhysicsComponent : Component
         foreach (var wall in Collided) 
         {
             if (entity.Collider.Equals(wall.Collider)) { continue; }
-            if (entity.Collider.Collide(wall.BoundingArea, offset)) 
+            if (entity.Collider.Collide(wall.Collider, offset)) 
             {
                 if (wall.Collider.GroupName == groupName) 
                 {
                     ent = (T)wall.PhysicsEntity;
+                    return true;
+                }
+                continue;
+            }
+        }
+        ent = default;
+        return false;
+    }
+
+    public bool Check<T1>(IPhysicsEntity entity, Vector2 offset, out T1 ent) 
+    where T1 : IPhysicsEntity
+    {
+        foreach (var wall in Collided) 
+        {
+            if (entity.Collider.Equals(wall.Collider)) { continue; }
+            if (entity.Collider.Collide(wall.Collider, offset)) 
+            {
+                if (wall.Entity is T1) 
+                {
+                    ent = (T1)wall.PhysicsEntity;
                     return true;
                 }
                 continue;

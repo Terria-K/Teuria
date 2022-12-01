@@ -85,13 +85,16 @@ public class OgmoLayer
     [Name("data2D")]
     public int[,] Data { get; set; }
     [Name("grid2D")]
-    public char[,] Grid2D { get; set; }
+    public string[,] Grid2D { get; set; }
 #else
     [Name("data2D")]
     public int[][] Data { get; set; }
     [Name("grid2D")]
-    public char[][] Grid2D { get; set; }
+    public string[][] Grid2D { get; set; }
 #endif
+    [Name("grid")]
+    public string[] Grid { get; set; }
+
     [Name("entities")]
     public OgmoEntity[] Entities { get; set; }
 }

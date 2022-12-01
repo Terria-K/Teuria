@@ -39,7 +39,6 @@ public class OgmoCanvas : CanvasLayer
             }
         }
     }
-#if !SYSTEMTEXTJSON
     private void DrawMap(int[,] data) 
     {
         for (int y = 0; y < level.LevelSize.X; y++) 
@@ -55,7 +54,7 @@ public class OgmoCanvas : CanvasLayer
             }
         }
     }
-#else
+
     private void DrawMap(int[][] data) 
     {
         for (int y = 0; y < level.LevelSize.X; y++) 
@@ -71,7 +70,6 @@ public class OgmoCanvas : CanvasLayer
             }
         }
     }
-#endif
 
     private void SummonEntity(OgmoEntity[] entities) 
     {

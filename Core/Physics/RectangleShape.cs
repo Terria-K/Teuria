@@ -23,7 +23,7 @@ public class RectangleShape : Shape
     public void Draw(SpriteBatch spriteBatch, Color color)
     {
         if (!DebugRender || !IsInTheWorld) return;
-        Canvas.DrawRectangle(spriteBatch, GlobalX, GlobalY, Width, Height, color);
+        Canvas.DrawRect(spriteBatch, (int)GlobalX, (int)GlobalY, (int)Width, (int)Height, 1, color);
     }
 
     public void Draw(SpriteBatch spriteBatch)
@@ -74,5 +74,10 @@ public class RectangleShape : Shape
             return value.Y < GlobalY + Height;
         }
         return false;
+    }
+
+    public override bool Collide(TileGrid grid, Vector2 offset = default)
+    {
+        return grid.Collide(this, offset);
     }
 }

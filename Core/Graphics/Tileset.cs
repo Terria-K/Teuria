@@ -67,6 +67,22 @@ public class Tileset
         return new Tileset(fs, manager);
     }
 
+    private Dictionary<byte, List<SpriteTexture>> InitializeTerrain() 
+    {
+        var dict = new Dictionary<byte, List<SpriteTexture>>();
+        foreach (var rule in rules) 
+        {
+            byte bit = 0;
+            for (int i = 0; i < rule.Mask.Length; i++) 
+            {
+                var mask = rule.Mask[i];
+                bit = (byte)(i * (int)mask);
+            }
+            dict.Add(bit, rule.Textures);
+        }
+        return dict;
+    }
+
     public class Terrain 
     {
         public char ID;
@@ -88,6 +104,8 @@ public class Tileset
 
 public struct TeuriaTileset 
 {
+    [Name("name")]
+    public string Name { get; set; }
     [Name("path")]
     public string Path { get; set; }
     [Name("rules")]

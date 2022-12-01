@@ -7,7 +7,6 @@ namespace Teuria;
 public class PhysicsCanvas : CanvasLayer
 {
     private readonly HashSet<PhysicsComponent> physicsComponents = new HashSet<PhysicsComponent>();
-    private readonly QuadTree<PhysicsComponent> quadTree;
     private Texture2D Quad;
     private bool showDebug;
     private bool isClearing;
@@ -15,7 +14,6 @@ public class PhysicsCanvas : CanvasLayer
     public PhysicsCanvas(AABB bounds, bool showDebug = false) 
     {
         this.showDebug = showDebug;
-        quadTree = new QuadTree<PhysicsComponent>(0, bounds);
     }
 
     public void Add(IPhysicsEntity entity) 
@@ -31,25 +29,21 @@ public class PhysicsCanvas : CanvasLayer
 
     public void UpdatePhysics() 
     {
-        if (isClearing) return;
-        quadTree.Clear();
-        quadTree.Insert(physicsComponents);
+        if (isClearing) { return; }
         foreach (var physicsComponent in physicsComponents) 
         {
-            if (physicsComponent.Entity == null) 
+            if (physicsComponent.Entity is null) 
             {
                 physicsComponents.Remove(physicsComponent);
                 continue;
             }
-            var total = quadTree.Retrieve(physicsComponent);
-            physicsComponent.Detect(new HashSet<PhysicsComponent>(total));
+            physicsComponent.Detect(physicsComponents);
         }
     }
 
     public void ClearAll() 
     {
         isClearing = true;
-        quadTree.Clear();
         physicsComponents.Clear();
         isClearing = false;
     }
@@ -66,8 +60,6 @@ public class PhysicsCanvas : CanvasLayer
     public override void Draw()
     {
 #if DEBUG
-        if (showDebug)
-            quadTree.ShowBoundaries(SpriteBatch, Quad, Color.White);
 #endif
     }
 

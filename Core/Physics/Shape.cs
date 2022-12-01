@@ -12,6 +12,7 @@ public abstract class Shape
     private string groupName;
     internal bool IsInTheWorld;
     public string GroupName { get => groupName; set => groupName = value; }
+    public int Tags;
 
     internal virtual void Added(Component component) 
     {
@@ -29,8 +30,17 @@ public abstract class Shape
         Component = null;
     }
 
+    public bool Collide(Shape shape, Vector2 offset) => shape switch
+    {
+        RectangleShape => Collide(shape as RectangleShape, offset),
+        TileGrid => Collide(shape as TileGrid, offset),
+        _ => throw new System.Exception("No Collider were implemented")
+    };
+
     public abstract bool Collide(float x, float y, float width, float height, Vector2 offset = default);
     public abstract bool Collide(RectangleShape other, Vector2 offset = default);
+    public abstract bool Collide(TileGrid grid, Vector2 offset = default);
+
     public abstract bool Collide(Rectangle rect, Vector2 offset = default);
     public abstract bool Collide(AABB aabb, Vector2 offset = default);
     public abstract bool Collide(Point value);
@@ -39,13 +49,13 @@ public abstract class Shape
     public abstract AABB BoundingArea { get; }
 
     
-    public float Width 
+    public virtual float Width 
     {
         get => width;
         set => width = value;
     }
 
-    public float Height 
+    public virtual float Height 
     {
         get => height;
         set => height = value;
@@ -59,35 +69,35 @@ public abstract class Shape
 
     public float X 
     {
-        get => Entity.Position.X + position.X;        
+        get => position.X;        
         set => position.Y = value;
     }
 
     public float Y 
     {
-        get => Entity.Position.Y + position.Y;
+        get => position.Y;
         set => position.Y = value;
     }
 
-    public float Left 
+    public virtual float Left 
     {
         get => position.X;
         set => position.X = value;
     }
 
-    public float Right 
+    public virtual float Right 
     {
         get => position.X + Width;
         set => position.X = value - Width;
     }
 
-    public float Bottom 
+    public virtual float Bottom 
     {
         get => position.Y + Height;
         set => position.Y = value - Height;
     }
 
-    public float Top 
+    public virtual float Top 
     {
         get => position.Y;
         set => position.Y = value;

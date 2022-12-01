@@ -31,10 +31,12 @@ public class TileMap : Entity
             }
             else if (layer.Data != null) 
             {
+                Console.WriteLine(layer.Name);
                 layerType = LayerType.Tiles;
             }
             else if (layer.Grid2D != null) 
             {
+                Console.WriteLine(layer.Name);
                 layerType = LayerType.Grid;
             }
             var tileset = layer.Tileset != null ? tilesets[layer.Tileset] : null;
@@ -74,6 +76,27 @@ public class TileMap : Entity
         }
     }
 
+    public void InitGrid(Action<Layer> gridLayer) 
+    { 
+        if (!Active) 
+        {
+            Console.WriteLine("The TileMap is inactive, unable to initialize grids");
+            return;
+        }
+        foreach (var grid in recognizeable) 
+        {
+            if (grid.Key == LayerType.Grid) 
+            {
+                foreach (var str in grid.Value) 
+                {
+                    var gl = layer[str];
+                    gridLayer?.Invoke(gl);
+                }
+            }
+        }
+
+    }
+
     private void DrawMap(SpriteBatch spriteBatch) 
     {
         foreach (var layer in this.layer) 
@@ -93,7 +116,8 @@ public class TileMap : Entity
         public string LayerName;
         public Tileset Tileset;
         public int[,] data;
-        public char[,] gridData;
+        public string[,] gridData;
+        public string[] singleGridData;
         public OgmoEntity[] entities;
         public Point LevelSize;
         // TODO Reference a LayerType
@@ -120,6 +144,11 @@ public class TileMap : Entity
                 case LayerType.Decal:
                     break;
                 case LayerType.Grid:
+                    if (layer.Grid2D is null) 
+                    {
+                        singleGridData = layer.Grid;
+                        return;
+                    }
 #if SYSTEMTEXTJSON
                     gridData = layer.Grid2D.To2D();
 #else
@@ -137,7 +166,7 @@ public class TileMap : Entity
                 for (int x = 0; x < LevelSize.Y; x++) 
                 {
                     var tile = gridData[x, y];
-                    if (tile == '0')
+                    if (tile == "0")
                         continue;
                     
                 }

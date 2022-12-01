@@ -33,6 +33,14 @@ public static class Canvas
         spriteBatch.Draw(pixel, new Rectangle(rect.X, (rect.Y + rect.Height - thickness), rect.Width, thickness), color);
     }
 
+    public static void DrawRect(SpriteBatch spriteBatch, int x, int y, int width, int height, int thickness, Color color) 
+    {
+        spriteBatch.Draw(pixel, new Rectangle(x, y, width, thickness), color);
+        spriteBatch.Draw(pixel, new Rectangle(x, y, thickness, height), color);
+        spriteBatch.Draw(pixel, new Rectangle((x + width - thickness), y, thickness, height), color);
+        spriteBatch.Draw(pixel, new Rectangle(x, (y + height - thickness), width, thickness), color);
+    }
+
     public static void DrawGrid<T>(SpriteBatch spriteBatch, int width, int height, int cellSize, List<T>[,] grid) 
     {
         // for (int i = 0; i < grid.GetLength(0); i++) 

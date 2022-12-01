@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -51,8 +53,19 @@ public class Entity : Node, IEnumerable<Component>
         comp.Added(this);
     }
 
+
     public T GetComponent<T>() where T : Component
     {
+#if NET6_0
+        Span<Component> comps = CollectionsMarshal.AsSpan(components);
+        foreach (var comp in comps) 
+        {
+            if (comp is T) 
+            {
+                return comp as T;
+            }
+        }
+#else
         foreach (var component in this) 
         {
             if (component is T) 
@@ -60,7 +73,8 @@ public class Entity : Node, IEnumerable<Component>
                 return (T)component;
             }
         }
-        return null;
+#endif
+        throw new Exception($"{typeof(T).Name} Component not found in this Entity!");
     }
 
     public void RemoveComponent(Component comp) 

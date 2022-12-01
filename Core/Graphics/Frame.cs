@@ -40,7 +40,7 @@ public readonly ref struct SpriteFrameLoader
     }
 }
 
-public struct SpriteFactory 
+internal struct SpriteFactory 
 {
     [Name("textureAtlas")]
     public SFAtlas SFAtlas { get; set; }
@@ -48,7 +48,7 @@ public struct SpriteFactory
     public Dictionary<string, SFCyclesFrame> SFCycles { get; set; }
 }
 
-public struct SFAtlas 
+internal struct SFAtlas 
 {
     [Name("texture")]
     public string Texture { get; set; }
