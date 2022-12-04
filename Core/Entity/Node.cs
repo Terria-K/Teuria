@@ -6,13 +6,13 @@ namespace Teuria;
 
 public class Node 
 {
-    protected Scene Scene;
     protected internal Node parent;
     private string name;
     private Dictionary<string, Node> childs = new Dictionary<string, Node>();
     public bool Active { get; set; } = true;
     public PauseMode PauseMode = PauseMode.Inherit;
     public int NodeID { get; internal set; }
+    public Scene Scene;
 
     public Node(string name = "Node") 
     {
@@ -43,14 +43,14 @@ public class Node
         return childs[nodePath] as T;
     }
 
-    public void Free() 
-    {
-        Scene.Remove(this);
-        foreach (var child in childs) 
-        {
-            Scene.Remove(child.Value);
-        }
-    }
+    // public void Free() 
+    // {
+    //     Scene.Remove(this);
+    //     foreach (var child in childs) 
+    //     {
+    //         Scene.Remove(child.Value);
+    //     }
+    // }
 
     public void QueueFree() 
     {

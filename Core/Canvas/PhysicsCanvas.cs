@@ -1,17 +1,14 @@
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
 
 public class PhysicsCanvas : CanvasLayer
 {
     private readonly HashSet<PhysicsComponent> physicsComponents = new HashSet<PhysicsComponent>();
-    private Texture2D Quad;
     private bool showDebug;
     private bool isClearing;
 
-    public PhysicsCanvas(AABB bounds, bool showDebug = false) 
+    public PhysicsCanvas(bool showDebug = false) 
     {
         this.showDebug = showDebug;
     }
@@ -48,15 +45,6 @@ public class PhysicsCanvas : CanvasLayer
         isClearing = false;
     }
 
-    public override void Ready()
-    {
-#if DEBUG
-        Quad = new Texture2D(SpriteBatch.GraphicsDevice, 1, 1);
-        Quad.SetData(new Color[] { Color.Yellow });
-#endif
-        base.Ready();
-    }
-
     public override void Draw()
     {
 #if DEBUG
@@ -65,7 +53,6 @@ public class PhysicsCanvas : CanvasLayer
 
     public override void Unload()
     {
-        Quad.Dispose();
         base.Unload();
     }
 }

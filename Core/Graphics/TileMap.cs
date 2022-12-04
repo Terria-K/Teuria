@@ -28,20 +28,26 @@ public class TileMap : Entity
             {
                 Console.WriteLine(layer.Entities);
                 layerType = LayerType.Entities;   
+                var newLayer = new Layer(layer, null, layerType);
+                this.layer[layer.Name] = newLayer;
             }
             else if (layer.Data != null) 
             {
                 Console.WriteLine(layer.Name);
                 layerType = LayerType.Tiles;
+                var tileset = layer.Tileset != null ? tilesets[layer.Tileset] : null;
+                var newLayer = new Layer(layer, tileset, layerType);
+                this.layer[layer.Name] = newLayer;
             }
             else if (layer.Grid2D != null) 
             {
                 Console.WriteLine(layer.Name);
                 layerType = LayerType.Grid;
+                var tileset = tilesets["Ruins"];
+                var newLayer = new Layer(layer, tileset, layerType);
+                this.layer[layer.Name] = newLayer;
             }
-            var tileset = layer.Tileset != null ? tilesets[layer.Tileset] : null;
-            var newLayer = new Layer(layer, tileset, layerType);
-            this.layer[layer.Name] = newLayer;
+
         }
     }
 
@@ -63,15 +69,16 @@ public class TileMap : Entity
     public void Begin(Action<OgmoEntity> spawnEntities = null) 
     {
         Active = true;
-        foreach (var entityLayer in recognizeable) 
+        foreach (var entityLayer in recognizeable)
         {
-            if (entityLayer.Key == LayerType.Entities) 
+            if (entityLayer.Key != LayerType.Entities)
             {
-                foreach (var str in entityLayer.Value) 
-                {
-                    foreach (var entity in layer[str].entities)
-                        spawnEntities?.Invoke(entity);
-                }
+                continue;
+            }
+            foreach (var str in entityLayer.Value)
+            {
+                foreach (var entity in layer[str].entities)
+                    spawnEntities?.Invoke(entity);
             }
         }
     }
@@ -101,7 +108,15 @@ public class TileMap : Entity
     {
         foreach (var layer in this.layer) 
         {
-            layer.Value.Draw(spriteBatch, physicsHandler);
+            switch (layer.Value.LayerType) 
+            {
+                case LayerType.Tiles:
+                    layer.Value.Draw(spriteBatch);
+                    break;
+                case LayerType.Grid:
+                    layer.Value.DrawGrid(spriteBatch);
+                    break;
+            }
         }
     }
 
@@ -158,9 +173,20 @@ public class TileMap : Entity
             }
         }
 
+        public int[,] ApplyAutotile(int[,] grids) 
+        {
+            for (int y = 0; y < LevelSize.X; y++) 
+            {
+                for (int x = 0; x < LevelSize.Y; x++) 
+                {
+                }
+            }
+            return null;
+        }
+
         public void DrawGrid(SpriteBatch spriteBatch) 
         {
-            if (data == null) return;
+            if (gridData == null) return;
             for (int y = 0; y < LevelSize.X; y++) 
             {
                 for (int x = 0; x < LevelSize.Y; x++) 
@@ -168,12 +194,13 @@ public class TileMap : Entity
                     var tile = gridData[x, y];
                     if (tile == "0")
                         continue;
-                    
+                    var texture = Tileset.TilesetAtlas[0];
+                    texture.DrawTexture(spriteBatch, new Vector2(y * Tileset.Height, x * Tileset.Width));
                 }
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch, PhysicsCanvas physicsCanvas) 
+        public void Draw(SpriteBatch spriteBatch) 
         {
             if (data == null) return;
             for (int y = 0; y < LevelSize.X; y++) 

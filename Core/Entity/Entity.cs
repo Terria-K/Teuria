@@ -15,7 +15,7 @@ public class Entity : Node, IEnumerable<Component>
     public float Rotation;
     public Vector2 Scale;
     public Color Modulate = Color.White;
-    public int ZIndex;
+    public float ZIndex;
 
     public override void EnterScene(Scene scene, ContentManager content) 
     {

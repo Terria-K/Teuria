@@ -39,7 +39,7 @@ public class SceneCanvas : CanvasLayer
 
     public override void Draw() 
     {
-        SpriteBatch.Begin(transformMatrix: Camera?.Transform, samplerState: SamplerState, sortMode: SpriteSortMode.Immediate, blendState: BlendState.AlphaBlend);
+        SpriteBatch.Begin(transformMatrix: Camera?.Transform, samplerState: SamplerState, sortMode: SpriteSortMode.FrontToBack, blendState: BlendState.AlphaBlend);
         Scene.Render();
         SpriteBatch.End();
     }

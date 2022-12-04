@@ -54,7 +54,16 @@ public class Sprite : Component
     
     public override void Draw(SpriteBatch spriteBatch)
     {
-        Texture.DrawTexture(spriteBatch, Entity.Position + PivotOffset, Modulate, Rotation, PivotOffset, Scale, spriteEffects, Entity.ZIndex);
+        Texture.DrawTexture(
+            spriteBatch, 
+            Entity.Position + PivotOffset, 
+            Modulate, 
+            Rotation, 
+            PivotOffset, 
+            Scale, 
+            spriteEffects, 
+            Entity.ZIndex
+        );
     }
 
     public override void Removed()

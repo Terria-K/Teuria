@@ -47,6 +47,7 @@ public abstract class PhysicsComponent : Component
     {
         foreach (var wall in Collided) 
         {
+            if (!wall.Collideable) { continue; }
             if (entity.Collider.Equals(wall.Collider)) { continue; }
             if (entity.Collider.Collide(wall.Collider, offset)) 
             {
@@ -60,6 +61,7 @@ public abstract class PhysicsComponent : Component
     {
         foreach (var wall in Collided) 
         {
+            if (!wall.Collideable) { continue; }
             if (entity.Collider.Equals(wall.Collider)) { continue; }
             if (entity.Collider.Collide(wall.Collider, offset)) 
             {
@@ -76,6 +78,7 @@ public abstract class PhysicsComponent : Component
     {
         foreach (var wall in Collided) 
         {
+            if (!wall.Collideable) { continue; }
             if (entity.Collider == wall.collider) { continue; }
             if (entity.Collider.Collide(wall.collider, offset)) 
             {
@@ -89,6 +92,7 @@ public abstract class PhysicsComponent : Component
     {
         foreach (var wall in Collided) 
         {
+            if (!wall.Collideable) { continue; }
             if (entity.Collider == wall.Collider) { continue; }
             if (entity.Collider.Collide(wall.Collider, offset)) 
             {
@@ -103,6 +107,7 @@ public abstract class PhysicsComponent : Component
     {
         foreach (var wall in Collided) 
         {
+            if (!wall.Collideable) { continue; }
             if (entity.Collider.Equals(wall.Collider)) { continue; }
             if (entity.Collider.Collide(wall.Collider, offset)) 
             {
@@ -123,6 +128,7 @@ public abstract class PhysicsComponent : Component
     {
         foreach (var wall in Collided) 
         {
+            if (!wall.Collideable) { continue; }
             if (entity.Collider.Equals(wall.Collider)) { continue; }
             if (entity.Collider.Collide(wall.Collider, offset)) 
             {

@@ -11,6 +11,7 @@ public class AnimatedSprite : Component
     public bool Loop { get; set; }
     public string Animation { get => currentAnimation;  }
     public float Rotation { get; set; }
+    public Vector2 Scale { get; set; }
     private float timer;
     private TextureAtlas atlas;
     private Dictionary<string, SFCyclesFrame> cycleFrame;
@@ -64,6 +65,7 @@ public class AnimatedSprite : Component
         atlas = loader.Atlas;
         cycleFrame = loader.CycleFrame;
         this.frameCount = frameCount;
+        Scale = Vector2.One;
     }
 
     public void Play(string animationName) 
@@ -117,7 +119,7 @@ public class AnimatedSprite : Component
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        atlas[frameIndex].DrawTexture(spriteBatch, GlobalPosition, Color.White, Rotation, Vector2.One, spriteEffects, Entity.ZIndex);
+        atlas[frameIndex].DrawTexture(spriteBatch, GlobalPosition, Color.White, Rotation, Scale, spriteEffects, Entity.ZIndex);
         base.Draw(spriteBatch);
     }
 }

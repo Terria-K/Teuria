@@ -2,6 +2,7 @@ using Teuria;
 using Microsoft.Xna.Framework.Input;
 using System;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 
 namespace Teuria;
 
@@ -35,9 +36,11 @@ public class KeyboardButton : Entity
     private bool canHandleInput = false;
     private string text;
     private SpriteFont fontText;
+    private bool centered;
 
-    public KeyboardButton(SpriteFont fontText, string text, bool firstSelected = false) 
+    public KeyboardButton(SpriteFont fontText, string text, bool firstSelected = false, bool center = false) 
     {
+        centered = center;
         this.fontText = fontText;
         this.text = text;
         selected = firstSelected;
@@ -88,7 +91,12 @@ public class KeyboardButton : Entity
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.DrawString(fontText, text, this.Position, Modulate);
+        var position = this.Position;
+        if (centered) 
+        {
+            position = new Vector2(fontText.MeasureScreenString(text, TeuriaEngine.ScreenWidth - this.Position.X), this.Position.Y);
+        }
+        spriteBatch.DrawString(fontText, text, position, Modulate);
         base.Draw(spriteBatch);
     }
 

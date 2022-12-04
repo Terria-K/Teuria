@@ -38,6 +38,25 @@ public readonly ref struct SpriteFrameLoader
         Size = new Vector2(atlas.RegionWidth, atlas.RegionHeight);
         CycleFrame = result.SFCycles;
     }
+
+    public SpriteFrameLoader(string sfPath, SpriteTexture texture) 
+    {
+        using var fs = new FileStream("Content/" + sfPath + ".sf", FileMode.Open, FileAccess.Read);
+
+#if SYSTEMTEXTJSON
+        var result = JsonSerializer.Deserialize<SpriteFactory>(fs);
+#else
+        using var sr = new StreamReader(fs);
+        using var jst = new JsonTextReader(sr);
+        var serializer = new JsonSerializer();
+        var result = serializer.Deserialize<SpriteFactory>(jst);
+#endif   
+        var atlas = result.SFAtlas;
+        Texture = texture;
+        Atlas = new TextureAtlas(Texture, atlas.RegionWidth, atlas.RegionHeight);
+        Size = new Vector2(atlas.RegionWidth, atlas.RegionHeight);
+        CycleFrame = result.SFCycles;
+    }
 }
 
 internal struct SpriteFactory 

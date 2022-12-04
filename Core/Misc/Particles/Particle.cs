@@ -43,7 +43,7 @@ public struct Particle
         var pos = Position.ToInt();
         if (Follow != null)
             pos += Follow.Position;
-        Rectangle srcRect = new Rectangle(0, 0, Source.Width, Source.Height);
+        Rectangle srcRect = new Rectangle(Source.X, Source.Y, Source.Width, Source.Height);
         Vector2 offset = new Vector2(Source.Width / 2f, Source.Height / 2f);
 
         Source.DrawTexture(spriteBatch, pos, srcRect, Color, Rotation, offset, Scale, SpriteEffects.None, 0);

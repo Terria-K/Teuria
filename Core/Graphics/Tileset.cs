@@ -20,7 +20,7 @@ public class Tileset
     public int Height { get; init; }
     private List<Rules> rules = new List<Rules>();    
 
-    private Tileset(FileStream fs, ContentManager manager) 
+    private Tileset(FileStream fs, ContentManager manager, SpriteTexture texture) 
     {
 #if SYSTEMTEXTJSON
         var result = JsonSerializer.Deserialize<TeuriaTileset>(fs);
@@ -30,7 +30,9 @@ public class Tileset
         var serializer = new JsonSerializer();
         var result = serializer.Deserialize<OgmoLevelData>(jst);
 #endif
-        var textureAtlas = new TextureAtlas(SpriteTexture.FromContent(manager, result.Path), result.Width, result.Height);
+        var textureAtlas = new TextureAtlas(texture == null 
+            ? SpriteTexture.FromContent(manager, result.Path)
+            : texture, result.Width, result.Height);
         TilesetAtlas = textureAtlas;
         Width = result.Width;
         Height = result.Height;
@@ -57,14 +59,13 @@ public class Tileset
             }
             rules.Add(rule);
         }
-        
     }
 
-    public static Tileset LoadTileset(string tilesetPath, ContentManager manager) 
+    public static Tileset LoadTileset(string tilesetPath, ContentManager manager, SpriteTexture texture = null) 
     {
         var path = Path.Join(TeuriaEngine.ContentPath, tilesetPath);
         using var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
-        return new Tileset(fs, manager);
+        return new Tileset(fs, manager, texture);
     }
 
     private Dictionary<byte, List<SpriteTexture>> InitializeTerrain() 
