@@ -21,6 +21,22 @@ public static class TeuriaExtension
         return array2D;
     }
 
+    public static int[,] ToIntArray(this string[,] arr) 
+    {
+        var first = arr.GetLength(1);
+        var second = arr.GetLength(0);
+        int[,] array2D = new int[second, first];
+
+        for (int y = 0; y < first; y++) 
+        {
+            for (int x = 0; x < second; x++) 
+            {
+                array2D[x, y] = int.Parse(arr[x, y]);
+            }
+        }
+        return array2D;
+    }
+
     public static T[,] To2D<T>(this T[][] arr) 
     {
         var first = arr.Length;

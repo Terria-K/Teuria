@@ -111,11 +111,11 @@ public class TileMap : Entity
             switch (layer.Value.LayerType) 
             {
                 case LayerType.Tiles:
+                case LayerType.Grid:
                     layer.Value.Draw(spriteBatch);
                     break;
-                case LayerType.Grid:
-                    layer.Value.DrawGrid(spriteBatch);
-                    break;
+                    // layer.Value.DrawGrid(spriteBatch);
+                    // break;
             }
         }
     }
@@ -135,11 +135,12 @@ public class TileMap : Entity
         public string[] singleGridData;
         public OgmoEntity[] entities;
         public Point LevelSize;
-        // TODO Reference a LayerType
         public LayerType LayerType;
 
+        //TODO Optimize this further
         public Layer(OgmoLayer layer, Tileset tileset, LayerType layerType) 
         {
+            var picker = new Picker<Vector2>();
             LayerType = layerType;
             LevelSize = new Point(layer.GridCellsX, layer.GridCellsY);
             Tileset = tileset;
@@ -169,19 +170,83 @@ public class TileMap : Entity
 #else
                     gridData = layer.Grid2D;
 #endif
+                    data = ApplyAutotile(gridData.ToIntArray(), picker, Tileset.InitializeTerrain());
                     break;
             }
         }
 
-        public int[,] ApplyAutotile(int[,] grids) 
+        private bool Check(int x, int y, int[,] grids) 
         {
-            for (int y = 0; y < LevelSize.X; y++) 
+            if (!(x < grids.GetLength(0) && y < grids.GetLength(1) && x >= 0 && y >= 0)) 
             {
-                for (int x = 0; x < LevelSize.Y; x++) 
+                return false;
+            }
+            var gr = grids[x, y];
+            if (gr == 0)
+                return false;
+            return true;
+        }
+
+        private const int NorthWest = 1 << 0;
+        private const int North = 1 << 1;
+        private const int NorthEast = 1 << 2;
+        private const int West = 1 << 3;
+        private const int East = 1 << 4;
+        private const int SouthWest = 1 << 5;
+        private const int South = 1 << 6;
+        private const int SouthEast = 1 << 7;
+
+        public int[,] ApplyAutotile(int[,] grids, Picker<Vector2> picker, Dictionary<byte, List<Vector2>> masks) 
+        {
+            var newGrid = new int[LevelSize.Y, LevelSize.X];
+            for (int x = 0; x < LevelSize.X; x++) 
+            {
+                for (int y = 0; y < LevelSize.Y; y++) 
                 {
+                    var check = (int x, int y) => Check(x, y, grids);
+                    
+                    if (grids[y, x] == 0) 
+                    {
+                        newGrid[y, x] = -1;
+                        continue;
+                    }
+                    var mask = 0;
+
+                    if (check(y, x + 1))
+                        mask += East;
+
+                    if (check(y, x - 1))
+                        mask += West;
+
+                    if (check(y + 1, x))
+                        mask += South;
+
+                    if (check(y - 1, x))
+                        mask += North;
+
+                    if ((mask & (64 | 8)) == (64 | 8) && check(y + 1, x - 1))
+                        mask += SouthWest;
+
+                    if ((mask & (64 | 16)) == (64 | 16) && check(y + 1, x + 1))
+                        mask += SouthEast;
+
+                    if ((mask & (2 | 8)) == (2 | 8) && check(y - 1, x - 1))
+                        mask += NorthWest;
+
+                    if ((mask & (2 | 16)) == (2 | 16) && check(y - 1, x + 1))
+                        mask += NorthEast;
+
+                    List<Vector2> finalMask = masks[(byte)mask]; 
+
+                    picker.AddOption(finalMask, 1f);
+                    var picked = picker.Pick();
+                    var idx = Tileset.TilesetAtlas.GetIndex((int)picked.X, (int)picked.Y);
+
+                    newGrid[y, x] = idx; 
+                    picker.Clear();
                 }
             }
-            return null;
+            return newGrid;
         }
 
         public void DrawGrid(SpriteBatch spriteBatch) 

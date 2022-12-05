@@ -32,6 +32,21 @@ public class TextureAtlas
                 ));
             }
         }
-        
+    }
+
+    public int GetIndex(int column, int row) 
+    {
+        var width = Texture.Width / this.TileWidth;
+        var height = Texture.Height / this.TileHeight;
+        // System.Console.WriteLine(width);
+        // System.Console.WriteLine(height);
+        // System.Console.WriteLine(row);
+        // System.Console.WriteLine(column);
+        if (column < width && row < height ) 
+        {
+            var gid = row * width + column;
+            return gid; 
+        }
+        return 0;
     }
 }

@@ -14,7 +14,12 @@ public sealed class Array2D<T> : IEnumerable<T>
 
     public T this[int x, int y] 
     {
-        get => array[GetIndex(x, y)];
+        get 
+        {
+            var index = GetIndex(x, y);
+            if (index < 0) { return default; }
+            return array[GetIndex(x, y)];
+        }
         set 
         {
             var index = GetIndex(x, y);
@@ -45,7 +50,7 @@ public sealed class Array2D<T> : IEnumerable<T>
         {
             return row * this.numRows + column;
         }
-        return 0;
+        return -1;
     }
 
     public IEnumerator<T> GetEnumerator()

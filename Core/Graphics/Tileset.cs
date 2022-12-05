@@ -1,11 +1,12 @@
 using System.IO;
+using Microsoft.Xna.Framework.Content;
+using System.Collections.Generic;
+using System;
 using Name =
 #if SYSTEMTEXTJSON
 System.Text.Json.Serialization.JsonPropertyNameAttribute;
 using System.Text.Json;
-using Microsoft.Xna.Framework.Content;
-using System.Collections.Generic;
-using System;
+using Microsoft.Xna.Framework;
 #else
 Newtonsoft.Json.JsonPropertyAttribute;
 using Newtonsoft.Json;
@@ -19,6 +20,12 @@ public class Tileset
     public int Width { get; init; }
     public int Height { get; init; }
     private List<Rules> rules = new List<Rules>();    
+    private int[] directionalValues = new int[9] 
+    {
+        0x001, 0x002, 0x004,
+        0x008, 0x000, 0x010,
+        0x020, 0x040, 0x080,
+    };
 
     private Tileset(FileStream fs, ContentManager manager, SpriteTexture texture) 
     {
@@ -51,11 +58,13 @@ public class Tileset
             if (teuriaRule.Mask == null) { continue; }
             for (int mask = 0; mask < teuriaRule.Mask.Length; mask++) 
             {
+
                 rule.Mask[mask] = ((byte)teuriaRule.Mask[mask]);
             }
             for (int j = 0; j < tile.GetLength(0); j++) 
             {
                 rule.Textures.Add(TilesetAtlas[tile[j, 0] - 1, tile[j, 1] - 1]);
+                rule.TextureLocation.Add(new Vector2(tile[j, 0] - 1, tile[j, 1] - 1));
             }
             rules.Add(rule);
         }
@@ -68,28 +77,28 @@ public class Tileset
         return new Tileset(fs, manager, texture);
     }
 
-    private Dictionary<byte, List<SpriteTexture>> InitializeTerrain() 
+    public Dictionary<byte, List<Vector2>> InitializeTerrain() 
     {
-        var dict = new Dictionary<byte, List<SpriteTexture>>();
+        var dict = new Dictionary<byte, List<Vector2>>();
         foreach (var rule in rules) 
         {
             byte bit = 0;
             for (int i = 0; i < rule.Mask.Length; i++) 
             {
                 var mask = rule.Mask[i];
-                bit = (byte)(i * (int)mask);
+                bit += (byte)((int)mask * directionalValues[i]);
             }
-            dict.Add(bit, rule.Textures);
+            dict.Add(bit, rule.TextureLocation);
         }
         return dict;
     }
 
     public class Terrain 
     {
-        public char ID;
+        public string ID;
         public List<Rules> Rules = new List<Rules>();
 
-        public Terrain(char id) 
+        public Terrain(string id) 
         {
             ID = id;
         }
@@ -99,11 +108,12 @@ public class Tileset
     public class Rules 
     {
         public byte[] Mask = new byte[9];
+        public List<Vector2> TextureLocation = new List<Vector2>();
         public List<SpriteTexture> Textures = new List<SpriteTexture>();
     }
 }
 
-public struct TeuriaTileset 
+internal struct TeuriaTileset 
 {
     [Name("name")]
     public string Name { get; set; }
@@ -117,7 +127,7 @@ public struct TeuriaTileset
     public int Height { get; set; }
 }
 
-public struct TeuriaRules 
+internal struct TeuriaRules 
 {
     [Name("name")]
     public string Name { get; set; }

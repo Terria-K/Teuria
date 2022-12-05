@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Teuria;
@@ -30,26 +29,40 @@ public class Picker<T>
         options.Add(new Option(option, w));
     }
 
-    public T Pick() 
-    {   
+    public void AddOption(List<T> options, float weight) 
+    {
+        foreach (var option in options) 
+        {
+            AddOption(option, weight);
+        }
+    }
+
+    public T Pick()
+    {
         if (options.Count == 1)
             return options[0].Value;
-        if (CanPick) 
+        if (!CanPick)
         {
-            var w = 0f;
-            var roll = MathUtils.Randomizer.NextDouble() * EvaluatedWeight;
-            var optionCount = options.Count - 1;
-            
-            for (int i = 0; i < optionCount; i++) 
-            {
-                var option = options[i];
-                w += option.Weight;
-                if (roll < w)
-                    return option.Value;
-            }
-            return options[optionCount].Value;
+            return default;
         }
-        return default;
+        var w = 0f;
+        var roll = MathUtils.Randomizer.NextDouble() * EvaluatedWeight;
+        var optionCount = options.Count - 1;
+
+        for (int i = 0; i < optionCount; i++)
+        {
+            var option = options[i];
+            w += option.Weight;
+            if (roll < w)
+                return option.Value;
+        }
+        return options[optionCount].Value;
+    }
+
+    public void Clear() 
+    {
+        EvaluatedWeight = 0;
+        options.Clear();
     }
 
     private class Option 
