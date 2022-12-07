@@ -5,11 +5,10 @@ namespace Teuria;
 
 public class RectangleShape : Shape 
 {
-#if DEBUG
+// #if DEBUG
     public static bool DebugRender = false;
-
+// #endif
     public override AABB BoundingArea => new AABB(GlobalX, GlobalY, Width, Height);
-#endif
 
     public RectangleShape(float width, float height, Vector2 pos) 
     {
@@ -19,7 +18,6 @@ public class RectangleShape : Shape
     }
     
 
-#if DEBUG
     public void Draw(SpriteBatch spriteBatch, Color color)
     {
         if (!DebugRender || !IsInTheWorld) return;
@@ -30,7 +28,6 @@ public class RectangleShape : Shape
     {
         Draw(spriteBatch, Color.Red);
     }
-#endif
 
     public override bool Collide(RectangleShape other, Vector2 offset = default) 
     {

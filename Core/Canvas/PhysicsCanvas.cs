@@ -45,7 +45,12 @@ public class PhysicsCanvas : CanvasLayer
         isClearing = false;
     }
 
-    public override void Draw()
+    public void Remove(IPhysicsEntity entity) 
+    {
+        physicsComponents.Remove(entity.PhysicsComponent);
+    }
+
+    public override void Draw(Scene scene)
     {
 #if DEBUG
 #endif

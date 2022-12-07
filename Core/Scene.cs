@@ -11,6 +11,7 @@ public class Scene
     private List<Node> nodeList = new List<Node>();
     private Entities entityList;
     private List<CanvasLayer> layers = new List<CanvasLayer>();
+    private Layers layerList;
     protected ContentManager Content;
     protected Camera Camera;
     protected SpriteBatch SpriteBatch;
@@ -28,7 +29,7 @@ public class Scene
         }
     }
 
-    public IEnumerable<Node> Entities 
+    public Entities Entities 
     {
         get => entityList;
     }
@@ -38,12 +39,14 @@ public class Scene
         Content = content;
         Camera = camera;
         entityList = new Entities(this);
+        layerList = new Layers(this);
     }
 
     public Scene(ContentManager content)
     {
         Content = content;
         entityList = new Entities(this);
+        layerList = new Layers(this);
     }
 
     public bool HasCanvas(CanvasLayer canvas) 
@@ -71,12 +74,15 @@ public class Scene
 
     public void Add(CanvasLayer layer) 
     {
-        layer.Obtain(SpriteBatch, this);
-        layers.Add(layer);
+        layer.Obtain(this);
+        layerList.Add(layer);
+        // layer.Obtain(SpriteBatch, this);
+        // layers.Add(layer);
     }
 
     public void Remove(CanvasLayer layer) 
     {
+        layerList.Remove(layer);
         layers.Remove(layer);
     }
 
@@ -90,9 +96,19 @@ public class Scene
 
     public void RemoveAllEntities() 
     {
-        var nodeCount = nodeList.Count;
         entityList.Clear();
         // nodeList.Clear();
+    }
+
+    public void RemoveAllEntitiesByFilter(Func<Entity, bool> predicate) 
+    {
+        foreach (var entity in entityList) 
+        {
+            if (predicate(entity)) 
+            {
+                entityList.Remove(entity);
+            }
+        }
     }
 
     public virtual void Initialize() {}
@@ -107,6 +123,7 @@ public class Scene
     {
         // if (QueueToFree.Count > 0)
         //     QueueToFree.Dequeue().Free();
+        layerList.UpdateLists();
         if (Paused) 
         {
             ProcessEntityInPauseMode();
@@ -114,6 +131,7 @@ public class Scene
         }
         entityList.UpdateSystem();
         entityList.Update();
+
         // foreach(var entity in nodeList) 
         // {
         //     if (!entity.Active) continue;
@@ -131,32 +149,25 @@ public class Scene
         // }
     }
 
+    public virtual void BeforeRender() 
+    {
+        layerList.PreDraw();
+    }
+
     public virtual void Render() 
     {
-        entityList.Draw(SpriteBatch);
+        // entityList.Draw(SpriteBatch);
         // foreach(var entity in nodeList) 
         // {
         //     if (!entity.Active) continue;
         //     entity.Draw(SpriteBatch);
         // }
-
-        foreach(var layer in layers) 
-        {
-            layer.Draw();
-        }
+        layerList.Draw();
     }
 
     public virtual void Exit() 
     {
-        // foreach(var entity in nodeList) 
-        // {
-        //     entity.ExitScene();
-        // }
-
-        foreach(var canvas in layers) 
-        {
-            canvas.Unload();
-        }
+        layerList.Unload();
     }
 
     internal ContentManager GetContent() 

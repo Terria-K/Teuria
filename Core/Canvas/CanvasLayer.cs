@@ -4,15 +4,15 @@ namespace Teuria;
 
 public abstract class CanvasLayer 
 {
-    protected SpriteBatch SpriteBatch;
     protected Scene Scene;
+    public bool Visible = true;
 
-    public abstract void Draw();
+    public virtual void PreDraw(Scene scene) {}
+    public abstract void Draw(Scene scene);
     public virtual void Unload() {}
 
-    internal void Obtain(SpriteBatch spriteBatch, Scene scene) 
+    internal void Obtain(Scene scene) 
     {
-        SpriteBatch = spriteBatch;
         Scene = scene;
         Ready();
     }

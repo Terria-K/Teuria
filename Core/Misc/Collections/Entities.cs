@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
 
-internal class Entities : IEnumerable<Entity>
+public class Entities : IEnumerable<Entity>
 {
     public Scene Scene { get; private set; }
 
@@ -14,6 +14,7 @@ internal class Entities : IEnumerable<Entity>
     private List<Entity> remove = new List<Entity>();
     private List<Entity> entering = new List<Entity>();
     private HashSet<Entity> current = new HashSet<Entity>();
+    private bool unsorted;
 
     public int Count => entities.Count;
     internal Entities(Scene scene) 
@@ -45,7 +46,7 @@ internal class Entities : IEnumerable<Entity>
                     entity.EnterScene(Scene, Scene.GetContent());
                 }
             }
-
+            unsorted = true;
         }
 
         if (remove.Count > 0) 
@@ -63,6 +64,12 @@ internal class Entities : IEnumerable<Entity>
                 }
             }
             remove.Clear();
+        }
+
+        if (unsorted) 
+        {
+            unsorted = false;
+            entities.Sort(CompareDepth);
         }
 
         if (add.Count > 0) 
@@ -106,7 +113,7 @@ internal class Entities : IEnumerable<Entity>
         }
     }
 
-    internal void Draw(SpriteBatch spriteBatch) 
+    public void Draw(SpriteBatch spriteBatch) 
     {
         foreach (var entity in entities) 
         {
@@ -123,4 +130,6 @@ internal class Entities : IEnumerable<Entity>
     {
         return GetEnumerator();
     }
+
+    public static Comparison<Entity> CompareDepth = (a, b) => Math.Sign(b.Depth - a.Depth);
 }

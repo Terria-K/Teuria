@@ -22,6 +22,20 @@ public static class MathUtils
         return current + MathF.Sign(target - current) * maxDelta;
     }
 
+    public static float Wrapf(float value, float min, float max) 
+    {
+        if (value < min) { return max; }
+        if (value > max) { return min; }
+        return value;
+    }
+
+    public static int Wrap(int value, int min, int max) 
+    {
+        if (value < min) { return max; }
+        if (value > max) { return min; }
+        return value;
+    }
+
 #region Vector2
     public static Vector2 MoveTowards(Vector2 current, Vector2 target, float maxDelta)
     {
@@ -74,6 +88,8 @@ public static class MathUtils
     {
         return new Vector2(Clamp(value.X, minX, maxX), Clamp(value.Y, minY, maxY));
     }
+
+
 #endregion
 
 #region Randomizer

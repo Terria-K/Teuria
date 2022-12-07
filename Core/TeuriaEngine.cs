@@ -33,7 +33,6 @@ public class TeuriaEngine : Game
         } 
     }
     private static TeuriaEngine instance;
-    private SceneCanvas sceneRenderer;
     private SubViewport subViewport;
     private bool resizing;
     private static bool fullscreen;
@@ -90,6 +89,7 @@ public class TeuriaEngine : Game
         Content.RootDirectory = ContentPath;
         Window.AllowUserResizing = true;
         IsMouseVisible = true;
+
     }
 
     private void OnClientSizeChanged(object sender, EventArgs e) 
@@ -158,10 +158,10 @@ public class TeuriaEngine : Game
         graphics.PreferredBackBufferWidth = ScreenWidth;
         graphics.PreferredBackBufferHeight = ScreenHeight;
         graphics.ApplyChanges();
-        sceneRenderer = Init();
+        Init();
         UpdateView();
-        subViewport = new SubViewport(new Point(540, 320), GraphicsDevice, sceneRenderer.EnvironmentColor);
-        subViewport.SamplerState = sceneRenderer.SamplerState;
+        subViewport = new SubViewport(new Point(540, 320), GraphicsDevice, Color.Black);
+        subViewport.SamplerState = SamplerState.PointClamp;
         subViewport.ScreenResolution = new Point(ScreenWidth, ScreenHeight);
         // ScreenMatrix = Matrix.CreateScale(ViewWidth / (float)ScreenHeight);
         scene.Initialize();
@@ -171,10 +171,9 @@ public class TeuriaEngine : Game
 
     protected override sealed void LoadContent()
     {
-        Canvas.Initialize(graphics.GraphicsDevice);
         TInput.Initialize();
         spriteBatch = new SpriteBatch(GraphicsDevice);
-        sceneRenderer.Obtain(spriteBatch, scene);
+        Canvas.Initialize(graphics.GraphicsDevice, spriteBatch);
         Load();
         scene.Activate(spriteBatch);
         scene.Hierarchy(graphics.GraphicsDevice);
@@ -215,12 +214,16 @@ public class TeuriaEngine : Game
         base.Update(gameTime);
     }
 
+
     protected override void Draw(GameTime gameTime)
     {
-        GraphicsDevice.Clear(sceneRenderer.EnvironmentColor);
+        Scene?.BeforeRender();
+        GraphicsDevice.SetRenderTarget(null);
+        GraphicsDevice.Clear(Color.Black);
         GraphicsDevice.Viewport = viewport;
+        // Scene?.Render();
         subViewport.Begin();
-        sceneRenderer.Draw();
+        Scene.Render();
         subViewport.End();
 
         base.Draw(gameTime);
@@ -242,7 +245,7 @@ public class TeuriaEngine : Game
         Exit();
     }
 
-    protected virtual SceneCanvas Init() { throw new Exception(@"
+    protected virtual void Init() { throw new Exception(@"
     You don't have a game initialize yet! Make a game class first before you proceed."); }
     protected virtual void Load() {}
     protected virtual void Process(GameTime gameTime) {}

@@ -16,6 +16,8 @@ public class Entity : Node, IEnumerable<Component>
     public Vector2 Scale;
     public Color Modulate = Color.White;
     public float ZIndex;
+    public int Depth;
+    public bool Visible = true;
 
     public override void EnterScene(Scene scene, ContentManager content) 
     {
@@ -40,6 +42,7 @@ public class Entity : Node, IEnumerable<Component>
     }
     public override void Draw(SpriteBatch spriteBatch) 
     {
+        if (!Visible) return;
         for (int i = 0; i < components.Count; i++) 
         {
             if (!components[i].Active) continue;

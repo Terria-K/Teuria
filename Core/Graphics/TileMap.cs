@@ -224,16 +224,16 @@ public class TileMap : Entity
                     if (check(y - 1, x))
                         mask += North;
 
-                    if ((mask & (64 | 8)) == (64 | 8) && check(y + 1, x - 1))
+                    if ((mask & (South | West)) == (South | West) && check(y + 1, x - 1))
                         mask += SouthWest;
 
-                    if ((mask & (64 | 16)) == (64 | 16) && check(y + 1, x + 1))
+                    if ((mask & (South | East)) == (South | East) && check(y + 1, x + 1))
                         mask += SouthEast;
 
-                    if ((mask & (2 | 8)) == (2 | 8) && check(y - 1, x - 1))
+                    if ((mask & (North | West)) == (North | West) && check(y - 1, x - 1))
                         mask += NorthWest;
 
-                    if ((mask & (2 | 16)) == (2 | 16) && check(y - 1, x + 1))
+                    if ((mask & (North | East)) == (North | East) && check(y - 1, x + 1))
                         mask += NorthEast;
 
                     List<Vector2> finalMask = masks[(byte)mask]; 
