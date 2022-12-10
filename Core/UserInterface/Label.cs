@@ -1,4 +1,6 @@
+using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
@@ -7,7 +9,7 @@ public class Label : Entity
 {
     public SpriteFont SpriteFont { get; private set; }
     public string Text { get; set; }
-    public int Size { get; set; }
+    public float Size { get; set; } = 1;
 
     public Label(SpriteFont spriteFont)
     {
@@ -26,7 +28,7 @@ public class Label : Entity
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.DrawString(SpriteFont, Text, Position, Modulate, Rotation, Vector2.Zero, Scale, SpriteEffects.None, ZIndex);
+        spriteBatch.DrawString(SpriteFont, Text, Position, Modulate, Rotation, Vector2.Zero, Size, SpriteEffects.None, ZIndex);
         base.Draw(spriteBatch);
     }
 }

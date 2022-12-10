@@ -11,8 +11,6 @@ public class TileMap : Entity
     public Point LevelSize { get; private set; }
     public Dictionary<string, Layer> layer = new Dictionary<string, Layer>();
     private Dictionary<LayerType, List<string>> recognizeable = new Dictionary<LayerType, List<string>>();
-    private OgmoLayer[] layers;
-    private PhysicsCanvas physicsHandler;
     
     public enum LayerType { Tiles, Entities, Decal, Grid }
 
@@ -20,20 +18,17 @@ public class TileMap : Entity
     {
         Active = false;
         LevelSize = level.LevelSize;
-        layers = level.LevelData.Layers;
         foreach (var layer in level.LevelData.Layers) 
         {
             LayerType layerType = LayerType.Tiles;
             if (layer.Entities != null) 
             {
-                Console.WriteLine(layer.Entities);
                 layerType = LayerType.Entities;   
                 var newLayer = new Layer(layer, null, layerType);
                 this.layer[layer.Name] = newLayer;
             }
             else if (layer.Data != null) 
             {
-                Console.WriteLine(layer.Name);
                 layerType = LayerType.Tiles;
                 var tileset = layer.Tileset != null ? tilesets[layer.Tileset] : null;
                 var newLayer = new Layer(layer, tileset, layerType);
@@ -41,13 +36,11 @@ public class TileMap : Entity
             }
             else if (layer.Grid2D != null) 
             {
-                Console.WriteLine(layer.Name);
                 layerType = LayerType.Grid;
                 var tileset = tilesets["Ruins"];
                 var newLayer = new Layer(layer, tileset, layerType);
                 this.layer[layer.Name] = newLayer;
             }
-
         }
     }
 
@@ -59,11 +52,6 @@ public class TileMap : Entity
             return;
         }
         recognizeable.Add(layerType, new List<string>() { layer });
-    }
-
-    public void AddPhysicsHandler(PhysicsCanvas physicsCanvas) 
-    {
-        physicsHandler = physicsCanvas;
     }
 
     public void Begin(Action<OgmoEntity> spawnEntities = null) 
@@ -274,9 +262,8 @@ public class TileMap : Entity
                 {
                     var gid = data[x, y];
                     if (gid < 0)
-                    {
                         continue;
-                    }
+                   
                     var texture = Tileset.TilesetAtlas[gid];
                     texture.DrawTexture(spriteBatch, new Vector2(y * Tileset.Height, x * Tileset.Width));
                 }

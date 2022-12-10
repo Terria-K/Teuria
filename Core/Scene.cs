@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -173,5 +174,17 @@ public class Scene
     internal ContentManager GetContent() 
     {
         return Content;
+    }
+
+    public List<T> GetEntities<T>() 
+    where T : Entity
+    {
+        var list = Enumerable.Empty<T>().ToList();
+        foreach (var entity in entityList) 
+        {
+            if (entity is T ent) 
+                list.Add(ent);
+        }
+        return list;
     }
 }

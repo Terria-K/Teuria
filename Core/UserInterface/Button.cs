@@ -39,12 +39,12 @@ public class Button : Entity
 
     public AABB BoundingArea => throw new NotImplementedException();
 
-    public void Detect(IPhysicsEntity entity)
+    public void Detect(ICollidableEntity entity)
     {
         throw new NotImplementedException();
     }
 
-    public void Detect(HashSet<IPhysicsEntity> entity)
+    public void Detect(HashSet<ICollidableEntity> entity)
     {
         throw new NotImplementedException();
     }

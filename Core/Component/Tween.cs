@@ -9,15 +9,18 @@ namespace Teuria;
 
 public class Tween : Component
 {
-    public enum TweenMode { Persistent, OneShot, Loop }
+    public enum TweenMode { Persistent, OneShot, Loop, YoyoLoop }
 
     public TweenMode Mode { get; private set; }
     public Ease.Easer Easer { get; private set; }
     public float Duration { get; private set; }
     public float TimeLeft { get; private set; }
     public float Progress { get; private set; }
+    public float Delay { get; private set; }
     public float Value { get; private set; }
     public bool Reverse { get; private set; }
+    private float lastDelay;
+
 
     public Action<Tween> OnReady;
     public Action<Tween> OnProcess;
@@ -42,6 +45,13 @@ public class Tween : Component
 
     public override void Update()
     {
+        if (Delay > 0) 
+        {
+            Delay -= TeuriaEngine.DeltaTime;
+            base.Update();
+            return;
+        }
+
         TimeLeft -= TeuriaEngine.DeltaTime;
 
         Progress = Math.Max(0, TimeLeft) / Duration;
@@ -67,28 +77,32 @@ public class Tween : Component
                     Entity.RemoveComponent(this);
                     break;
                 case TweenMode.Loop:
-                    Start(Reverse);
+                    Start(Reverse, lastDelay);
+                    break;
+                case TweenMode.YoyoLoop:
+                    Start(!Reverse, lastDelay);
                     break;
             }
         }
         base.Update();
     }
 
-    public void Start(float duration, bool reverse = false) 
+    public void Start(float duration, bool reverse = false, float delay = 0f) 
     {  
 #if DEBUG
         if (duration <= 0) { throw new Exception("Infinite Tween detected! Duration cannot be less than 0"); }
 #endif
         Duration = duration;
-        Start(reverse);
+        Start(reverse, delay);
     } 
 
-    public void Start(bool reverse = false) 
+    public void Start(bool reverse = false, float delay = 0f) 
     {
         Reverse = reverse;
         TimeLeft = Duration;
         Value = Progress = Reverse ? 1 : 0;
-
+        Delay = delay;
+        lastDelay = delay;
         Active = true;
         OnReady?.Invoke(this);
     }

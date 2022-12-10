@@ -20,12 +20,6 @@ public class Tileset
     public int Width { get; init; }
     public int Height { get; init; }
     private List<Rules> rules = new List<Rules>();    
-    private int[] directionalValues = new int[9] 
-    {
-        0x001, 0x002, 0x004,
-        0x008, 0x000, 0x010,
-        0x020, 0x040, 0x080,
-    };
 
     private Tileset(FileStream fs, ContentManager manager, SpriteTexture texture) 
     {
@@ -44,10 +38,9 @@ public class Tileset
         Width = result.Width;
         Height = result.Height;
 
-
         for (int i = 0; i < result.Rules.Length; i++) 
         {
-            Rules rule = new Rules();
+            var rule = new Rules();
             var teuriaRule = result.Rules[i];
             var tile =
 #if SYSTEMTEXTJSON
@@ -58,7 +51,6 @@ public class Tileset
             if (teuriaRule.Mask == null) { continue; }
             for (int mask = 0; mask < teuriaRule.Mask.Length; mask++) 
             {
-
                 rule.Mask[mask] = ((byte)teuriaRule.Mask[mask]);
             }
             for (int j = 0; j < tile.GetLength(0); j++) 
@@ -79,6 +71,17 @@ public class Tileset
 
     public Dictionary<byte, List<Vector2>> InitializeTerrain() 
     {
+#if NET5_0_OR_GREATER
+        ReadOnlySpan<int> directionalValues = stackalloc int[9]     
+#else 
+        int[] directionalValues = new int[9]     
+#endif
+        {
+            0x001, 0x002, 0x004,
+            0x008, 0x000, 0x010,
+            0x020, 0x040, 0x080,
+        };
+
         var dict = new Dictionary<byte, List<Vector2>>();
         foreach (var rule in rules) 
         {
@@ -91,18 +94,6 @@ public class Tileset
             dict.Add(bit, rule.TextureLocation);
         }
         return dict;
-    }
-
-    public class Terrain 
-    {
-        public string ID;
-        public List<Rules> Rules = new List<Rules>();
-
-        public Terrain(string id) 
-        {
-            ID = id;
-        }
-
     }
 
     public class Rules 

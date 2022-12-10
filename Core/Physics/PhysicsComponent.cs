@@ -13,7 +13,7 @@ public abstract class PhysicsComponent : Component
     public AABB BoundingArea => collider.BoundingArea;    
 
 
-    public IPhysicsEntity PhysicsEntity;
+    public ICollidableEntity PhysicsEntity;
 
     public PhysicsComponent(Shape collider, bool collidable = true) 
     {
@@ -24,7 +24,7 @@ public abstract class PhysicsComponent : Component
     public override void Added(Entity entity) 
     {
         base.Added(entity);
-        if (entity is IPhysicsEntity physicsEntity) 
+        if (entity is ICollidableEntity physicsEntity) 
         {
             PhysicsEntity = physicsEntity;
         }
@@ -43,7 +43,7 @@ public abstract class PhysicsComponent : Component
         Collided = components;
     }
     
-    public bool Check(IPhysicsEntity entity, Vector2 offset) 
+    public bool Check(ICollidableEntity entity, Vector2 offset) 
     {
         foreach (var wall in Collided) 
         {
@@ -57,7 +57,17 @@ public abstract class PhysicsComponent : Component
         return false;
     }
 
-    public bool Check<T>(IPhysicsEntity entity, Vector2 offset) 
+    public bool Check(ICollidableEntity entity, ICollidableEntity entity2, Vector2 offset) 
+    {
+        if (entity.Collider.Equals(entity2)) { return false; }
+        if (entity.Collider.Collide(entity2.Collider, offset)) 
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public bool Check<T>(ICollidableEntity entity, Vector2 offset) 
     {
         foreach (var wall in Collided) 
         {
@@ -74,7 +84,7 @@ public abstract class PhysicsComponent : Component
         return false;
     }
 
-    public bool Check(IPhysicsEntity entity, int tags, Vector2 offset) 
+    public bool Check(ICollidableEntity entity, int tags, Vector2 offset) 
     {
         foreach (var wall in Collided) 
         {
@@ -88,7 +98,7 @@ public abstract class PhysicsComponent : Component
         return false;
     }
 
-    public bool Check(IPhysicsEntity entity, string groupName, Vector2 offset) 
+    public bool Check(ICollidableEntity entity, string groupName, Vector2 offset) 
     {
         foreach (var wall in Collided) 
         {
@@ -102,8 +112,8 @@ public abstract class PhysicsComponent : Component
         return false;
     }
 
-    public bool Check<T>(IPhysicsEntity entity, string groupName, Vector2 offset, out T ent) 
-    where T : IPhysicsEntity
+    public bool Check<T>(ICollidableEntity entity, string groupName, Vector2 offset, out T ent) 
+    where T : ICollidableEntity
     {
         foreach (var wall in Collided) 
         {
@@ -123,8 +133,8 @@ public abstract class PhysicsComponent : Component
         return false;
     }
 
-    public bool Check<T1>(IPhysicsEntity entity, Vector2 offset, out T1 ent) 
-    where T1 : IPhysicsEntity
+    public bool Check<T1>(ICollidableEntity entity, Vector2 offset, out T1 ent) 
+    where T1 : ICollidableEntity
     {
         foreach (var wall in Collided) 
         {

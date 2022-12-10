@@ -22,6 +22,9 @@ public class AnimatedSprite : Component
     private Vector2 position;
     private SpriteEffects spriteEffects = SpriteEffects.None;
 
+    public TextureAtlas Atlas => atlas;
+    public SpriteEffects SpriteEffects => spriteEffects;
+
     public bool FlipH
     {
         get => (spriteEffects & SpriteEffects.FlipHorizontally) == SpriteEffects.FlipHorizontally;
@@ -57,6 +60,12 @@ public class AnimatedSprite : Component
         {
             position = Entity.Position + value;
         }
+    }
+
+    public int Frame 
+    {
+        get => frameIndex;
+        set => frameIndex = value;
     }
 
     // Since SpriteFrameLoader is readonly ref struct, we can use 'in' here

@@ -13,7 +13,7 @@ public class PhysicsCanvas : CanvasLayer
         this.showDebug = showDebug;
     }
 
-    public void Add(IPhysicsEntity entity) 
+    public void Add(ICollidableEntity entity) 
     {
         entity.Collider.IsInTheWorld = true;
         Add(entity.PhysicsComponent);
@@ -45,7 +45,7 @@ public class PhysicsCanvas : CanvasLayer
         isClearing = false;
     }
 
-    public void Remove(IPhysicsEntity entity) 
+    public void Remove(ICollidableEntity entity) 
     {
         physicsComponents.Remove(entity.PhysicsComponent);
     }
