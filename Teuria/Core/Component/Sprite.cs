@@ -9,8 +9,8 @@ public class Sprite : Component
     private SpriteEffects spriteEffects = SpriteEffects.None;
     public Vector2 Scale = Vector2.One;
     public SpriteTexture Texture;
-    private int width;
-    private int height;
+    public int Width { get; private set; }
+    public int Height { get; private set; }
     public bool cleanUpTexture = false;
     public Color Modulate { get => Entity.Modulate; set => Entity.Modulate = value;  }
     public bool FlipH
@@ -33,33 +33,45 @@ public class Sprite : Component
     public Vector2 PivotOffset { get; set; }
 
     public float Rotation { get; set; }
+    private bool useNinePatch;
 
-    public Sprite(SpriteTexture texture, bool cleanUp = false)
+    public Sprite(SpriteTexture texture, bool cleanUp = false, bool useNinePatch = false)
     {
         this.Texture = texture;
-        width = texture.Width;
-        height = texture.Height;
+        Width = texture.Width;
+        Height = texture.Height;
         cleanUpTexture = cleanUp;
+        this.useNinePatch = useNinePatch;
     }
 
-    public Sprite(SpriteTexture texture, int width, int height, bool cleanUp = false)
+    public Sprite(SpriteTexture texture, int width, int height, bool cleanUp = false, bool useNinePatch = false)
     {
         this.Texture = texture;
-        this.width = width;
-        this.height = height;
+        this.Width = width;
+        this.Height = height;
         cleanUpTexture = cleanUp;
+        this.useNinePatch = useNinePatch;
     }
 
     public override void Update() {}
     
     public override void Draw(SpriteBatch spriteBatch)
     {
+        if (useNinePatch)  
+        {
+            Texture.DrawTexture(spriteBatch, new Rectangle(
+                (int)Entity.Position.X, 
+                (int)Entity.Position.Y,
+                Width, Height)
+            );
+            return;
+        }
         Texture.DrawTexture(
             spriteBatch, 
-            Entity.Position + PivotOffset, 
+            Entity.Position, 
             Modulate, 
             Rotation, 
-            PivotOffset, 
+            -PivotOffset, 
             Scale, 
             spriteEffects, 
             Entity.ZIndex

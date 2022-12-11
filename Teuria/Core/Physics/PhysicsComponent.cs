@@ -6,7 +6,7 @@ namespace Teuria;
 
 public abstract class PhysicsComponent : Component
 {
-    private HashSet<PhysicsComponent> Collided = new HashSet<PhysicsComponent>();
+    protected HashSet<PhysicsComponent> Collided = new HashSet<PhysicsComponent>();
     public bool Collideable;
     private readonly Shape collider;
     public Shape Collider => collider;

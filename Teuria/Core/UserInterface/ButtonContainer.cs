@@ -22,6 +22,8 @@ public class ButtonContainer : Entity
         foreach (var button in buttons) 
         {
             button.Position = Position;
+            button.Tags = Tags;
+            button.PauseMode = PauseMode;
             scene.Add(button, PauseMode);
         }
     }
@@ -49,6 +51,15 @@ public class ButtonContainer : Entity
             button.UpFocus = buttons[slot];
         }
         base.Ready();
+    }
+
+    public override void Update()
+    {
+        foreach (var button in buttons) 
+        {
+            button.Position = new Vector2(Position.X, button.Position.Y);
+        }
+        base.Update();
     }
 
     public void AddItem(KeyboardButton button) 

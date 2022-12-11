@@ -9,7 +9,6 @@ namespace Teuria;
 public class Scene 
 {
     internal Queue<Node> QueueToFree = new Queue<Node>();
-    private List<Node> nodeList = new List<Node>();
     private Entities entityList;
     private List<CanvasLayer> layers = new List<CanvasLayer>();
     private Layers layerList;
@@ -69,8 +68,11 @@ public class Scene
     {
         entity.PauseMode = pauseMode;
         entityList.Add(entity);
-        // nodeList.Add(entity);
-        // entity.EnterScene(this, Content);
+    }
+
+    public void Add(Entity entity) 
+    {
+        entityList.Add(entity);
     }
 
     public void Add(CanvasLayer layer) 
@@ -111,6 +113,16 @@ public class Scene
             }
         }
     }
+    public void RemoveAllEntitiesExcludeByTags(int tags) 
+    {
+        foreach (var entity in entityList) 
+        {
+            if ((entity.Tags & tags) == 0) 
+            {
+                entityList.Remove(entity);
+            }
+        }
+    }
 
     public virtual void Initialize() {}
     public virtual void Hierarchy(GraphicsDevice device) 
@@ -125,11 +137,6 @@ public class Scene
         // if (QueueToFree.Count > 0)
         //     QueueToFree.Dequeue().Free();
         layerList.UpdateLists();
-        if (Paused) 
-        {
-            ProcessEntityInPauseMode();
-            return;
-        }
         entityList.UpdateSystem();
         entityList.Update();
 
@@ -137,16 +144,6 @@ public class Scene
         // {
         //     if (!entity.Active) continue;
         //     entity.Update();
-        // }
-    }
-
-    private void ProcessEntityInPauseMode() 
-    {
-        // foreach(var entity in nodeList) 
-        // {
-        //     if (!entity.Active) continue;
-        //     if (entity.PauseMode == PauseMode.Single)
-        //         entity.Update();
         // }
     }
 
@@ -184,6 +181,19 @@ public class Scene
         {
             if (entity is T ent) 
                 list.Add(ent);
+        }
+        return list;
+    }
+
+    public List<Entity> GetEntitiesByTag(int tags) 
+    {
+        var list = Enumerable.Empty<Entity>().ToList();
+        foreach (var entity in entityList) 
+        {
+            if ((entity.Tags & tags) != 0) 
+            {
+                list.Add(entity);
+            }
         }
         return list;
     }

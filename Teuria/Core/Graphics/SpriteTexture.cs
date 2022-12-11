@@ -15,17 +15,27 @@ public class SpriteTexture
     public Rectangle Clip { get; private set; }
     public Vector2 Origin { get; private set; }
     public string AtlasPath { get; private set; }
+    public Rectangle[] Patches { get; private set; }
+    public Rectangle Padding { get; private set; }
     
-    public SpriteTexture(Texture2D texture) 
+    public SpriteTexture(Texture2D texture, Rectangle padding = default) 
     {
         Texture = texture;
         Clip = new Rectangle(0, 0, Texture.Width, Texture.Height);
         Origin = Vector2.Zero;
         Width = Clip.Width;
         Height = Clip.Height;
+        Padding = padding;
+        Patches = CreatePatches(
+            Texture.Bounds, 
+            padding.X, 
+            padding.X + padding.Width, 
+            padding.Y, 
+            padding.Y + padding.Height
+        );
     }
 
-    public SpriteTexture(Texture2D texture, Point regionPos, int width, int height) 
+    public SpriteTexture(Texture2D texture, Point regionPos, int width, int height, Rectangle padding = default) 
     {
         Texture = texture;
         X = regionPos.X;
@@ -34,6 +44,14 @@ public class SpriteTexture
         Origin = Vector2.Zero;
         Width = Clip.Width;
         Height = Clip.Height;
+        Padding = padding;
+        Patches = CreatePatches(
+            Clip, 
+            padding.X, 
+            padding.X + padding.Width, 
+            padding.Y, 
+            padding.Y + padding.Height
+        );
     }
 
     public SpriteTexture(SpriteTexture spriteTexture, string atlasPath, Rectangle clip, Vector2 offset, int width, int height) 
@@ -88,6 +106,46 @@ public class SpriteTexture
         return new SpriteTexture(content.Load<Texture2D>(filename));
     }
 
+    
+
+    private Rectangle[] CreatePatches(Rectangle rectangle, int left, int right, int bottom, int top) 
+    {
+        var x = rectangle.X;
+        var y = rectangle.Y;
+        var w = rectangle.Width;
+        var h = rectangle.Height;
+        var mWidth = w - left - right;
+        var mHeight = h - top - bottom;
+        var bottomY = y + h - bottom;
+        var rightX = x + w - right;
+        var leftX = x + left;
+        var topY = y + top;
+        var patches = new[] 
+        {
+            new Rectangle(x, y, left, top),
+            new Rectangle(leftX, y, mWidth, top),
+            new Rectangle(rightX, y, right, top),
+            new Rectangle(x, topY, left, mHeight),
+            new Rectangle(leftX, topY, mWidth, mHeight),
+            new Rectangle(rightX, topY, right, mHeight),
+            new Rectangle(x, bottomY, left, bottom),
+            new Rectangle(leftX, bottomY, mWidth, bottom),
+            new Rectangle(rightX, bottomY, right, bottom)
+        };
+        return patches;
+    }
+
+    public void DrawTexture(SpriteBatch spriteBatch, Rectangle rectangle) 
+    {
+        var col = Color.White;
+#if DEBUG
+        if (RectangleShape.DebugRender)
+            col = Color.White * 0.5f;
+#endif
+        var destPatches = CreatePatches(rectangle, Padding.X, Padding.X + Padding.Width, Padding.Y, Padding.Y + Padding.Height);
+        for (int i = 0; i < Patches.Length; i++)
+            spriteBatch.Draw(Texture, sourceRectangle: Patches[i], destinationRectangle: destPatches[i], color: col);
+    }
 
     public void DrawTexture(SpriteBatch spriteBatch, Vector2 position) 
     {

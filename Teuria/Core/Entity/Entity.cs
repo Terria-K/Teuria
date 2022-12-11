@@ -17,6 +17,7 @@ public class Entity : Node, IEnumerable<Component>
     public Color Modulate = Color.White;
     public float ZIndex;
     public int Depth;
+    public int Tags;
     public bool Visible = true;
 
     public override void EnterScene(Scene scene, ContentManager content) 

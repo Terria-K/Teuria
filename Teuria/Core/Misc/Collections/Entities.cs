@@ -107,9 +107,15 @@ public class Entities : IEnumerable<Entity>
 
     internal void Update() 
     {
-        foreach (var entity in entities) 
+        foreach (var entity in entities)
         {
-            if (entity.Active) { entity.Update(); }
+            if (!entity.Active)
+                continue;
+            
+            if (Scene.Paused && entity.PauseMode != PauseMode.Single)
+                continue;
+
+            entity.Update();
         }
     }
 
