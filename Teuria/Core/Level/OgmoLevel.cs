@@ -43,8 +43,19 @@ public class OgmoLevel
         {
             levelPath += ".json";
         }
-        using var fs = new FileStream(levelPath, FileMode.Open, FileAccess.Read);
-        return new OgmoLevel(fs);
+#if DEBUG
+        try 
+        {
+#endif
+            using var fs = new FileStream(levelPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            return new OgmoLevel(fs);
+#if DEBUG
+        } catch (IOException) 
+        {
+            return null;
+        }
+#endif
+
     }
 }
 

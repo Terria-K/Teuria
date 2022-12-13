@@ -98,12 +98,12 @@ public class Tween : Component
 
     public void Start(bool reverse = false, float delay = 0f) 
     {
+        Active = true;
         Reverse = reverse;
         TimeLeft = Duration;
         Value = Progress = Reverse ? 1 : 0;
         Delay = delay;
         lastDelay = delay;
-        Active = true;
         OnReady?.Invoke(this);
     }
 

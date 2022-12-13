@@ -45,6 +45,18 @@ public class PhysicsCanvas : CanvasLayer
         isClearing = false;
     }
 
+    public void ClearAllExpectWithTags(int tags) 
+    {
+        isClearing = true;
+        foreach (var comp in physicsComponents) 
+        {
+            if ((comp.Entity.Tags & tags) != 0) 
+                continue;
+            physicsComponents.Remove(comp);
+        }
+        isClearing = false;
+    }
+
     public void Remove(ICollidableEntity entity) 
     {
         physicsComponents.Remove(entity.PhysicsComponent);
