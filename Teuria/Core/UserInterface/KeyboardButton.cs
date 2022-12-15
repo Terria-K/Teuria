@@ -37,6 +37,7 @@ public class KeyboardButton : Entity
     private string text;
     private SpriteFont fontText;
     private bool centered;
+    public string Text => text;
 
     public KeyboardButton(SpriteFont fontText, string text, bool firstSelected = false, bool center = false) 
     {
@@ -55,37 +56,35 @@ public class KeyboardButton : Entity
         if (!canHandleInput) 
         {
             canHandleInput = true;
-            return;
         }
-        if (!selected) return;
-        if (TInput.IsKeyJustPressed(Keys.C)) 
+        else if (selected) 
         {
-            OnEnter();
-            return;
+            if (TInput.IsKeyJustPressed(Keys.C)) 
+            {
+                OnEnter();
+            }
+            else if (TInput.IsKeyJustPressed(Keys.Up) && UpFocus != null) 
+            {
+                UpFocus.Selected = true;
+                Selected = false;
+            }
+            else if (TInput.IsKeyJustPressed(Keys.Down) && DownFocus != null) 
+            {
+                DownFocus.Selected = true;
+                Selected = false;
+            }
+            else if (TInput.IsKeyJustPressed(Keys.Left) && LeftFocus != null) 
+            {
+                LeftFocus.Selected = true;
+                Selected = false;
+            }
+            else if (TInput.IsKeyJustPressed(Keys.Right) && RightFocus != null) 
+            {
+                RightFocus.Selected = true;
+                Selected = false;
+            }
         }
-        if (TInput.IsKeyJustPressed(Keys.Up) && UpFocus != null) 
-        {
-            UpFocus.Selected = true;
-            Selected = false;
-            return;
-        }
-        if (TInput.IsKeyJustPressed(Keys.Down) && DownFocus != null) 
-        {
-            DownFocus.Selected = true;
-            Selected = false;
-            return;
-        }
-        if (TInput.IsKeyJustPressed(Keys.Left) && LeftFocus != null) 
-        {
-            LeftFocus.Selected = true;
-            Selected = false;
-            return;
-        }
-        if (TInput.IsKeyJustPressed(Keys.Right) && RightFocus != null) 
-        {
-            RightFocus.Selected = true;
-            Selected = false;
-        }
+        
         base.Update();
     }
 

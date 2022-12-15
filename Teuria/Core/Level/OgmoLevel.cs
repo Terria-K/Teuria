@@ -5,6 +5,7 @@ using Name =
 #if SYSTEMTEXTJSON
 System.Text.Json.Serialization.JsonPropertyNameAttribute;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 #else
 Newtonsoft.Json.JsonPropertyAttribute;
 using Newtonsoft.Json;
@@ -144,13 +145,12 @@ public class OgmoEntity
     [Name("nodes")]
     public OgmoNode[] Nodes { get; set; }
     [Name("values")]
-#if SYSTEMTEXTJSON
     public Dictionary<string, JsonElement> Values { get; set; }
-#else
-    public Dictionary<string, object> Values { get; set; }
-#endif
+    [JsonIgnore]
+    public Vector2 Position => new Vector2(X, Y);
+    [JsonIgnore]
+    public Rectangle Size => new Rectangle(OriginX, OriginY, Width, Height);
 
-#if SYSTEMTEXTJSON
     public int GetValueInt(string valueName) 
     {
         return Values[valueName].GetInt32();
@@ -175,30 +175,4 @@ public class OgmoEntity
     {
         return Values[valueName].GetString();
     }
-#else
-    public int GetValueInt(string valueName) 
-    {
-        return (int)Values[valueName];
-    }
-
-    public bool GetValueBoolean(string valueName) 
-    {
-        return (bool)Values[valueName];
-    }
-
-    public float GetValueFloat(string valueName) 
-    {
-        return Convert.ToSingle(Values[valueName]);
-    }
-
-    public Vector2 GetValueVector2(string x, string y) 
-    {
-        return new Vector2(GetValueFloat(x), GetValueFloat(y));
-    }
-
-    public string GetValueString(string valueName) 
-    {
-        return Values[valueName].ToString();
-    }
-#endif
 }

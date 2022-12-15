@@ -67,6 +67,8 @@ public class AnimatedSprite : Component
         get => frameIndex;
         set => frameIndex = value;
     }
+    public int Width { get; private set; }
+    public int Height { get; private set; }
 
     // Since SpriteFrameLoader is readonly ref struct, we can use 'in' here
     public AnimatedSprite(in SpriteFrameLoader loader, int frameCount) 
@@ -75,6 +77,8 @@ public class AnimatedSprite : Component
         cycleFrame = loader.CycleFrame;
         this.frameCount = frameCount;
         Scale = Vector2.One;
+        Width = Texture.Width;
+        Height = Texture.Height;
     }
 
     public void Play(string animationName) 

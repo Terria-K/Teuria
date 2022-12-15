@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Teuria.Level;
+using System.Linq;
 
 namespace Teuria;
 
@@ -16,10 +17,12 @@ public class TileMap : Entity
 
     public TileMap(OgmoLevel level, Dictionary<string, Tileset> tilesets) 
     {
+        Depth = 3;
         Active = false;
         LevelSize = level.LevelSize;
-        foreach (var layer in level.LevelData.Layers) 
+        for (int i = level.LevelData.Layers.Length - 1; i > 0; i--) 
         {
+            var layer = level.LevelData.Layers[i];
             LayerType layerType = LayerType.Tiles;
             if (layer.Entities != null) 
             {
@@ -29,18 +32,19 @@ public class TileMap : Entity
             }
             else if (layer.Data != null) 
             {
-                layerType = LayerType.Tiles;
-                var tileset = layer.Tileset != null ? tilesets[layer.Tileset] : null;
-                var newLayer = new Layer(layer, tileset, layerType);
-                this.layer[layer.Name] = newLayer;
+                // layerType = LayerType.Tiles;
+                // var tileset = layer.Tileset != null ? tilesets[layer.Tileset] : null;
+                // var newLayer = new Layer(layer, tileset, layerType);
+                // this.layer[layer.Name] = newLayer;
             }
             else if (layer.Grid2D != null) 
             {
                 layerType = LayerType.Grid;
-                var tileset = tilesets["Ruins"];
+                var tileset = tilesets[layer.Name];
                 var newLayer = new Layer(layer, tileset, layerType);
                 this.layer[layer.Name] = newLayer;
             }
+
         }
     }
 
@@ -73,11 +77,11 @@ public class TileMap : Entity
 
     public void InitGrid(Action<Layer> gridLayer) 
     { 
-        if (!Active) 
-        {
-            Console.WriteLine("The TileMap is inactive, unable to initialize grids");
-            return;
-        }
+        // if (!Active) 
+        // {
+        //     Console.WriteLine("The TileMap is inactive, unable to initialize grids");
+        //     return;
+        // }
         foreach (var grid in recognizeable) 
         {
             if (grid.Key == LayerType.Grid) 
@@ -167,7 +171,7 @@ public class TileMap : Entity
         {
             if (!(x < grids.GetLength(0) && y < grids.GetLength(1) && x >= 0 && y >= 0)) 
             {
-                return false;
+                return true;
             }
             var gr = grids[x, y];
             if (gr == 0)
@@ -265,7 +269,10 @@ public class TileMap : Entity
                         continue;
                    
                     var texture = Tileset.TilesetAtlas[gid];
-                    texture.DrawTexture(spriteBatch, new Vector2(y * Tileset.Height, x * Tileset.Width));
+                    texture.DrawTexture(
+                        spriteBatch, 
+                        new Vector2(y * Tileset.Height, x * Tileset.Width),
+                        Color.White, 0f, Vector2.One, SpriteEffects.None, 0f);
                 }
             }
         }

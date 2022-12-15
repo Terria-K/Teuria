@@ -133,6 +133,27 @@ public abstract class PhysicsComponent : Component
         return false;
     }
 
+    public bool Check<T>(ICollidableEntity entity, int tags, Vector2 offset, out T ent) 
+    where T : ICollidableEntity
+    {
+        foreach (var wall in Collided) 
+        {
+            if (!wall.Collideable) { continue; }
+            if (entity.Collider.Equals(wall.Collider)) { continue; }
+            if (entity.Collider.Collide(wall.Collider, offset)) 
+            {
+                if ((wall.Collider.Tags & tags) !=  0)
+                {
+                    ent = (T)wall.PhysicsEntity;
+                    return true;
+                }
+                continue;
+            }
+        }
+        ent = default;
+        return false;
+    }
+
     public bool Check<T1>(ICollidableEntity entity, Vector2 offset, out T1 ent) 
     where T1 : ICollidableEntity
     {

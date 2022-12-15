@@ -45,7 +45,7 @@ public class PhysicsCanvas : CanvasLayer
         isClearing = false;
     }
 
-    public void ClearAllExpectWithTags(int tags) 
+    public void ClearAllExceptWithTags(int tags) 
     {
         isClearing = true;
         foreach (var comp in physicsComponents) 

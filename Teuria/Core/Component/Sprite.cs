@@ -13,6 +13,7 @@ public class Sprite : Component
     public int Height { get; private set; }
     public bool cleanUpTexture = false;
     public Color Modulate { get => Entity.Modulate; set => Entity.Modulate = value;  }
+    public SpriteEffects SpriteEffects => spriteEffects;
     public bool FlipH
     {
         get => (spriteEffects & SpriteEffects.FlipHorizontally) == SpriteEffects.FlipHorizontally;
