@@ -6,6 +6,7 @@ using System.Text.Json;
 using Microsoft.Xna.Framework;
 using System.IO;
 using Microsoft.Xna.Framework.Content;
+using System.Text.Json.Serialization;
 #else
 Newtonsoft.Json.JsonPropertyAttribute;
 using Newtonsoft.Json;
@@ -25,7 +26,7 @@ public readonly ref struct SpriteFrameLoader
         using var fs = new FileStream("Content/" + contentTexturePath + ".sf", FileMode.Open, FileAccess.Read);
 
 #if SYSTEMTEXTJSON
-        var result = JsonSerializer.Deserialize<SpriteFactory>(fs);
+        var result = JsonSerializer.Deserialize<SpriteFactory>(fs, Loader_SpriteFactory.Default.SpriteFactory);
 #else
         using var sr = new StreamReader(fs);
         using var jst = new JsonTextReader(sr);
@@ -44,7 +45,7 @@ public readonly ref struct SpriteFrameLoader
         using var fs = new FileStream("Content/" + sfPath + ".sf", FileMode.Open, FileAccess.Read);
 
 #if SYSTEMTEXTJSON
-        var result = JsonSerializer.Deserialize<SpriteFactory>(fs);
+        var result = JsonSerializer.Deserialize<SpriteFactory>(fs, Loader_SpriteFactory.Default.SpriteFactory);
 #else
         using var sr = new StreamReader(fs);
         using var jst = new JsonTextReader(sr);
@@ -67,6 +68,9 @@ internal struct SpriteFactory
     public Dictionary<string, SFCyclesFrame> SFCycles { get; set; }
 }
 
+[JsonSerializable(typeof(SpriteFactory))]
+internal partial class Loader_SpriteFactory : JsonSerializerContext {}
+
 internal struct SFAtlas 
 {
     [Name("texture")]
@@ -77,6 +81,9 @@ internal struct SFAtlas
     public int RegionHeight { get; set; }
 }
 
+[JsonSerializable(typeof(SFAtlas))]
+internal partial class Loader_SFAtlas : JsonSerializerContext {}
+
 public struct SFCyclesFrame 
 {
     [Name("frames")]
@@ -84,3 +91,6 @@ public struct SFCyclesFrame
     [Name("isLooping")]
     public bool IsLooping { get; set; }
 }
+
+[JsonSerializable(typeof(SFCyclesFrame))]
+internal partial class Loader_SFCyclesFrame : JsonSerializerContext {}

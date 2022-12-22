@@ -83,8 +83,8 @@ public class Entity : Node, IEnumerable<Component>
 
     public void RemoveComponent(Component comp) 
     {
+        comp?.Removed();
         components.Remove(comp);
-        comp.Removed();
     }
 
     public IEnumerator<Component> GetEnumerator() => components.GetEnumerator();

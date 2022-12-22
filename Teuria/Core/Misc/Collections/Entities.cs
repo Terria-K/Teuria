@@ -70,6 +70,7 @@ public class Entities : IEnumerable<Entity>
         {
             unsorted = false;
             entities.Sort(CompareDepth);
+
         }
 
         if (add.Count > 0) 
@@ -123,7 +124,7 @@ public class Entities : IEnumerable<Entity>
     {
         foreach (var entity in entities) 
         {
-            if (entity.Active) { entity.Draw(spriteBatch); }
+            if (entity.Visible) { entity.Draw(spriteBatch); }
         }
     }
 

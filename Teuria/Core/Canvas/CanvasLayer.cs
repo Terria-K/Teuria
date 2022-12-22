@@ -9,6 +9,7 @@ public abstract class CanvasLayer
 
     public virtual void PreDraw(Scene scene) {}
     public abstract void Draw(Scene scene);
+    public virtual void PostDraw(Scene scene) {}
     public virtual void Unload() {}
 
     internal void Obtain(Scene scene) 

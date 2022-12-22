@@ -15,21 +15,15 @@ namespace Teuria.Level;
 
 public class OgmoLevel 
 {
-    public OgmoLevelData LevelData { get; set; }
+    public OgmoLevelData LevelData { get; private set; }
     public Point LevelSize { get; private set; }
     public Point TileSize { get; private set; }
     public Point LevelPixelSize { get; private set; }
 
     private OgmoLevel(FileStream fs) 
     {
-#if SYSTEMTEXTJSON
-        var result = JsonSerializer.Deserialize<OgmoLevelData>(fs);
-#else
-        using var sr = new StreamReader(fs);
-        using var jst = new JsonTextReader(sr);
-        var serializer = new JsonSerializer();
-        var result = serializer.Deserialize<OgmoLevelData>(jst);
-#endif
+        var result = JsonSerializer.Deserialize<OgmoLevelData>(fs, Loader_OgmoLevelData.Default.OgmoLevelData);
+
         LevelData = result;
 
         var firstLayer = result.Layers[0];
@@ -75,6 +69,9 @@ public class OgmoLevelData
     
 }
 
+[JsonSerializable(typeof(OgmoLevelData))]
+internal partial class Loader_OgmoLevelData : JsonSerializerContext {}
+
 public class OgmoLayer 
 {
     [Name("name")]
@@ -111,6 +108,9 @@ public class OgmoLayer
     public OgmoEntity[] Entities { get; set; }
 }
 
+[JsonSerializable(typeof(OgmoLayer))]
+internal partial class Loader_OgmoLayer : JsonSerializerContext {}
+
 public class OgmoNode 
 {
     [Name("x")]
@@ -123,6 +123,9 @@ public class OgmoNode
         return new Vector2(X, Y);
     }
 }
+
+[JsonSerializable(typeof(OgmoNode))]
+internal partial class Loader_OgmoNode : JsonSerializerContext {}
 
 public class OgmoEntity
 {
@@ -176,3 +179,6 @@ public class OgmoEntity
         return Values[valueName].GetString();
     }
 }
+
+[JsonSerializable(typeof(OgmoEntity))]
+internal partial class Loader_OgmoEntity : JsonSerializerContext {}

@@ -71,7 +71,7 @@ public class Sprite : Component
             spriteBatch, 
             Entity.Position, 
             Modulate, 
-            Rotation, 
+            Rotation + Entity.Rotation, 
             -PivotOffset, 
             Scale, 
             spriteEffects, 

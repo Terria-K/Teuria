@@ -52,6 +52,15 @@ public class Layers
         }
     }
 
+    internal void PostDraw() 
+    {
+        foreach (var layer in LayerList) 
+        {
+            if (!layer.Visible) { continue; }
+            layer.PostDraw(scene);
+        }
+    }
+
     internal void Unload() 
     {
         foreach (var layer in LayerList) 

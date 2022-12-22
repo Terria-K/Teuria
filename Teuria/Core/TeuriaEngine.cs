@@ -83,6 +83,9 @@ public class TeuriaEngine : Game
         graphics = new GraphicsDeviceManager(this);
         graphics.HardwareModeSwitch = !fullScreen;
         graphics.IsFullScreen = fullScreen;
+        graphics.PreferredBackBufferWidth = ScreenWidth;
+        graphics.PreferredBackBufferHeight = ScreenHeight;
+        // graphics.ApplyChanges();
         ContentPath = "Content";
 
 
@@ -105,7 +108,7 @@ public class TeuriaEngine : Game
             }
             graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
             graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
-            graphics.ApplyChanges();
+            // graphics.ApplyChanges();
             subViewport.ScreenResolution = new Point(
                 graphics.PreferredBackBufferWidth, 
                 graphics.PreferredBackBufferHeight);
@@ -116,6 +119,8 @@ public class TeuriaEngine : Game
 
     private void UpdateView() 
     {
+        Console.WriteLine(ViewWidth);
+        Console.WriteLine(ViewHeight);
         var screen = new Vector2(
             GraphicsDevice.PresentationParameters.BackBufferWidth, 
             GraphicsDevice.PresentationParameters.BackBufferHeight
@@ -138,6 +143,8 @@ public class TeuriaEngine : Game
             MinDepth = 0,
             MaxDepth = 1
         };
+        Console.WriteLine(ViewWidth);
+        Console.WriteLine(ViewHeight);
 
     }
 
@@ -155,14 +162,12 @@ public class TeuriaEngine : Game
 
     protected override sealed void Initialize()
     {
-        graphics.PreferredBackBufferWidth = ScreenWidth;
-        graphics.PreferredBackBufferHeight = ScreenHeight;
-        graphics.ApplyChanges();
         Init();
-        UpdateView();
-        subViewport = new SubViewport(new Point(540, 320), GraphicsDevice, Color.Black);
+
+        subViewport = new SubViewport(new Point(ViewWidth, ViewHeight), GraphicsDevice, Color.Black);
         subViewport.SamplerState = SamplerState.PointClamp;
         subViewport.ScreenResolution = new Point(ScreenWidth, ScreenHeight);
+        UpdateView();
         // ScreenMatrix = Matrix.CreateScale(ViewWidth / (float)ScreenHeight);
         scene.Initialize();
 
@@ -218,13 +223,21 @@ public class TeuriaEngine : Game
     protected override void Draw(GameTime gameTime)
     {
         Scene?.BeforeRender();
+        // GraphicsDevice.SetRenderTarget(SceneRender);
+        // GraphicsDevice.Clear(Color.Black);
+        // Scene?.Render();
+
         GraphicsDevice.SetRenderTarget(null);
         GraphicsDevice.Clear(Color.Black);
         GraphicsDevice.Viewport = viewport;
-        // Scene?.Render();
+        // spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
+        // spriteBatch.Draw(SceneRender, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 1f);
+        // spriteBatch.End();
         subViewport.Begin();
-        Scene.Render();
+        Scene?.Render();
         subViewport.End();
+
+        Scene?.AfterRender();
 
         base.Draw(gameTime);
 

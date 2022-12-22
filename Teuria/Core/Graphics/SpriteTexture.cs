@@ -197,4 +197,9 @@ public class SpriteTexture
 #endif
         spriteBatch.Draw(Texture, position, rectangle, col, rotation, offset, scale, spriteEffects, zIndex);
     }
+
+    public void Unload() 
+    {
+        Texture.Dispose();
+    }
 }

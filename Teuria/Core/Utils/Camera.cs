@@ -7,6 +7,7 @@ namespace Teuria;
 public class Camera
 {
     private Matrix transform = Matrix.Identity;
+    private Matrix inverse = Matrix.Identity;
     private float angle = 0;
     private Vector2 position = Vector2.Zero;
     private Vector2 zoom = Vector2.One;
@@ -42,7 +43,39 @@ public class Camera
             Matrix.CreateScale(zooming)   *
             Matrix.CreateTranslation(orig);
 
+        inverse = Matrix.Invert(transform);
+
         needChanges = false;
+    }
+
+    public Vector2 ScreenToCamera(Vector2 position) 
+    {
+        return Vector2.Transform(position, inverse);
+    }
+
+    public Vector2 CameraToScreen(Vector2 position) 
+    {
+        return Vector2.Transform(position, transform);
+    }
+
+    public float X 
+    {
+        get => position.X;
+        set 
+        {
+            needChanges = true;
+            position.X = value;
+        }
+    }
+
+    public float Y 
+    {
+        get => position.Y;
+        set 
+        {
+            needChanges = true;
+            position.Y = value;
+        }
     }
 
     public Matrix Transform 

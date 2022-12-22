@@ -7,6 +7,7 @@ using Name =
 System.Text.Json.Serialization.JsonPropertyNameAttribute;
 using System.Text.Json;
 using Microsoft.Xna.Framework;
+using System.Text.Json.Serialization;
 #else
 Newtonsoft.Json.JsonPropertyAttribute;
 using Newtonsoft.Json;
@@ -24,7 +25,7 @@ public class Tileset
     private Tileset(FileStream fs, ContentManager manager, SpriteTexture texture) 
     {
 #if SYSTEMTEXTJSON
-        var result = JsonSerializer.Deserialize<TeuriaTileset>(fs);
+        var result = JsonSerializer.Deserialize<TeuriaTileset>(fs, Loader_TeuriaTileset.Default.TeuriaTileset);
 #else
         using var sr = new StreamReader(fs);
         using var jst = new JsonTextReader(sr);
@@ -62,11 +63,23 @@ public class Tileset
         }
     }
 
+    private Tileset(SpriteTexture texture, int width, int height) 
+    {
+        TilesetAtlas = new TextureAtlas(texture, width, height);
+        Width = width;
+        Height = height;
+    }
+
     public static Tileset LoadTileset(string tilesetPath, ContentManager manager, SpriteTexture texture = null) 
     {
         var path = Path.Join(TeuriaEngine.ContentPath, tilesetPath);
         using var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
         return new Tileset(fs, manager, texture);
+    }
+
+    public static Tileset LoadTileset(SpriteTexture texture, int width, int height) 
+    {
+        return new Tileset(texture, width, height);
     }
 
     public Dictionary<byte, List<Vector2>> InitializeTerrain() 
@@ -118,6 +131,9 @@ internal struct TeuriaTileset
     public int Height { get; set; }
 }
 
+[JsonSerializable(typeof(TeuriaTileset))]
+internal partial class Loader_TeuriaTileset : JsonSerializerContext {}
+
 internal struct TeuriaRules 
 {
     [Name("name")]
@@ -134,3 +150,6 @@ internal struct TeuriaRules
     [Name("maskType")]
     public string MaskType { get; set; }
 }
+
+[JsonSerializable(typeof(TeuriaRules))]
+internal partial class Loader_TeuriaRules : JsonSerializerContext {}

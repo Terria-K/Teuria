@@ -13,8 +13,8 @@ public class Scene
     private List<CanvasLayer> layers = new List<CanvasLayer>();
     private Layers layerList;
     protected ContentManager Content;
-    protected Camera Camera;
-    protected SpriteBatch SpriteBatch;
+    public Camera Camera;
+    public SpriteBatch SpriteBatch;
     public event Action OnPause;
     public SceneCanvas MainCanvas;
     private bool paused;
@@ -161,6 +161,11 @@ public class Scene
         //     entity.Draw(SpriteBatch);
         // }
         layerList.Draw();
+    }
+
+    public virtual void AfterRender() 
+    {
+        layerList.PostDraw();
     }
 
     public virtual void Exit() 

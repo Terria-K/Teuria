@@ -20,7 +20,7 @@ public class TileMap : Entity
         Depth = 3;
         Active = false;
         LevelSize = level.LevelSize;
-        for (int i = level.LevelData.Layers.Length - 1; i > 0; i--) 
+        for (int i = level.LevelData.Layers.Length - 1; i >= 0; i--) 
         {
             var layer = level.LevelData.Layers[i];
             LayerType layerType = LayerType.Tiles;
@@ -36,6 +36,10 @@ public class TileMap : Entity
                 // var tileset = layer.Tileset != null ? tilesets[layer.Tileset] : null;
                 // var newLayer = new Layer(layer, tileset, layerType);
                 // this.layer[layer.Name] = newLayer;
+                layerType = LayerType.Tiles;
+                var tileset = tilesets[layer.Name];
+                var newLayer = new Layer(layer, tileset, layerType);
+                this.layer[layer.Name] = newLayer;
             }
             else if (layer.Grid2D != null) 
             {
@@ -132,7 +136,6 @@ public class TileMap : Entity
         //TODO Optimize this further
         public Layer(OgmoLayer layer, Tileset tileset, LayerType layerType) 
         {
-            var picker = new Picker<Vector2>();
             LayerType = layerType;
             LevelSize = new Point(layer.GridCellsX, layer.GridCellsY);
             Tileset = tileset;
@@ -152,6 +155,7 @@ public class TileMap : Entity
                 case LayerType.Decal:
                     break;
                 case LayerType.Grid:
+                    var picker = new Picker<Vector2>();
                     if (layer.Grid2D is null) 
                     {
                         singleGridData = layer.Grid;

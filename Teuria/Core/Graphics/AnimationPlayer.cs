@@ -132,7 +132,7 @@ public class AnimatedSprite : Component
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        atlas[frameIndex].DrawTexture(spriteBatch, GlobalPosition, Color.White, Rotation, Scale, spriteEffects, Entity.ZIndex);
+        atlas[frameIndex].DrawTexture(spriteBatch, GlobalPosition, Entity.Modulate, Rotation, Scale, spriteEffects, Entity.ZIndex);
         base.Draw(spriteBatch);
     }
 }

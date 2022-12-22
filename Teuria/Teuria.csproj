@@ -2,11 +2,11 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFrameworks>net7.0</TargetFrameworks>
     <LangVersion>10</LangVersion>
 
-    <DefineConstants Condition="'$(TargetFramework)' == 'net6.0'">SYSTEMTEXTJSON</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' != 'net6.0'">NEWTONSOFTJSON</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'net7.0'">SYSTEMTEXTJSON</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' != 'net7.0'">NEWTONSOFTJSON</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
