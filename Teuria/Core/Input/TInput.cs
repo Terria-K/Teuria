@@ -9,6 +9,7 @@ public static class TInput
 {
     private static Dictionary<string, Keys> keyActions = new Dictionary<string, Keys>();
     internal static List<BaseInput> InputList = new List<BaseInput>();
+    internal static List<BindableInput> BindableInputs = new List<BindableInput>();
     public static KeyboardInput Keyboard { get; private set; }
     public static MouseInput Mouse { get; private set; }
 
@@ -28,6 +29,11 @@ public static class TInput
         foreach (var input in InputList) 
         {
             input.Update();
+        }
+
+        foreach (var bindableInput in BindableInputs) 
+        {
+            bindableInput.Update();
         }
     }
 

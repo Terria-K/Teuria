@@ -15,21 +15,22 @@ public class KeyboardInput : BaseInput
 
     public bool Pressed(Keys key) 
     {
-        return CurrentState.IsKeyDown(key);
+        return !Disabled && CurrentState.IsKeyDown(key);
     }
 
     public bool JustPressed(Keys key) 
     {
-        return CurrentState.IsKeyDown(key) && !PreviousState.IsKeyDown(key);
+        return !Disabled && CurrentState.IsKeyDown(key) && !PreviousState.IsKeyDown(key);
     }
 
     public bool Released(Keys key) 
     {
-        return !CurrentState.IsKeyDown(key) && PreviousState.IsKeyDown(key);
+        return !Disabled && !CurrentState.IsKeyDown(key) && PreviousState.IsKeyDown(key);
     }
 
     public int GetAxis(Keys neg, Keys pos) 
     {
+        if (Disabled) return 0;
         return Pressed(neg) 
             ? (Pressed(pos) ? 0 : -1) 
             : (Pressed(pos) ? 1 : 0);

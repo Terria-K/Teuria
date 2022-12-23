@@ -66,6 +66,33 @@ public class OgmoLevelData
     public int OffsetY { get; set; }
     [Name("layers")]
     public OgmoLayer[] Layers { get; set; }
+    [Name("values")]
+    public Dictionary<string, JsonElement> Values { get; set; }
+
+    public int GetValueInt(string valueName) 
+    {
+        return Values[valueName].GetInt32();
+    }
+
+    public bool GetValueBoolean(string valueName) 
+    {
+        return Values[valueName].GetBoolean();
+    }
+
+    public float GetValueFloat(string valueName) 
+    {
+        return Values[valueName].GetSingle();
+    }
+
+    public Vector2 GetValueVector2(string x, string y) 
+    {
+        return new Vector2(Values[x].GetSingle(), Values[y].GetSingle());
+    }
+
+    public string GetValueString(string valueName) 
+    {
+        return Values[valueName].GetString();
+    }
     
 }
 

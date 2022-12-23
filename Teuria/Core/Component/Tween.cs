@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 namespace Teuria;
@@ -26,16 +27,25 @@ public class Tween : Component
     public Action<Tween> OnProcess;
     public Action<Tween> OnEnd;
 
+    private static Stack<Tween> cached = new Stack<Tween>();
 
-    public Tween(TweenMode mode, Ease.Easer easer = null, float duration = 1f, bool start = false) 
+
+    public Tween() {}
+
+    public static Tween Create(Entity entity, TweenMode mode, Ease.Easer easer = null, float duration = 1f) 
     {
-        Mode = mode;
-        Easer = easer;
-        Duration = duration;
-
-        TimeLeft = 0;
-        Progress = 0;
-        Active = false;
+        Tween tween;
+        if (cached.Count == 0)
+            tween = new Tween();
+        else
+            tween = cached.Pop();
+        tween.Mode = mode;
+        tween.Easer = easer;
+        tween.Duration = duration;
+        tween.Active = false;
+        
+        entity.AddComponent(tween);
+        return tween;
     }
 
     public override void Added(Entity entity)
