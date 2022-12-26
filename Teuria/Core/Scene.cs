@@ -17,6 +17,7 @@ public class Scene
     public SpriteBatch SpriteBatch;
     public event Action OnPause;
     public SceneCanvas MainCanvas;
+    public float TimeActive;
     private bool paused;
     public bool Paused 
     {
@@ -134,6 +135,8 @@ public class Scene
     }
     public virtual void ProcessLoop() 
     {
+        if (!Paused)
+            TimeActive += TeuriaEngine.DeltaTime;
         // if (QueueToFree.Count > 0)
         //     QueueToFree.Dequeue().Free();
         layerList.UpdateLists();

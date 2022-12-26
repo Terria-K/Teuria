@@ -32,10 +32,6 @@ public class TileMap : Entity
             }
             else if (layer.Data != null) 
             {
-                // layerType = LayerType.Tiles;
-                // var tileset = layer.Tileset != null ? tilesets[layer.Tileset] : null;
-                // var newLayer = new Layer(layer, tileset, layerType);
-                // this.layer[layer.Name] = newLayer;
                 layerType = LayerType.Tiles;
                 var tileset = tilesets[layer.Name];
                 var newLayer = new Layer(layer, tileset, layerType);
@@ -132,6 +128,16 @@ public class TileMap : Entity
         public OgmoEntity[] entities;
         public Point LevelSize;
         public LayerType LayerType;
+#region Constants
+        private const int NorthWest = 1 << 0;
+        private const int North = 1 << 1;
+        private const int NorthEast = 1 << 2;
+        private const int West = 1 << 3;
+        private const int East = 1 << 4;
+        private const int SouthWest = 1 << 5;
+        private const int South = 1 << 6;
+        private const int SouthEast = 1 << 7;
+#endregion
 
         //TODO Optimize this further
         public Layer(OgmoLayer layer, Tileset tileset, LayerType layerType) 
@@ -166,59 +172,42 @@ public class TileMap : Entity
 #else
                     gridData = layer.Grid2D;
 #endif
-                    data = ApplyAutotile(gridData.ToIntArray(), picker, Tileset.InitializeTerrain());
+                    data = ApplyAutotile(gridData, picker, Tileset.InitializeTerrain());
                     break;
             }
         }
 
-        private bool Check(int x, int y, int[,] grids) 
+        private bool Check(int x, int y, string[,] grids) 
         {
             if (!(x < grids.GetLength(0) && y < grids.GetLength(1) && x >= 0 && y >= 0)) 
             {
                 return true;
             }
             var gr = grids[x, y];
-            if (gr == 0)
+            if (gr == "0")
                 return false;
             return true;
         }
 
-        private const int NorthWest = 1 << 0;
-        private const int North = 1 << 1;
-        private const int NorthEast = 1 << 2;
-        private const int West = 1 << 3;
-        private const int East = 1 << 4;
-        private const int SouthWest = 1 << 5;
-        private const int South = 1 << 6;
-        private const int SouthEast = 1 << 7;
-
-        public int[,] ApplyAutotile(int[,] grids, Picker<Vector2> picker, Dictionary<byte, List<Vector2>> masks) 
+        public int[,] ApplyAutotile(string[,] grids, Picker<Vector2> picker, Dictionary<byte, List<Vector2>> masks) 
         {
             var newGrid = new int[LevelSize.Y, LevelSize.X];
-            for (int x = 0; x < LevelSize.X; x++) 
-            {
+
+            for (int x = 0; x < LevelSize.X; x++)
                 for (int y = 0; y < LevelSize.Y; y++) 
                 {
                     var check = (int x, int y) => Check(x, y, grids);
-                    
-                    if (grids[y, x] == 0) 
+                    if (grids[y, x] == "0") 
                     {
                         newGrid[y, x] = -1;
                         continue;
                     }
                     var mask = 0;
 
-                    if (check(y, x + 1))
-                        mask += East;
-
-                    if (check(y, x - 1))
-                        mask += West;
-
-                    if (check(y + 1, x))
-                        mask += South;
-
-                    if (check(y - 1, x))
-                        mask += North;
+                    if (check(y, x + 1)) mask += East;
+                    if (check(y, x - 1)) mask += West;
+                    if (check(y + 1, x)) mask += South;
+                    if (check(y - 1, x)) mask += North;
 
                     if ((mask & (South | West)) == (South | West) && check(y + 1, x - 1))
                         mask += SouthWest;
@@ -232,33 +221,16 @@ public class TileMap : Entity
                     if ((mask & (North | East)) == (North | East) && check(y - 1, x + 1))
                         mask += NorthEast;
 
-                    List<Vector2> finalMask = masks[(byte)mask]; 
+                    List<Vector2> texture = masks[(byte)mask]; 
 
-                    picker.AddOption(finalMask, 1f);
+                    picker.AddOption(texture, 1f);
                     var picked = picker.Pick();
                     var idx = Tileset.TilesetAtlas.GetIndex((int)picked.X, (int)picked.Y);
 
                     newGrid[y, x] = idx; 
                     picker.Clear();
                 }
-            }
             return newGrid;
-        }
-
-        public void DrawGrid(SpriteBatch spriteBatch) 
-        {
-            if (gridData == null) return;
-            for (int y = 0; y < LevelSize.X; y++) 
-            {
-                for (int x = 0; x < LevelSize.Y; x++) 
-                {
-                    var tile = gridData[x, y];
-                    if (tile == "0")
-                        continue;
-                    var texture = Tileset.TilesetAtlas[0];
-                    texture.DrawTexture(spriteBatch, new Vector2(y * Tileset.Height, x * Tileset.Width));
-                }
-            }
         }
 
         public void Draw(SpriteBatch spriteBatch) 

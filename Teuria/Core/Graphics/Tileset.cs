@@ -17,38 +17,43 @@ namespace Teuria;
 
 public class Tileset 
 {
+    public List<Terrain> Terrains = new List<Terrain>();
     public TextureAtlas TilesetAtlas;
-    public int Width { get; init; }
-    public int Height { get; init; }
+    public int Width { get; private set; }
+    public int Height { get; private set ; }
     private List<Rules> rules = new List<Rules>();    
 
     private Tileset(FileStream fs, ContentManager manager, SpriteTexture texture) 
     {
-#if SYSTEMTEXTJSON
+        AddToList(fs, texture, manager);
+    }
+
+    private Tileset(SpriteTexture texture, int width, int height) 
+    {
+        TilesetAtlas = new TextureAtlas(texture, width, height);
+        Width = width;
+        Height = height;
+    }
+
+    private void AddToList(FileStream fs, SpriteTexture texture, ContentManager manager) 
+    {
         var result = JsonSerializer.Deserialize<TeuriaTileset>(fs, Loader_TeuriaTileset.Default.TeuriaTileset);
-#else
-        using var sr = new StreamReader(fs);
-        using var jst = new JsonTextReader(sr);
-        var serializer = new JsonSerializer();
-        var result = serializer.Deserialize<OgmoLevelData>(jst);
-#endif
+
         var textureAtlas = new TextureAtlas(texture == null 
             ? SpriteTexture.FromContent(manager, result.Path)
             : texture, result.Width, result.Height);
         TilesetAtlas = textureAtlas;
         Width = result.Width;
         Height = result.Height;
+        var terrain = new Terrain(result.Name);
 
         for (int i = 0; i < result.Rules.Length; i++) 
         {
             var rule = new Rules();
             var teuriaRule = result.Rules[i];
             var tile =
-#if SYSTEMTEXTJSON
             teuriaRule.Tiles.To2D();
-#else
-            teuriaRule.Tiles;
-#endif
+
             if (teuriaRule.Mask == null) { continue; }
             for (int mask = 0; mask < teuriaRule.Mask.Length; mask++) 
             {
@@ -60,14 +65,16 @@ public class Tileset
                 rule.TextureLocation.Add(new Vector2(tile[j, 0] - 1, tile[j, 1] - 1));
             }
             rules.Add(rule);
+            terrain.RulesList.Add(rule);
         }
+        Terrains.Add(terrain);
     }
 
-    private Tileset(SpriteTexture texture, int width, int height) 
+    public void AddTerrain(string tilesetPath, SpriteTexture texture) 
     {
-        TilesetAtlas = new TextureAtlas(texture, width, height);
-        Width = width;
-        Height = height;
+        var path = Path.Join(TeuriaEngine.ContentPath, tilesetPath);
+        using var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
+        AddToList(fs, texture, null);
     }
 
     public static Tileset LoadTileset(string tilesetPath, ContentManager manager, SpriteTexture texture = null) 
@@ -84,11 +91,7 @@ public class Tileset
 
     public Dictionary<byte, List<Vector2>> InitializeTerrain() 
     {
-#if NET5_0_OR_GREATER
         ReadOnlySpan<int> directionalValues = stackalloc int[9]     
-#else 
-        int[] directionalValues = new int[9]     
-#endif
         {
             0x001, 0x002, 0x004,
             0x008, 0x000, 0x010,
@@ -114,6 +117,17 @@ public class Tileset
         public byte[] Mask = new byte[9];
         public List<Vector2> TextureLocation = new List<Vector2>();
         public List<SpriteTexture> Textures = new List<SpriteTexture>();
+    }
+
+    public class Terrain 
+    {
+        public string Name;
+        public List<Rules> RulesList = new List<Rules>();
+
+        public Terrain(string name) 
+        {
+            Name = name;
+        }
     }
 }
 
