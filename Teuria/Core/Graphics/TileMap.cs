@@ -103,8 +103,10 @@ public class TileMap : Entity
             switch (layer.Value.LayerType) 
             {
                 case LayerType.Tiles:
-                case LayerType.Grid:
                     layer.Value.Draw(spriteBatch);
+                    break;
+                case LayerType.Grid:
+                    layer.Value.DrawTextures(spriteBatch);
                     break;
                     // layer.Value.DrawGrid(spriteBatch);
                     // break;
@@ -128,6 +130,7 @@ public class TileMap : Entity
         public OgmoEntity[] entities;
         public Point LevelSize;
         public LayerType LayerType;
+        private Array2D<SpriteTexture> textureGridData;
 #region Constants
         private const int NorthWest = 1 << 0;
         private const int North = 1 << 1;
@@ -161,7 +164,8 @@ public class TileMap : Entity
                 case LayerType.Decal:
                     break;
                 case LayerType.Grid:
-                    var picker = new Picker<Vector2>();
+                    textureGridData = new Array2D<SpriteTexture>(LevelSize.Y, LevelSize.X);
+                    var picker = new Picker<SpriteTexture>();
                     if (layer.Grid2D is null) 
                     {
                         singleGridData = layer.Grid;
@@ -172,7 +176,7 @@ public class TileMap : Entity
 #else
                     gridData = layer.Grid2D;
 #endif
-                    data = ApplyAutotile(gridData, picker, Tileset.InitializeTerrain());
+                    data = ApplyAutotile(gridData, picker);
                     break;
             }
         }
@@ -189,7 +193,7 @@ public class TileMap : Entity
             return true;
         }
 
-        public int[,] ApplyAutotile(string[,] grids, Picker<Vector2> picker, Dictionary<byte, List<Vector2>> masks) 
+        public int[,] ApplyAutotile(string[,] grids, Picker<SpriteTexture> picker) 
         {
             var newGrid = new int[LevelSize.Y, LevelSize.X];
 
@@ -221,16 +225,31 @@ public class TileMap : Entity
                     if ((mask & (North | East)) == (North | East) && check(y - 1, x + 1))
                         mask += NorthEast;
 
-                    List<Vector2> texture = masks[(byte)mask]; 
+                    var masker = Tileset.GetTerrainRules(grids[y, x]);
+                    var rule = masker[(byte)mask];
 
-                    picker.AddOption(texture, 1f);
-                    var picked = picker.Pick();
-                    var idx = Tileset.TilesetAtlas.GetIndex((int)picked.X, (int)picked.Y);
+                    picker.AddOption(rule.Textures, 1f);
+                    textureGridData[x, y] = picker.Pick();
 
-                    newGrid[y, x] = idx; 
                     picker.Clear();
                 }
             return newGrid;
+        }
+
+        public void DrawTextures(SpriteBatch spriteBatch) 
+        {
+            if (textureGridData == null) return; 
+            for (int w = 0; w < LevelSize.X; w++) 
+            {
+                for (int x = 0; x < LevelSize.Y; x++) 
+                {
+                    var gid = textureGridData[w, x];
+                    if (gid == null) continue;
+                    gid.DrawTexture(
+                        spriteBatch, 
+                        new Vector2(w * 8, x * 8));
+                }
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch) 

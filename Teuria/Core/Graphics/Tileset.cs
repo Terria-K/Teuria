@@ -2,18 +2,14 @@ using System.IO;
 using Microsoft.Xna.Framework.Content;
 using System.Collections.Generic;
 using System;
-using Name =
-#if SYSTEMTEXTJSON
-System.Text.Json.Serialization.JsonPropertyNameAttribute;
+using Name = System.Text.Json.Serialization.JsonPropertyNameAttribute;
 using System.Text.Json;
 using Microsoft.Xna.Framework;
 using System.Text.Json.Serialization;
-#else
-Newtonsoft.Json.JsonPropertyAttribute;
-using Newtonsoft.Json;
-#endif
+using System.Linq;
 
 namespace Teuria;
+
 
 public class Tileset 
 {
@@ -62,7 +58,6 @@ public class Tileset
             for (int j = 0; j < tile.GetLength(0); j++) 
             {
                 rule.Textures.Add(TilesetAtlas[tile[j, 0] - 1, tile[j, 1] - 1]);
-                rule.TextureLocation.Add(new Vector2(tile[j, 0] - 1, tile[j, 1] - 1));
             }
             rules.Add(rule);
             terrain.RulesList.Add(rule);
@@ -89,7 +84,7 @@ public class Tileset
         return new Tileset(texture, width, height);
     }
 
-    public Dictionary<byte, List<Vector2>> InitializeTerrain() 
+    public Dictionary<byte, Rules> GetTerrainRules(string terrainName) 
     {
         ReadOnlySpan<int> directionalValues = stackalloc int[9]     
         {
@@ -97,9 +92,9 @@ public class Tileset
             0x008, 0x000, 0x010,
             0x020, 0x040, 0x080,
         };
-
-        var dict = new Dictionary<byte, List<Vector2>>();
-        foreach (var rule in rules) 
+        var dict = new Dictionary<byte, Rules>();
+        var terrain = Terrains.Where(x => x.Name == terrainName).First();
+        foreach (var rule in terrain.RulesList) 
         {
             byte bit = 0;
             for (int i = 0; i < rule.Mask.Length; i++) 
@@ -107,7 +102,7 @@ public class Tileset
                 var mask = rule.Mask[i];
                 bit += (byte)((int)mask * directionalValues[i]);
             }
-            dict.Add(bit, rule.TextureLocation);
+            dict.Add(bit, rule);
         }
         return dict;
     }
@@ -115,7 +110,6 @@ public class Tileset
     public class Rules 
     {
         public byte[] Mask = new byte[9];
-        public List<Vector2> TextureLocation = new List<Vector2>();
         public List<SpriteTexture> Textures = new List<SpriteTexture>();
     }
 
@@ -154,13 +148,8 @@ internal struct TeuriaRules
     public string Name { get; set; }
     [Name("mask")]
     public int[] Mask { get; set; }
-#if !SYSTEMTEXTJSON
-    [Name("tiles")]
-    public int[,] Tiles { get; set; }
-#else
     [Name("tiles")]
     public int[][] Tiles { get; set; }
-#endif
     [Name("maskType")]
     public string MaskType { get; set; }
 }

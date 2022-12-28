@@ -76,12 +76,19 @@ public class Scene
         entityList.Add(entity);
     }
 
+    public void Add<T>(List<T> entities) 
+    where T : Entity
+    {
+        foreach (var entity in entities) 
+        {
+            entityList.Add(entity);
+        }
+    }
+
     public void Add(CanvasLayer layer) 
     {
         layer.Obtain(this);
         layerList.Add(layer);
-        // layer.Obtain(SpriteBatch, this);
-        // layers.Add(layer);
     }
 
     public void Remove(CanvasLayer layer) 
@@ -128,10 +135,7 @@ public class Scene
     public virtual void Initialize() {}
     public virtual void Hierarchy(GraphicsDevice device) 
     {
-        // foreach(var entity in nodeList) 
-        // {
-        //     entity.Ready();
-        // }
+
     }
     public virtual void ProcessLoop() 
     {
@@ -179,6 +183,16 @@ public class Scene
     internal ContentManager GetContent() 
     {
         return Content;
+    }
+
+    public T CreateEntity<T>(string name = default) 
+    where T : Entity, new()
+    {
+        if (name == default)
+            name = typeof(T).Name;
+        var entity = new T();
+        Add(entity);
+        return entity;
     }
 
     public List<T> GetEntities<T>() 

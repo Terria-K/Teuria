@@ -32,7 +32,7 @@ public class Tween : Component
 
     public Tween() {}
 
-    public static Tween Create(Entity entity, TweenMode mode, Ease.Easer easer = null, float duration = 1f) 
+    public static Tween Create(Entity entity, TweenMode mode, Ease.Easer easer = null, float duration = 1f, bool start = false) 
     {
         Tween tween;
         if (cached.Count == 0)
@@ -45,6 +45,9 @@ public class Tween : Component
         tween.Active = false;
         
         entity.AddComponent(tween);
+        if (start) 
+            tween.Start();
+        
         return tween;
     }
 
