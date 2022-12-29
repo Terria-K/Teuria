@@ -198,6 +198,16 @@ public class SpriteTexture
         spriteBatch.Draw(Texture, position, rectangle, col, rotation, offset, scale, spriteEffects, zIndex);
     }
 
+    public void DrawTexture(SpriteBatch spriteBatch, Rectangle destRect, Color color, float rotation, Vector2 offset, float scale, SpriteEffects spriteEffects, float zIndex) 
+    {
+        var col = color;
+#if DEBUG
+        if (RectangleShape.DebugRender)
+            col = color * 0.5f;
+#endif
+        spriteBatch.Draw(Texture, destRect, Clip, col, rotation, offset, spriteEffects, zIndex);
+    }
+
     public void Unload() 
     {
         Texture.Dispose();

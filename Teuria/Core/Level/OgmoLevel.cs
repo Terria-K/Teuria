@@ -172,6 +172,10 @@ public class OgmoEntity
     public int Width { get; set; }
     [Name("height")]
     public int Height { get; set; }
+    [Name("flippedX")]
+    public bool FlippedX { get; set; }
+    [Name("flippedY")]
+    public bool FlippedY { get; set; }
     [Name("nodes")]
     public OgmoNode[] Nodes { get; set; }
     [Name("values")]

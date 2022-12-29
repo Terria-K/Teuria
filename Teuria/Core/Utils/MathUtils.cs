@@ -58,6 +58,21 @@ public static class MathUtils
         return new Vector2((float)Math.Cos(radians) * length, (float)Math.Sin(radians) * length);
     }
 
+    public static Vector2 Approach(Vector2 val, Vector2 target, float maxMove)
+    {
+        if (maxMove == 0 || val == target)
+            return val;
+
+        var diff = target - val;
+        var length = diff.Length();
+
+        if (length < maxMove)
+            return target;
+
+        diff.Normalize();
+        return val + diff * maxMove;
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2 ToInt(this Vector2 vec) 
     {

@@ -71,7 +71,6 @@ public class Node
     public virtual void Ready() {}
     public virtual void Update() 
     {
-        
     }
     public virtual void Draw(SpriteBatch spriteBatch) 
     {
