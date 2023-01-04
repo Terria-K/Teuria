@@ -8,9 +8,11 @@ namespace Teuria;
 
 public class Label : Entity 
 {
+    public enum LabelType { Normal, Outline }
     public SpriteFont SpriteFont { get; private set; }
     public string Text { get; set; }
     public float Size { get; set; } = 1;
+    public LabelType TextType;
     public Rectangle Rect { get; set; }
 
     public Label(SpriteFont spriteFont, Rectangle rectangle = default)
@@ -59,7 +61,16 @@ public class Label : Entity
         var text = Text;
         if (Rect.Width > 0)
             text = WrapText();
-        spriteBatch.DrawString(SpriteFont, text, Position, Modulate, Rotation, Vector2.Zero, Size, SpriteEffects.None, ZIndex);
+        
+        switch (TextType) 
+        {
+        case LabelType.Normal:
+            Canvas.DrawText(SpriteFont, text, Position, Modulate, Vector2.Zero, new Vector2(Size), Rotation);
+            break;
+        case LabelType.Outline:
+            Canvas.DrawOutlineTextAlign(SpriteFont, text, Position, Modulate, Color.Black, new Vector2(0, 0), Size);
+            break;
+        }
         base.Draw(spriteBatch);
     }
 }

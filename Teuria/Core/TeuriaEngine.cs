@@ -119,8 +119,6 @@ public class TeuriaEngine : Game
 
     private void UpdateView() 
     {
-        Console.WriteLine(ViewWidth);
-        Console.WriteLine(ViewHeight);
         var screen = new Vector2(
             GraphicsDevice.PresentationParameters.BackBufferWidth, 
             GraphicsDevice.PresentationParameters.BackBufferHeight
@@ -143,9 +141,6 @@ public class TeuriaEngine : Game
             MinDepth = 0,
             MaxDepth = 1
         };
-        Console.WriteLine(ViewWidth);
-        Console.WriteLine(ViewHeight);
-
     }
 
     private void ViewSize(ref Vector2 screen) 

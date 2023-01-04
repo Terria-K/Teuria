@@ -96,6 +96,10 @@ public class SpriteTexture
         return new Rectangle(pos.X, pos.Y, w, h);
     }
 
+    public Rectangle GetAbsoluteRect(Rectangle rectangle) => new Rectangle(
+        rectangle.X + Clip.X, rectangle.Y + Clip.Y, rectangle.Width, rectangle.Height   
+    );
+
     public static SpriteTexture FromFile(GraphicsDevice device, string filename) 
     {
         return new SpriteTexture(TextureImporter.LoadImage(device, filename));
@@ -106,9 +110,7 @@ public class SpriteTexture
         return new SpriteTexture(content.Load<Texture2D>(filename));
     }
 
-    
-
-    private Rectangle[] CreatePatches(Rectangle rectangle, int left, int right, int bottom, int top) 
+    internal Rectangle[] CreatePatches(Rectangle rectangle, int left, int right, int bottom, int top) 
     {
         var x = rectangle.X;
         var y = rectangle.Y;
@@ -135,16 +137,20 @@ public class SpriteTexture
         return patches;
     }
 
-    public void DrawTexture(SpriteBatch spriteBatch, Rectangle rectangle) 
+    public void DrawTexture(SpriteBatch spriteBatch, Rectangle rectangle, Color color) 
     {
-        var col = Color.White;
 #if DEBUG
         if (RectangleShape.DebugRender)
-            col = Color.White * 0.5f;
+            color = Color.White * 0.5f;
 #endif
         var destPatches = CreatePatches(rectangle, Padding.X, Padding.X + Padding.Width, Padding.Y, Padding.Y + Padding.Height);
         for (int i = 0; i < Patches.Length; i++)
-            spriteBatch.Draw(Texture, sourceRectangle: Patches[i], destinationRectangle: destPatches[i], color: col);
+            spriteBatch.Draw(Texture, sourceRectangle: Patches[i], destinationRectangle: destPatches[i], color: color);
+    }
+
+    public void DrawTexture(SpriteBatch spriteBatch, Rectangle rectangle) 
+    {
+        DrawTexture(spriteBatch, rectangle, Color.White);
     }
 
     public void DrawTexture(SpriteBatch spriteBatch, Vector2 position) 
@@ -181,11 +187,15 @@ public class SpriteTexture
     public void DrawTexture(SpriteBatch spriteBatch, Vector2 position, Rectangle rectangle, Color color, float rotation, Vector2 offset, Vector2 scale, SpriteEffects spriteEffects, float zIndex) 
     {
         var col = color;
+        Rectangle rect = default;
+        if (rectangle != default) 
+            rect = GetAbsoluteRect(rectangle);
+        else rect = Clip;
 #if DEBUG
         if (RectangleShape.DebugRender)
             col = color * 0.5f;
 #endif
-        spriteBatch.Draw(Texture, position, rectangle, col, rotation, offset, scale, spriteEffects, zIndex);
+        spriteBatch.Draw(Texture, position, rect, col, rotation, offset, scale, spriteEffects, zIndex);
     }
 
     public void DrawTexture(SpriteBatch spriteBatch, Vector2 position, Rectangle rectangle, Color color, float rotation, Vector2 offset, float scale, SpriteEffects spriteEffects, float zIndex) 

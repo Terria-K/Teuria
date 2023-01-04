@@ -37,6 +37,14 @@ public class Picker<T>
         }
     }
 
+    public void AddOption(T[] options, float weight) 
+    {
+        foreach (var option in options) 
+        {
+            AddOption(option, weight);
+        }
+    }
+
     public T Pick()
     {
         if (options.Count == 1)

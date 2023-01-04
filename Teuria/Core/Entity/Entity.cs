@@ -22,13 +22,17 @@ public class Entity : Node, IEnumerable<Component>
 
     public override void EnterScene(Scene scene, ContentManager content) 
     {
+        foreach (var comp in components) 
+            comp.EntityEntered(scene);
+        
         base.EnterScene(scene, content);
     }
     public override void ExitScene() 
     {
-        for (int i = 0; i < components.Count; i++) 
+        foreach (var comp in components) 
         {
-            components[i].Removed();
+            comp.Removed();
+            comp.EntityExited(Scene);
         }
         base.ExitScene();
     }
@@ -60,7 +64,6 @@ public class Entity : Node, IEnumerable<Component>
 
     public T GetComponent<T>() where T : Component
     {
-#if NET6_0
         Span<Component> comps = CollectionsMarshal.AsSpan(components);
         foreach (var comp in comps) 
         {
@@ -69,16 +72,8 @@ public class Entity : Node, IEnumerable<Component>
                 return comp as T;
             }
         }
-#else
-        foreach (var component in this) 
-        {
-            if (component is T) 
-            {
-                return (T)component;
-            }
-        }
-#endif
-        throw new Exception($"{typeof(T).Name} Component not found in this Entity!");
+    
+        return default;
     }
 
     public void RemoveComponent(Component comp) 

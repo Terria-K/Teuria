@@ -8,9 +8,9 @@ namespace Teuria;
 
 public class Scene 
 {
-    internal Queue<Node> QueueToFree = new Queue<Node>();
+    internal Queue<Node> QueueToFree = new();
     private Entities entityList;
-    private List<CanvasLayer> layers = new List<CanvasLayer>();
+    private List<CanvasLayer> layers = new();
     private Layers layerList;
     protected ContentManager Content;
     public Camera Camera;
@@ -57,10 +57,10 @@ public class Scene
 
     internal void Activate(SpriteBatch spriteBatch) 
     {
-        this.SpriteBatch = spriteBatch;
+        SpriteBatch = spriteBatch;
     }
 
-    internal void AddToQueue(Node entity) 
+    internal void AddToQueue(Node entity)
     {
         QueueToFree.Enqueue(entity);
     }
@@ -73,7 +73,7 @@ public class Scene
 
     public void Add(Entity entity) 
     {
-        entityList.Add(entity);
+        Add(entity, PauseMode.Inherit);
     }
 
     public void Add<T>(List<T> entities) 
@@ -108,7 +108,6 @@ public class Scene
     public void RemoveAllEntities() 
     {
         entityList.Clear();
-        // nodeList.Clear();
     }
 
     public void RemoveAllEntitiesByFilter(Func<Entity, bool> predicate) 
@@ -185,11 +184,9 @@ public class Scene
         return Content;
     }
 
-    public T CreateEntity<T>(string name = default) 
+    public T CreateEntity<T>() 
     where T : Entity, new()
     {
-        if (name == default)
-            name = typeof(T).Name;
         var entity = new T();
         Add(entity);
         return entity;

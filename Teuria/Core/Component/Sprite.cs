@@ -34,6 +34,7 @@ public class Sprite : Component
     public Vector2 PivotOffset { get; set; }
 
     public float Rotation { get; set; }
+    public Rectangle Rect;
     private bool useNinePatch;
 
     public Sprite(SpriteTexture texture, bool cleanUp = false, bool useNinePatch = false)
@@ -54,6 +55,14 @@ public class Sprite : Component
         this.useNinePatch = useNinePatch;
     }
 
+    public Sprite(SpriteTexture texture, Rectangle clipRect, bool cleanUp = false, bool useNinePatch = false) 
+    {
+        Texture = texture;
+        Width = clipRect.Width;
+        Height = clipRect.Height;
+        Rect = clipRect;
+    }
+
     public override void Update() {}
     
     public override void Draw(SpriteBatch spriteBatch)
@@ -61,15 +70,17 @@ public class Sprite : Component
         if (useNinePatch)  
         {
             Texture.DrawTexture(spriteBatch, new Rectangle(
-                (int)Entity.Position.X, 
-                (int)Entity.Position.Y,
-                Width, Height)
+                (int)(Entity.Position.X + PivotOffset.X), 
+                (int)(Entity.Position.Y + PivotOffset.Y),
+                Width, Height), 
+                Modulate
             );
             return;
         }
         Texture.DrawTexture(
             spriteBatch, 
             Entity.Position, 
+            Rect,
             Modulate, 
             Rotation + Entity.Rotation, 
             -PivotOffset, 
