@@ -1,0 +1,3 @@
+[submodule "LightJson"]
+	path = LightJson
+	url = https://github.com/Terria028/TeuriaLightJson
