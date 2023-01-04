@@ -152,11 +152,7 @@ public class TileMap : Entity
             switch (LayerType) 
             {
                 case LayerType.Tiles:
-#if SYSTEMTEXTJSON
-                    data = layer.Data.To2D();
-#else
                     data = layer.Data; 
-#endif
                     break;
                 case LayerType.Entities:
                     entities = layer.Entities;
@@ -171,11 +167,8 @@ public class TileMap : Entity
                         singleGridData = layer.Grid;
                         return;
                     }
-#if SYSTEMTEXTJSON
-                    gridData = layer.Grid2D.To2D();
-#else
+
                     gridData = layer.Grid2D;
-#endif
                     data = ApplyAutotile(gridData, picker);
                     break;
             }

@@ -16,6 +16,11 @@
   <ItemGroup Condition="$(DefineConstants.Contains(NEWTONSOFTJSON))">
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../LightJson/Sources/LightJson/LightJson.csproj">
+      <PrivateAssets>false</PrivateAssets>
+    </ProjectReference>
+  </ItemGroup>
   <!-- <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />
   </ItemGroup> -->

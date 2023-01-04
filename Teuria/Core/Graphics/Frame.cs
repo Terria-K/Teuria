@@ -1,38 +1,22 @@
 using System.Collections.Generic;
-using Name =
-#if SYSTEMTEXTJSON
-System.Text.Json.Serialization.JsonPropertyNameAttribute;
-using System.Text.Json;
 using Microsoft.Xna.Framework;
-using System.IO;
 using Microsoft.Xna.Framework.Content;
-using System.Text.Json.Serialization;
-#else
-Newtonsoft.Json.JsonPropertyAttribute;
-using Newtonsoft.Json;
-#endif
+using LightJson;
+
 
 namespace Teuria;
 
 public readonly ref struct SpriteFrameLoader 
 {
-    public TextureAtlas Atlas { get; init; }
-    public SpriteTexture Texture { get; init; }
-    public Vector2 Size { get; init; }
-    public Dictionary<string, SFCyclesFrame> CycleFrame { get; init; }
+    internal TextureAtlas Atlas { get; init; }
+    internal SpriteTexture Texture { get; init; }
+    internal Vector2 Size { get; init; }
+    internal Dictionary<string, SFCyclesFrame> CycleFrame { get; init; }
     
     public SpriteFrameLoader(string contentTexturePath, ContentManager content) 
     {
-        using var fs = new FileStream("Content/" + contentTexturePath + ".sf", FileMode.Open, FileAccess.Read);
+        var result = JsonConvert.DeserializeFromFile<SpriteFactory>($"Content/{contentTexturePath}.sf");
 
-#if SYSTEMTEXTJSON
-        var result = JsonSerializer.Deserialize<SpriteFactory>(fs, Loader_SpriteFactory.Default.SpriteFactory);
-#else
-        using var sr = new StreamReader(fs);
-        using var jst = new JsonTextReader(sr);
-        var serializer = new JsonSerializer();
-        var result = serializer.Deserialize<SpriteFactory>(jst);
-#endif   
         Texture = SpriteTexture.FromContent(content, contentTexturePath);
         var atlas = result.SFAtlas;
         Atlas = new TextureAtlas(Texture, atlas.RegionWidth, atlas.RegionHeight);
@@ -42,16 +26,8 @@ public readonly ref struct SpriteFrameLoader
 
     public SpriteFrameLoader(string sfPath, SpriteTexture texture) 
     {
-        using var fs = new FileStream("Content/" + sfPath + ".sf", FileMode.Open, FileAccess.Read);
-
-#if SYSTEMTEXTJSON
-        var result = JsonSerializer.Deserialize<SpriteFactory>(fs, Loader_SpriteFactory.Default.SpriteFactory);
-#else
-        using var sr = new StreamReader(fs);
-        using var jst = new JsonTextReader(sr);
-        var serializer = new JsonSerializer();
-        var result = serializer.Deserialize<SpriteFactory>(jst);
-#endif   
+        var result = JsonConvert.DeserializeFromFile<SpriteFactory>($"Content/{sfPath}.sf");
+        
         var atlas = result.SFAtlas;
         Texture = texture;
         Atlas = new TextureAtlas(Texture, atlas.RegionWidth, atlas.RegionHeight);
@@ -60,37 +36,45 @@ public readonly ref struct SpriteFrameLoader
     }
 }
 
-internal struct SpriteFactory 
+internal struct SpriteFactory : IJsonDeserializable
 {
-    [Name("textureAtlas")]
     public SFAtlas SFAtlas { get; set; }
-    [Name("cycles")]
     public Dictionary<string, SFCyclesFrame> SFCycles { get; set; }
+
+    public void Deserialize(JsonObject obj)
+    {
+        SFAtlas = JsonConvert.Deserialize<SFAtlas>(obj["textureAtlas"]);       
+        var dict = obj["cycles"].AsJsonObject;
+        SFCycles = new Dictionary<string, SFCyclesFrame>();
+        foreach (var dic in dict) 
+        {
+            SFCycles.Add(dic.Key, JsonConvert.Deserialize<SFCyclesFrame>(dic.Value));
+        }
+    }
 }
 
-[JsonSerializable(typeof(SpriteFactory))]
-internal partial class Loader_SpriteFactory : JsonSerializerContext {}
-
-internal struct SFAtlas 
+internal struct SFAtlas : IJsonDeserializable
 {
-    [Name("texture")]
     public string Texture { get; set; }
-    [Name("regionWidth")]
     public int RegionWidth { get; set; }
-    [Name("regionHeight")]
     public int RegionHeight { get; set; }
+
+    public void Deserialize(JsonObject obj)
+    {
+        Texture = obj["texture"];
+        RegionWidth = obj["regionWidth"];
+        RegionHeight = obj["regionHeight"];
+    }
 }
 
-[JsonSerializable(typeof(SFAtlas))]
-internal partial class Loader_SFAtlas : JsonSerializerContext {}
-
-public struct SFCyclesFrame 
+internal struct SFCyclesFrame : IJsonDeserializable
 {
-    [Name("frames")]
     public int[] Frames { get; set; }
-    [Name("isLooping")]
     public bool IsLooping { get; set; }
-}
 
-[JsonSerializable(typeof(SFCyclesFrame))]
-internal partial class Loader_SFCyclesFrame : JsonSerializerContext {}
+    public void Deserialize(JsonObject obj)
+    {
+        Frames = obj["frames"].ConvertToArrayInt();
+        IsLooping = obj["isLooping"];
+    }
+}

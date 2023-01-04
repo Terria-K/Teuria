@@ -2,11 +2,8 @@ using System.IO;
 using Microsoft.Xna.Framework.Content;
 using System.Collections.Generic;
 using System;
-using Name = System.Text.Json.Serialization.JsonPropertyNameAttribute;
-using System.Text.Json;
-using Microsoft.Xna.Framework;
-using System.Text.Json.Serialization;
 using System.Linq;
+using LightJson;
 
 namespace Teuria;
 
@@ -19,9 +16,9 @@ public class Tileset
     public int Height { get; private set ; }
     private List<Rules> rules = new List<Rules>();    
 
-    private Tileset(FileStream fs, ContentManager manager, SpriteTexture texture) 
+    private Tileset(string path, ContentManager manager, SpriteTexture texture) 
     {
-        AddToList(fs, texture, manager);
+        AddToList(path, texture, manager);
     }
 
     private Tileset(SpriteTexture texture, int width, int height) 
@@ -31,9 +28,9 @@ public class Tileset
         Height = height;
     }
 
-    private void AddToList(FileStream fs, SpriteTexture texture, ContentManager manager) 
+    private void AddToList(string path, SpriteTexture texture, ContentManager manager) 
     {
-        var result = JsonSerializer.Deserialize<TeuriaTileset>(fs, Loader_TeuriaTileset.Default.TeuriaTileset);
+        var result = JsonConvert.DeserializeFromFile<TeuriaTileset>(path);
 
         var textureAtlas = new TextureAtlas(texture == null 
             ? SpriteTexture.FromContent(manager, result.Path)
@@ -47,8 +44,7 @@ public class Tileset
         {
             var rule = new Rules();
             var teuriaRule = result.Rules[i];
-            var tile =
-            teuriaRule.Tiles.To2D();
+            var tile = teuriaRule.Tiles;
 
             if (teuriaRule.Mask == null) { continue; }
             for (int mask = 0; mask < teuriaRule.Mask.Length; mask++) 
@@ -68,15 +64,13 @@ public class Tileset
     public void AddTerrain(string tilesetPath, SpriteTexture texture) 
     {
         var path = Path.Join(TeuriaEngine.ContentPath, tilesetPath);
-        using var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
-        AddToList(fs, texture, null);
+        AddToList(path, texture, null);
     }
 
     public static Tileset LoadTileset(string tilesetPath, ContentManager manager, SpriteTexture texture = null) 
     {
         var path = Path.Join(TeuriaEngine.ContentPath, tilesetPath);
-        using var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
-        return new Tileset(fs, manager, texture);
+        return new Tileset(path, manager, texture);
     }
 
     public static Tileset LoadTileset(SpriteTexture texture, int width, int height) 
@@ -125,34 +119,35 @@ public class Tileset
     }
 }
 
-internal struct TeuriaTileset 
+internal struct TeuriaTileset : IJsonDeserializable
 {
-    [Name("name")]
     public string Name { get; set; }
-    [Name("path")]
     public string Path { get; set; }
-    [Name("rules")]
     public TeuriaRules[] Rules { get; set; }
-    [Name("width")]
     public int Width { get; set; }
-    [Name("height")]
     public int Height { get; set; }
+
+    public void Deserialize(JsonObject obj)
+    {
+        Name = obj["name"];
+        Path = obj["path"];
+        Rules = obj["rules"].ConvertToArray<TeuriaRules>();
+        Width = obj["width"];
+        Height = obj["height"];
+    }
 }
-
-[JsonSerializable(typeof(TeuriaTileset))]
-internal partial class Loader_TeuriaTileset : JsonSerializerContext {}
-
-internal struct TeuriaRules 
+internal struct TeuriaRules : IJsonDeserializable
 {
-    [Name("name")]
     public string Name { get; set; }
-    [Name("mask")]
     public int[] Mask { get; set; }
-    [Name("tiles")]
-    public int[][] Tiles { get; set; }
-    [Name("maskType")]
+    public int[,] Tiles { get; set; }
     public string MaskType { get; set; }
-}
 
-[JsonSerializable(typeof(TeuriaRules))]
-internal partial class Loader_TeuriaRules : JsonSerializerContext {}
+    public void Deserialize(JsonObject obj)
+    {
+        Name = obj["name"];
+        Mask = obj["mask"].ConvertToArrayInt();
+        Tiles = obj["tiles"].ConvertToArrayInt2D();
+        MaskType = obj["maskType"];
+    }
+}
