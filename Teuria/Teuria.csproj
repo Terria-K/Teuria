@@ -20,12 +20,13 @@
     <ProjectReference Include="../LightJson/Sources/LightJson/LightJson.csproj">
       <PrivateAssets>false</PrivateAssets>
     </ProjectReference>
+    <ProjectReference Include="../LightJson/Sources/LightJson.Generator/LightJson.Generator.csproj"
+      OutputItemType="Analyzer" 
+      ReferenceOutputAssembly="false">
+      <PrivateAssets>true</PrivateAssets>
+    </ProjectReference>
   </ItemGroup>
   <!-- <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />
   </ItemGroup> -->
-  <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
-    <Message Text="Restoring dotnet tools" Importance="High" />
-    <Exec Command="dotnet tool restore" />
-  </Target>
 </Project>

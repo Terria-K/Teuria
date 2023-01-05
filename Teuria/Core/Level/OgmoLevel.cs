@@ -2,6 +2,7 @@ using System.IO;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using LightJson;
+using LightJson.Serialization;
 
 namespace Teuria.Level;
 
@@ -45,25 +46,23 @@ public class OgmoLevel
     }
 }
 
-public class OgmoLevelData : IJsonDeserializable
+[JsonSerializable]
+public partial class OgmoLevelData 
 {
+    [JName("width")]
     public int Width { get; set; }
+    [JName("height")]
     public int Height { get; set; }
+    [JName("offsetX")]
     public int OffsetX { get; set; }
+    [JName("offsetY")]
     public int OffsetY { get; set; }
+    [JName("layers")]
+    [JArray(SupportedTypes.Other)]
     public OgmoLayer[] Layers { get; set; }
-    public JsonObject Values { get; set; }
+    [JName("values")]
+    public JsonValue Values { get; set; }
 
-
-    public void Deserialize(JsonObject obj)
-    {
-        Width = obj["width"];
-        Height = obj["height"];
-        OffsetX = obj["offsetX"];
-        OffsetY = obj["offsetY"];
-        Layers = obj["layers"].ConvertToArray<OgmoLayer>();
-        Values = obj["values"].AsJsonObject;
-    }
 
     public int GetValueInt(string valueName) 
     {
@@ -92,50 +91,50 @@ public class OgmoLevelData : IJsonDeserializable
 
 }
 
-
-public class OgmoLayer : IJsonDeserializable
+[JsonSerializable]
+public partial class OgmoLayer 
 {
+    [JName("name")]
     public string Name { get; set; }
+    [JName("offsetX")]
     public int OffsetX { get; set; }
+    [JName("offsetY")]
     public int OffsetY { get; set; }
+    [JName("gridCellWidth")]
     public int GridCellWidth { get; set; }
+    [JName("gridCellHeight")]
     public int GridCellHeight { get; set; }
+    [JName("gridCellsX")]
     public int GridCellsX { get; set; }
+    [JName("gridCellsY")]
     public int GridCellsY { get; set; }
+    [JName("tileset")]
     public string Tileset { get; set; }
+
+    [JName("data2D")]
+    [JArray(SupportedTypes.Int2D)]
     public int[,] Data { get; set; }
+
+    [JName("grid2D")]
+    [JArray(SupportedTypes.String2D)]
     public string[,] Grid2D { get; set; }
+
+    [JName("grid")]
+    [JArray(SupportedTypes.String)]
     public string[] Grid { get; set; }
+
+    [JName("entities")]
+    [JArray(SupportedTypes.Other)]
     public OgmoEntity[] Entities { get; set; }
-
-
-    public void Deserialize(JsonObject obj)
-    {
-        Name = obj["name"];
-        OffsetX = obj["offsetX"];
-        OffsetY = obj["offsetY"];
-        GridCellWidth = obj["gridCellWidth"];
-        GridCellHeight = obj["gridCellHeight"];
-        GridCellsX = obj["gridCellsX"];
-        GridCellsY = obj["gridCellsY"];
-        Tileset = obj["tileset"];
-        Data = obj["data2D"].ConvertToArrayInt2D();
-        Grid2D = obj["grid2D"].ConvertToArrayString2D();
-        Grid = obj["grid"].ConvertToArrayString();
-        Entities = obj["entities"].ConvertToArray<OgmoEntity>();
-    }
 }
 
-public class OgmoNode : IJsonDeserializable
+[JsonSerializable]
+public partial class OgmoNode 
 {
+    [JName("x")]
     public float X { get; set; }
+    [JName("y")]
     public float Y { get; set; }
-
-    public void Deserialize(JsonObject obj)
-    {
-        X = obj["x"];
-        Y = obj["y"];
-    }
 
     public Vector2 ToVector2() 
     {
@@ -143,41 +142,40 @@ public class OgmoNode : IJsonDeserializable
     }
 }
 
-public class OgmoEntity : IJsonDeserializable
+[JsonSerializable]
+public partial class OgmoEntity 
 {
+    [JName("name")]
     public string Name { get; set; }
+    [JName("id")]
     public int ID { get; set; }
+    [JName("x")]
     public int X { get; set; }
+    [JName("y")]
     public int Y { get; set; }
+    [JName("originX")]
     public int OriginX { get; set; }
+    [JName("originY")]
     public int OriginY { get; set; }
+    [JName("width")]
     public int Width { get; set; }
+    [JName("height")]
     public int Height { get; set; }
+    [JName("flippedX")]
     public bool FlippedX { get; set; }
+    [JName("flippedY")]
     public bool FlippedY { get; set; }
+    [JName("nodes")]
+    [JArray(SupportedTypes.Other)]
     public OgmoNode[] Nodes { get; set; }
+    [JName("values")]
     public JsonValue Values { get; set; }
 
-
+    [JIgnore]
     public Vector2 Position => new Vector2(X, Y);
+    [JIgnore]
     public Rectangle Size => new Rectangle(OriginX, OriginY, Width, Height);
 
-
-    public void Deserialize(JsonObject obj)
-    {
-        Name = obj["name"];
-        ID = obj["id"];
-        X = obj["x"];
-        Y = obj["y"];
-        OriginX = obj["originX"];
-        OriginY = obj["originY"];
-        Width = obj["width"];
-        Height = obj["height"];
-        FlippedX = obj["flippedX"];
-        FlippedY = obj["flippedY"];
-        Nodes = obj["nodes"].ConvertToArray<OgmoNode>();
-        Values = obj["values"];
-    }
 
     public int GetValueInt(string valueName) 
     {

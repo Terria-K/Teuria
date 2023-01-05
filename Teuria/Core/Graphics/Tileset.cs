@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using LightJson;
+using LightJson.Serialization;
 
 namespace Teuria;
 
@@ -119,35 +120,33 @@ public class Tileset
     }
 }
 
-internal struct TeuriaTileset : IJsonDeserializable
+[JsonSerializable]
+partial struct TeuriaTileset
 {
+    [JName("name")]
     public string Name { get; set; }
+    [JName("path")]
     public string Path { get; set; }
+    [JName("rules")]
+    [JArray(SupportedTypes.Other)]
     public TeuriaRules[] Rules { get; set; }
+    [JName("width")]
     public int Width { get; set; }
+    [JName("height")]
     public int Height { get; set; }
-
-    public void Deserialize(JsonObject obj)
-    {
-        Name = obj["name"];
-        Path = obj["path"];
-        Rules = obj["rules"].ConvertToArray<TeuriaRules>();
-        Width = obj["width"];
-        Height = obj["height"];
-    }
 }
-internal struct TeuriaRules : IJsonDeserializable
-{
-    public string Name { get; set; }
-    public int[] Mask { get; set; }
-    public int[,] Tiles { get; set; }
-    public string MaskType { get; set; }
 
-    public void Deserialize(JsonObject obj)
-    {
-        Name = obj["name"];
-        Mask = obj["mask"].ConvertToArrayInt();
-        Tiles = obj["tiles"].ConvertToArrayInt2D();
-        MaskType = obj["maskType"];
-    }
+[JsonSerializable]
+partial struct TeuriaRules 
+{
+    [JName("name")]
+    public string Name { get; set; }
+    [JName("mask")]
+    [JArray(SupportedTypes.Int)]
+    public int[] Mask { get; set; }
+    [JName("tiles")]
+    [JArray(SupportedTypes.Int2D)]
+    public int[,] Tiles { get; set; }
+    [JName("maskType")]
+    public string MaskType { get; set; }
 }

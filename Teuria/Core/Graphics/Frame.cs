@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using LightJson;
+using LightJson.Serialization;
 
 
 namespace Teuria;
@@ -36,40 +37,33 @@ public readonly ref struct SpriteFrameLoader
     }
 }
 
-internal struct SpriteFactory : IJsonDeserializable
+[JsonSerializable]
+internal partial struct SpriteFactory
 {
+    [JName("textureAtlas")]
     public SFAtlas SFAtlas { get; set; }
+    [JName("cycles")]
+    [JDictionary()]
     public Dictionary<string, SFCyclesFrame> SFCycles { get; set; }
-
-    public void Deserialize(JsonObject obj)
-    {
-        SFAtlas = JsonConvert.Deserialize<SFAtlas>(obj["textureAtlas"]);       
-        SFCycles = obj["cycles"].ToDictionary<SFCyclesFrame>();
-    }
 }
 
-internal struct SFAtlas : IJsonDeserializable
+[JsonSerializable]
+internal partial struct SFAtlas 
 {
+    [JName("texture")]
     public string Texture { get; set; }
+    [JName("regionWidth")]
     public int RegionWidth { get; set; }
+    [JName("regionHeight")]
     public int RegionHeight { get; set; }
-
-    public void Deserialize(JsonObject obj)
-    {
-        Texture = obj["texture"];
-        RegionWidth = obj["regionWidth"];
-        RegionHeight = obj["regionHeight"];
-    }
 }
 
-internal struct SFCyclesFrame : IJsonDeserializable
+[JsonSerializable]
+internal partial struct SFCyclesFrame 
 {
+    [JName("frames")]
+    [JArray(SupportedTypes.Int)]
     public int[] Frames { get; set; }
+    [JName("isLooping")]
     public bool IsLooping { get; set; }
-
-    public void Deserialize(JsonObject obj)
-    {
-        Frames = obj["frames"].ConvertToArrayInt();
-        IsLooping = obj["isLooping"];
-    }
 }
