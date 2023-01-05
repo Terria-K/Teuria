@@ -44,12 +44,7 @@ internal struct SpriteFactory : IJsonDeserializable
     public void Deserialize(JsonObject obj)
     {
         SFAtlas = JsonConvert.Deserialize<SFAtlas>(obj["textureAtlas"]);       
-        var dict = obj["cycles"].AsJsonObject;
-        SFCycles = new Dictionary<string, SFCyclesFrame>();
-        foreach (var dic in dict) 
-        {
-            SFCycles.Add(dic.Key, JsonConvert.Deserialize<SFCyclesFrame>(dic.Value));
-        }
+        SFCycles = obj["cycles"].ToDictionary<SFCyclesFrame>();
     }
 }
 
