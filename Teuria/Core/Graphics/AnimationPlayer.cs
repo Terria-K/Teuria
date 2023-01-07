@@ -17,7 +17,6 @@ public class AnimatedSprite : Component
     private Dictionary<string, SFCyclesFrame> cycleFrame;
     private string currentAnimation;
     private int index;
-    private int frameCount;
     private int frameIndex;
     private Vector2 position;
     private SpriteEffects spriteEffects = SpriteEffects.None;
@@ -71,15 +70,16 @@ public class AnimatedSprite : Component
     public int Height { get; private set; }
 
     // Since SpriteFrameLoader is readonly ref struct, we can use 'in' here
-    public AnimatedSprite(in SpriteFrameLoader loader, int frameCount) 
+    public AnimatedSprite(in SpriteFrameLoader loader) 
     {
         atlas = loader.Atlas;
         cycleFrame = loader.CycleFrame;
-        this.frameCount = frameCount;
         Scale = Vector2.One;
         Width = Texture.Width;
         Height = Texture.Height;
     }
+
+    public AnimatedSprite(string path, SpriteTexture texture) : this(new SpriteFrameLoader(path, texture)) {}
 
     public void Play(string animationName) 
     {

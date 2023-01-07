@@ -68,12 +68,12 @@ public class Scene
     public void Add(Entity entity, PauseMode pauseMode = PauseMode.Inherit) 
     {
         entity.PauseMode = pauseMode;
-        entityList.Add(entity);
+        Add(entity);
     }
 
     public void Add(Entity entity) 
     {
-        Add(entity, PauseMode.Inherit);
+        entityList.Add(entity);
     }
 
     public void Add<T>(List<T> entities) 
