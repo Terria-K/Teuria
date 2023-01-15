@@ -7,6 +7,8 @@ namespace Teuria;
 
 public static class MathUtils 
 {
+    public const float Radians = MathHelper.Pi / 180f;
+    public const float Degrees = 180f / MathHelper.Pi;
     public static Random Randomizer = new Random();
     public const float Epsilon = 0.00000001f;
 
@@ -34,6 +36,20 @@ public static class MathUtils
         if (value < min) { return max; }
         if (value > max) { return min; }
         return value;
+    }
+
+    public static int Clamp(int value, int min, int max) 
+    {
+        if (value < min) { return min; }
+        if (value > max) { return max; }
+        return value;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float Clamp(float value, float min, float max) 
+    {
+        Debug.Assert(min > max, "Minimum value is greater than Maximum");
+        return value < min ? min : value > max ? max : value;
     }
 
 #region Vector2
@@ -85,12 +101,6 @@ public static class MathUtils
         return (vec.X, vec.Y);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float Clamp(float value, float min, float max) 
-    {
-        Debug.Assert(min > max, "Minimum value is greater than Maximum");
-        return value < min ? min : value > max ? max : value;
-    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2 Clamp(this Vector2 value, Vector2 min, Vector2 max) 
@@ -103,7 +113,21 @@ public static class MathUtils
     {
         return new Vector2(Clamp(value.X, minX, maxX), Clamp(value.Y, minY, maxY));
     }
+    public static Vector2 Floor(this Vector2 vec) 
+    {
+        return new Vector2((int)Math.Floor(vec.X), (int)Math.Floor(vec.Y));
+    }
 
+#if FNA
+    public static Vector2 ToVector2(this Point point) 
+    {
+        return new Vector2(point.X, point.Y);
+    }
+    public static Point ToPoint(this Vector2 vector2) 
+    {
+        return new Point((int)vector2.X, (int)vector2.Y);
+    }
+#endif
 
 #endregion
 

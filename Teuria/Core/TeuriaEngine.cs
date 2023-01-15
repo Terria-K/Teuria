@@ -19,6 +19,7 @@ public class TeuriaEngine : Game
     private static Viewport viewport;
 
     public static string ContentPath;
+    public GraphicsDeviceManager GraphicsDeviceManager => graphics;
     
     public static int FPS { get; private set; }
     public static float DeltaTime { get; private set; }
@@ -57,7 +58,9 @@ public class TeuriaEngine : Game
         set 
         {
             fullscreen = value;
+#if !FNA
             Instance.graphics.HardwareModeSwitch = !fullscreen;
+#endif
         }
     }
 
@@ -81,7 +84,9 @@ public class TeuriaEngine : Game
         ViewHeight = height;
         Window.ClientSizeChanged += OnClientSizeChanged;
         graphics = new GraphicsDeviceManager(this);
+#if !FNA
         graphics.HardwareModeSwitch = !fullScreen;
+#endif
         graphics.IsFullScreen = fullScreen;
         graphics.PreferredBackBufferWidth = ScreenWidth;
         graphics.PreferredBackBufferHeight = ScreenHeight;

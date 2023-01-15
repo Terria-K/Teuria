@@ -31,7 +31,6 @@ public class AnimatedSprite : Component
         set => spriteEffects = value 
                 ? spriteEffects | SpriteEffects.FlipHorizontally 
                 : spriteEffects & ~SpriteEffects.FlipHorizontally;
-        
     }
     public bool FlipV
     {
@@ -41,10 +40,8 @@ public class AnimatedSprite : Component
                 : spriteEffects & ~SpriteEffects.FlipVertically;
     }
 
-    public SpriteTexture Texture 
-    {
-        get => atlas.Texture;
-    }
+    public SpriteTexture Texture => atlas.Texture;
+    
 
     public Vector2 Position 
     {

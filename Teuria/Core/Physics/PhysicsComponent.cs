@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework;
 
 namespace Teuria;
@@ -61,6 +63,24 @@ public abstract class PhysicsComponent : Component
     {
         if (entity.Collider.Equals(entity2)) { return false; }
         if (entity.Collider.Collide(entity2.Collider, offset)) 
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public static bool CheckPosition(ICollidableEntity entity, Vector2 pos) 
+    {
+        if (entity.Collider.Collide(pos)) 
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public static bool CheckAABB(ICollidableEntity entity, AABB aabb, Vector2 offset = default) 
+    {
+        if (entity.Collider.Collide(aabb, offset)) 
         {
             return true;
         }
@@ -173,6 +193,48 @@ public abstract class PhysicsComponent : Component
         }
         ent = default;
         return false;
+    }
+
+    public List<T1> Checks<T1>(ICollidableEntity entity, Vector2 offset) 
+    where T1 : ICollidableEntity
+    {
+        var list = Enumerable.Empty<T1>().ToList();
+        foreach (var wall in Collided) 
+        {
+            if (!wall.Collideable) { continue; }
+            if (entity.Collider.Equals(wall.Collider)) { continue; }
+            if (entity.Collider.Collide(wall.Collider, offset)) 
+            {
+
+                if (wall.Entity is T1 t1) 
+                {
+                    list.Add(t1);
+                }
+                continue;
+            }
+        }
+        return list;
+    }
+
+    public T1 CheckFirst<T1>(ICollidableEntity entity, Vector2 offset) 
+    where T1 : ICollidableEntity
+    {
+        var list = Enumerable.Empty<T1>().ToList();
+        foreach (var wall in Collided) 
+        {
+            if (!wall.Collideable) { continue; }
+            if (entity.Collider.Equals(wall.Collider)) { continue; }
+            if (entity.Collider.Collide(wall.Collider, offset)) 
+            {
+
+                if (wall.Entity is T1 t1) 
+                {
+                    list.Add(t1);
+                }
+                continue;
+            }
+        }
+        return list.LastOrDefault();
     }
 
 

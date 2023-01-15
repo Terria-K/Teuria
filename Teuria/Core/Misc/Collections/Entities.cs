@@ -14,6 +14,7 @@ public class Entities : IEnumerable<Entity>
     private List<Entity> remove = new List<Entity>();
     private List<Entity> entering = new List<Entity>();
     private HashSet<Entity> current = new HashSet<Entity>();
+    private HashSet<Entity> adding = new HashSet<Entity>();
     private bool unsorted;
 
     public int Count => entities.Count;
@@ -77,6 +78,7 @@ public class Entities : IEnumerable<Entity>
         {
             entering.AddRange(add);
             add.Clear();
+            adding.Clear();
             foreach (var entity in entering) 
             {
                 if (entity.Scene == Scene) 
@@ -90,7 +92,11 @@ public class Entities : IEnumerable<Entity>
 
     public void Add(Entity entity) 
     {
-        add.Add(entity);
+        if (!adding.Contains(entity) && !current.Contains(entity)) 
+        {
+            adding.Add(entity);
+            add.Add(entity);
+        }
     }
 
     public void Remove(Entity entity) 

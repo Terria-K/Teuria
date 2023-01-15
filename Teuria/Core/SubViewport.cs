@@ -79,7 +79,17 @@ public class SubViewport
 
         device.SetRenderTargets(prevTargets);
         device.Clear(environmentColor);
+#if !FNA
         spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState, blendState: BlendState.AlphaBlend);
+#else
+        spriteBatch.Begin(
+            sortMode: SpriteSortMode.Immediate, 
+            samplerState: SamplerState, 
+            blendState: BlendState.AlphaBlend,
+            depthStencilState: DepthStencilState.None,
+            rasterizerState: RasterizerState.CullCounterClockwise
+        );
+#endif
         spriteBatch.Draw(rt, pos, null, Color.White, 0, origin, scale, SpriteEffects.None, 0);
         spriteBatch.End();
     }

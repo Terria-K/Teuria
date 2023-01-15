@@ -29,6 +29,22 @@ public class Picker<T>
         options.Add(new Option(option, w));
     }
 
+    public void AddOption(Span<T> options, float weight) 
+    {
+        foreach (var option in options) 
+        {
+            AddOption(option, weight);
+        }
+    }
+
+    public void AddOption(ReadOnlySpan<T> options, float weight) 
+    {
+        foreach (var option in options) 
+        {
+            AddOption(option, weight);
+        }
+    }
+
     public void AddOption(List<T> options, float weight) 
     {
         foreach (var option in options) 

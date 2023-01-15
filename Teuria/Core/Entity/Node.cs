@@ -32,6 +32,21 @@ public class Node
         node.parent = this;
     }
 
+    public bool TryAddChild(string name, Node node) 
+    {
+        if (!string.IsNullOrEmpty(this.name)) 
+        {
+            name = $"{this.name}/{name}";
+        }
+        if (childs.TryAdd(name, node)) 
+        {
+            node.name = name;
+            node.parent = this;
+            return true;
+        }
+        return false;
+    }
+
     public void RemoveChild(string nodePath) 
     {
         var node = childs[nodePath];
@@ -41,6 +56,15 @@ public class Node
     public T GetNode<T>(string nodePath) where T : Node
     {
         return childs[nodePath] as T;
+    }
+
+    public T TryGetNode<T>(string nodePath) where T : Node 
+    {
+        if (childs.TryGetValue(nodePath, out Node value)) 
+        {
+            return (T)value;
+        }
+        return null;
     }
 
     // public void Free() 

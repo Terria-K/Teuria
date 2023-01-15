@@ -61,6 +61,16 @@ public class Entity : Node, IEnumerable<Component>
         comp.Added(this);
     }
 
+    public void AddComponent<T>(T[] comps) 
+    where T : Component
+    {
+        foreach (var comp in comps) 
+        {
+            components.Add(comp);
+            comp.Added(this);
+        }
+    }
+
 
     public T GetComponent<T>() where T : Component
     {

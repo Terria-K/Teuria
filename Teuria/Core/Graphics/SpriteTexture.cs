@@ -54,6 +54,25 @@ public class SpriteTexture
         );
     }
 
+    public SpriteTexture(Texture2D texture, Point regionPos, int width, int height, Vector2 origin, Rectangle padding = default) 
+    {
+        Texture = texture;
+        X = regionPos.X;
+        Y = regionPos.Y;
+        Clip = new Rectangle(X, Y, width, height);
+        Origin = origin;
+        Width = Clip.Width;
+        Height = Clip.Height;
+        Padding = padding;
+        Patches = CreatePatches(
+            Clip, 
+            padding.X, 
+            padding.X + padding.Width, 
+            padding.Y, 
+            padding.Y + padding.Height
+        );
+    }
+
     public SpriteTexture(SpriteTexture spriteTexture, string atlasPath, Rectangle clip, Vector2 offset, int width, int height) 
     {
         Texture = spriteTexture.Texture;
@@ -87,8 +106,8 @@ public class SpriteTexture
             (int)(Clip.Y - Origin.Y + y)
         );
         var pos = new Point(
-            MathHelper.Clamp(orig.X, Clip.Left, Clip.Right),
-            MathHelper.Clamp(orig.Y, Clip.Top, Clip.Bottom)
+            MathUtils.Clamp(orig.X, Clip.Left, Clip.Right),
+            MathUtils.Clamp(orig.Y, Clip.Top, Clip.Bottom)
         );
         var w = Math.Max(0, Math.Min(orig.X + width, Clip.Right) - pos.X);
         var h = Math.Max(0, Math.Min(orig.Y + height, Clip.Bottom) - pos.Y);

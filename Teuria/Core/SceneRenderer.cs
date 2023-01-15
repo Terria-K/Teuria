@@ -42,7 +42,13 @@ public class SceneCanvas : CanvasLayer
     public override void Draw(Scene scene) 
     {
         Canvas.SpriteBatch.Begin(
+#if FNA
+            transformationMatrix: Camera.Transform, 
+            rasterizerState: RasterizerState.CullCounterClockwise,
+            depthStencilState: DepthStencilState.None,
+#else
             transformMatrix: Camera?.Transform, 
+#endif
             samplerState: SamplerState, 
             sortMode: SpriteSortMode.Immediate, 
             blendState: BlendState.AlphaBlend,

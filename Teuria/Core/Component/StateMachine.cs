@@ -14,8 +14,6 @@ public class StateMachine : Component
     private Func<int>[] updateList;
     private Action[] endList;
     private Coroutine coroutine;
-    // private TeuriTask task;
-    // private Task coroutineRunning;
 
     public int CurrentState 
     {
@@ -57,7 +55,7 @@ public class StateMachine : Component
         Add(coroutine);
     }
 
-    public void AddState(int id, Func<int> update = null, Action ready = null, Func<IEnumerator> coroutine = null, Action end = null) 
+    internal void AddState(int id, Func<int> update, Action ready, Func<IEnumerator> coroutine, Action end) 
     {
         updateList[id] = update;
         readyList[id] = ready;
@@ -65,10 +63,63 @@ public class StateMachine : Component
         endList[id] = end;
     }
 
+    public StateBuilder CreateState(int id) 
+    {
+        var stateBuilder = new StateBuilder(id, this);
+        return stateBuilder;
+    }
+
     public override void Update()
     {
         if (updateList[currentState] != null)
             CurrentState = updateList[currentState]();
         base.Update();
+    }
+}
+
+public class StateBuilder 
+{
+    private int id;
+    private Func<IEnumerator> coroutine;
+    private Action ready;
+    private Func<int> update;
+    private Action end;
+    private StateMachine stateMachine;
+
+
+    internal StateBuilder(int id, StateMachine stateMachine) 
+    {
+        this.id = id;
+        this.stateMachine = stateMachine;
+    }
+
+    public StateBuilder AddReady(Action readyFunc) 
+    {
+        ready = readyFunc;
+        return this;
+    }
+
+    public StateBuilder AddUpdate(Func<int> updateFunc) 
+    {
+        update = updateFunc;
+        return this;
+    }
+
+    public StateBuilder AddEnd(Action endFunc) 
+    {
+        end = endFunc;
+        return this;
+    }
+
+    public StateBuilder AddCoroutine(Func<IEnumerator> coroutineFunc) 
+    {
+        coroutine = coroutineFunc;
+        return this;
+    }
+
+    public void Build() 
+    {
+        stateMachine.AddState(id, update, ready, coroutine, end);
+        stateMachine = null;
     }
 }

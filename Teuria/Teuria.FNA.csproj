@@ -3,15 +3,13 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFramework>net7.0</TargetFramework>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>11</LangVersion>
 
-    <DefineConstants>SYSTEMTEXTJSON</DefineConstants>
+    <DefineConstants>SYSTEMTEXTJSON;FNA</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" />
-    <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
+    <ProjectReference Include="..\..\FNA\FNA.Core.csproj"/>
   </ItemGroup>
 
   <ItemGroup Condition="$(DefineConstants.Contains(NEWTONSOFTJSON))">
@@ -27,5 +25,5 @@
       <PrivateAssets>true</PrivateAssets>
     </ProjectReference>
   </ItemGroup>
-
 </Project>
+

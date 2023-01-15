@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace Teuria;
 
@@ -53,4 +55,6 @@ public static class TeuriaExtension
 
         return array2D;
     }
+
+
 }
