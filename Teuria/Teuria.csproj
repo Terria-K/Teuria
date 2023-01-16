@@ -28,4 +28,11 @@
     </ProjectReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="../runtimes/**" PackagePath="runtimes" Visible="true"/>
+    <Content Include="rfd_sharp.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

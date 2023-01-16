@@ -1,0 +1,11 @@
+[package]
+name = "rfd-sharp"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "rfd_sharp"
+crate-type = ["dylib"]
+
+[dependencies]
+rfd = "0.10.0"
