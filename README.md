@@ -3,13 +3,10 @@
  
  This game engine includes a basic functionality you need for 2D game development.
  
- This engine is still work-in-progress and still needs more improvements. It is heavily inspired from Monocle and Godot Engine. 
- This is has a Nodes and ECS system combined together to make things easy to use, and straightforward for beginners that has different game development experience whether they want ECS or Nodes.
+ This engine is still work-in-progress and still needs more improvements. It is heavily inspired from [Monocle](https://github.com/JamesMcMahon/monocle-engine) and [Godot](https://godotengine.org/). 
+ This has a Nodes and ECS system combined together to make things easy to use, and straightforward for beginners that has different game development experience whether they want ECS or Nodes.
  It is not usable for larger projects, but it is useful for starters who wants to get in to Monogame.
 
- Monocle: https://github.com/JamesMcMahon/monocle-engine
-
- Godot Engine: https://godotengine.org/
  
  - [x] ECS
  - [x] Scenes
@@ -38,11 +35,10 @@ public class YourGame : TeuriaEngine
     }
 
     /** We need to setup the scene renderer before going any further */
-    protected override SceneRenderer Init()
+    protected override void Init()
     {
         var camera = new Camera();
-		var mainScene = new MainScene(Content, camera);
-        return new SceneRenderer(mainScene, camera);
+		Scene = new MainScene(Content, camera);
     }
 }
 
@@ -53,6 +49,9 @@ public class MainScene : Scene
 	
 	public override void Hierarchy(GraphicsDevice device) 
 	{
+		// Setup the main Renderer
+		var sceneCanvas = new SceneCanvas(this, Camera, Color.CornflowerBlue); 
+        Add(sceneCanvas);
 		/** Load Content Here */
 		// We need the font first, but we can use the built-in font
 		var font = FontText.Create("Teuria/Rubik-Regular");
@@ -117,25 +116,4 @@ mgcbImg.Dispose();
 TextureImporter.CleanUp(texImpImg);
 base.Ready(device);
 
-```
-
-### Loading a level
-
-Originally, the level were loaded with Ogmo Editor. But you can make your own if you wanted. The example shown below is the way to load a level with Ogmo Editor.
-
-```csharp
-/** Hierarchy */
-var texture = SpriteTexture.FromContent(Content, "Jungle");
-var tileset = new TextureAtlas(texture, 32, 32);
-var levelRenderer = new OgmoCanvas(ogmoLevels[this.level], tileset);
-levelRenderer.SummoningEntity = OnSummonEntity;
-Add(levelRenderer)
-
-void OnSummonEntity(OgmoEntity entity) 
-{
-	switch (entity.Name) 
-	{
-		// Your entity name and logics here. All of your entity variables were put in entity.
-	}
-}
 ```

@@ -39,6 +39,7 @@ public static class TeuriaExtension
         return array2D;
     }
 
+
     public static T[,] To2D<T>(this T[][] arr) 
     {
         var first = arr.Length;

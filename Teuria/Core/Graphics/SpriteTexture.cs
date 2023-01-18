@@ -119,9 +119,9 @@ public class SpriteTexture
         rectangle.X + Clip.X, rectangle.Y + Clip.Y, rectangle.Width, rectangle.Height   
     );
 
-    public static SpriteTexture FromFile(GraphicsDevice device, string filename) 
+    public static SpriteTexture FromFile(string filename) 
     {
-        return new SpriteTexture(TextureImporter.LoadImage(device, filename));
+        return new SpriteTexture(TextureImporter.LoadImage(filename));
     }
 
     public static SpriteTexture FromContent(ContentManager content, string filename) 

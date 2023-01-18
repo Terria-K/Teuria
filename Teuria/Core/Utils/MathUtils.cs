@@ -14,7 +14,6 @@ public static class MathUtils
 
 
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float MoveTowards(float current, float target, float maxDelta)
     {
         if (MathF.Abs(target - current) <= maxDelta)
@@ -45,7 +44,6 @@ public static class MathUtils
         return value;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float Clamp(float value, float min, float max) 
     {
         Debug.Assert(min > max, "Minimum value is greater than Maximum");
@@ -89,26 +87,22 @@ public static class MathUtils
         return val + diff * maxMove;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2 ToInt(this Vector2 vec) 
     {
         return new Vector2((int)vec.X, (int)vec.Y);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static (float, float) Destruct(this Vector2 vec) 
     {
         return (vec.X, vec.Y);
     }
 
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2 Clamp(this Vector2 value, Vector2 min, Vector2 max) 
     {
         return new Vector2(Clamp(value.X, min.X, min.Y), Clamp(value.Y, min.Y, max.Y));
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2 Clamp(this Vector2 value, float minX, float maxX, float minY, float maxY) 
     {
         return new Vector2(Clamp(value.X, minX, maxX), Clamp(value.Y, minY, maxY));

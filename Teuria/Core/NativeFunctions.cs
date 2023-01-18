@@ -12,12 +12,12 @@ internal static class NativeFunctions
     internal static unsafe extern PathHandler open_file(string directory);
 
     [DllImport(RFD_SHARP, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    internal static unsafe extern PathHandler open_file_with_filter(string directory, string[] filters, UIntPtr length);
+    internal static unsafe extern PathHandler open_file_with_filter(string directory, string[] filters, nuint length);
     [DllImport(RFD_SHARP, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
     internal static unsafe extern PathHandler save_file(string directory);
 
     [DllImport(RFD_SHARP, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    internal static unsafe extern PathHandler save_file_with_filter(string directory, string[] filters, UIntPtr length);
+    internal static unsafe extern PathHandler save_file_with_filter(string directory, string[] filters, nuint length);
 
 }
 
@@ -25,5 +25,5 @@ internal static class NativeFunctions
 internal struct PathHandler 
 {
     public byte error;
-    public IntPtr path;
+    public nint path;
 }
