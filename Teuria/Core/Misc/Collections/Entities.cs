@@ -27,7 +27,9 @@ public class Entities : IEnumerable<Entity>
     {
         get 
         {
+#if DEBUG
             if (idx < 0 || idx >= entities.Count) { throw new IndexOutOfRangeException(); }
+#endif
             return entities[idx];
         }    
     }
@@ -45,6 +47,7 @@ public class Entities : IEnumerable<Entity>
                     entities.Add(entity);
                     if (Scene == null) { continue; }
                     entity.EnterScene(Scene, Scene.GetContent());
+                    Scene.OnEntityCreated?.Invoke(entity);
                 }
             }
             unsorted = true;
@@ -62,6 +65,7 @@ public class Entities : IEnumerable<Entity>
 
                     if (Scene == null) { continue; }
                     entity.ExitScene();
+                    Scene.OnEntityDeleted?.Invoke(entity);
                 }
             }
             remove.Clear();

@@ -12,6 +12,7 @@ public class SpriteTexture
     public int Y { get; private set; }
     public int Width { get; private set; }
     public int Height { get; private set; }
+    public float Rotation { get; private set; }
     public Rectangle Clip { get; private set; }
     public Vector2 Origin { get; private set; }
     public string AtlasPath { get; private set; }
@@ -45,6 +46,46 @@ public class SpriteTexture
         Width = Clip.Width;
         Height = Clip.Height;
         Padding = padding;
+        Patches = CreatePatches(
+            Clip, 
+            padding.X, 
+            padding.X + padding.Width, 
+            padding.Y, 
+            padding.Y + padding.Height
+        );
+    }
+
+    public SpriteTexture(Texture2D texture, Point regionPos, int width, int height, float rotation, Rectangle padding = default) 
+    {
+        Texture = texture;
+        X = regionPos.X;
+        Y = regionPos.Y;
+        Clip = new Rectangle(X, Y, width, height);
+        Origin = Vector2.Zero;
+        Width = Clip.Width;
+        Height = Clip.Height;
+        Padding = padding;
+        Rotation = rotation;
+        Patches = CreatePatches(
+            Clip, 
+            padding.X, 
+            padding.X + padding.Width, 
+            padding.Y, 
+            padding.Y + padding.Height
+        );
+    }
+
+    public SpriteTexture(Texture2D texture, Point regionPos, int width, int height, float rotation, Vector2 origin, Rectangle padding = default) 
+    {
+        Texture = texture;
+        X = regionPos.X;
+        Y = regionPos.Y;
+        Clip = new Rectangle(X, Y, width, height);
+        Origin = origin;
+        Width = Clip.Width;
+        Height = Clip.Height;
+        Padding = padding;
+        Rotation = rotation;
         Patches = CreatePatches(
             Clip, 
             padding.X, 
@@ -164,7 +205,9 @@ public class SpriteTexture
 #endif
         var destPatches = CreatePatches(rectangle, Padding.X, Padding.X + Padding.Width, Padding.Y, Padding.Y + Padding.Height);
         for (int i = 0; i < Patches.Length; i++)
-            spriteBatch.Draw(Texture, sourceRectangle: Patches[i], destinationRectangle: destPatches[i], color: color);
+            spriteBatch.Draw(
+                Texture, destPatches[i], Patches[i], 
+                color, Rotation, -Origin, SpriteEffects.None, 0);
     }
 
     public void DrawTexture(SpriteBatch spriteBatch, Rectangle rectangle) 
@@ -180,7 +223,7 @@ public class SpriteTexture
             color = color * 0.5f;
 #endif
 
-        spriteBatch.Draw(Texture, position, Clip, color, 0, -Origin, 1f, SpriteEffects.None, 0);
+        spriteBatch.Draw(Texture, position, Clip, color, Rotation, -Origin, 1f, SpriteEffects.None, 0);
     }
 
     public void DrawTexture(SpriteBatch spriteBatch, Vector2 position, Color color, float rotation, Vector2 scale, SpriteEffects spriteEffects, float zIndex) 
@@ -190,7 +233,7 @@ public class SpriteTexture
         if (RectangleShape.DebugRender)
             col = color * 0.5f;
 #endif
-        spriteBatch.Draw(Texture, position, Clip, col, rotation, -Origin, scale, spriteEffects, zIndex);
+        spriteBatch.Draw(Texture, position, Clip, col, Rotation + rotation, -Origin, scale, spriteEffects, zIndex);
     }
 
     public void DrawTexture(SpriteBatch spriteBatch, Vector2 position, Color color, float rotation, Vector2 offset, Vector2 scale, SpriteEffects spriteEffects, float zIndex) 
@@ -200,7 +243,7 @@ public class SpriteTexture
         if (RectangleShape.DebugRender)
             col = color * 0.5f;
 #endif
-        spriteBatch.Draw(Texture, position, Clip, col, rotation, offset, scale, spriteEffects, zIndex);
+        spriteBatch.Draw(Texture, position, Clip, col, Rotation + rotation, offset, scale, spriteEffects, zIndex);
     }
 
     public void DrawTexture(SpriteBatch spriteBatch, Vector2 position, Rectangle rectangle, Color color, float rotation, Vector2 offset, Vector2 scale, SpriteEffects spriteEffects, float zIndex) 
@@ -214,7 +257,7 @@ public class SpriteTexture
         if (RectangleShape.DebugRender)
             col = color * 0.5f;
 #endif
-        spriteBatch.Draw(Texture, position, rect, col, rotation, offset, scale, spriteEffects, zIndex);
+        spriteBatch.Draw(Texture, position, rect, col, Rotation + rotation, offset - Origin, scale, spriteEffects, zIndex);
     }
 
     public void DrawTexture(SpriteBatch spriteBatch, Vector2 position, Rectangle rectangle, Color color, float rotation, Vector2 offset, float scale, SpriteEffects spriteEffects, float zIndex) 
@@ -224,7 +267,7 @@ public class SpriteTexture
         if (RectangleShape.DebugRender)
             col = color * 0.5f;
 #endif
-        spriteBatch.Draw(Texture, position, rectangle, col, rotation, offset, scale, spriteEffects, zIndex);
+        spriteBatch.Draw(Texture, position, rectangle, col, Rotation + rotation, offset, scale, spriteEffects, zIndex);
     }
 
     public void DrawTexture(SpriteBatch spriteBatch, Rectangle destRect, Color color, float rotation, Vector2 offset, float scale, SpriteEffects spriteEffects, float zIndex) 
@@ -234,7 +277,7 @@ public class SpriteTexture
         if (RectangleShape.DebugRender)
             col = color * 0.5f;
 #endif
-        spriteBatch.Draw(Texture, destRect, Clip, col, rotation, offset, spriteEffects, zIndex);
+        spriteBatch.Draw(Texture, destRect, Clip, col, Rotation + rotation, offset, spriteEffects, zIndex);
     }
 
     public void Unload() 

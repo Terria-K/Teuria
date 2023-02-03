@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using LightJson;
 using LightJson.Serialization;
+using Microsoft.Xna.Framework;
 
 namespace Teuria;
 
@@ -31,7 +32,8 @@ public class Tileset
 
     private void AddToList(string path, SpriteTexture texture, ContentManager manager) 
     {
-        var result = JsonConvert.DeserializeFromFile<TeuriaTileset>(path);
+        using var fs = TitleContainer.OpenStream(path);
+        var result = JsonConvert.DeserializeFromStream<TeuriaTileset>(fs);
 
         var textureAtlas = new TextureAtlas(texture == null 
             ? SpriteTexture.FromContent(manager, result.Path)

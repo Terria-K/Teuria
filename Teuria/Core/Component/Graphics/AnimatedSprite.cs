@@ -127,6 +127,8 @@ public class AnimatedSprite : Component
         Stop();
     }
 
+    public SpriteTexture GetSpriteTexture(int id) => atlas[frameIndex];
+
     public override void Draw(SpriteBatch spriteBatch)
     {
         atlas[frameIndex].DrawTexture(spriteBatch, GlobalPosition, Entity.Modulate, Rotation, Scale, spriteEffects, Entity.ZIndex);

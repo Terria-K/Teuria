@@ -20,6 +20,11 @@ public static class SkyLog
         SkyLog.logFn(log, new object[0]);
     }
 
+    public static void Log(object log) 
+    {
+        SkyLog.logFn("{0}", new object[1] { log });
+    }
+
     public static void Log(string log, params object[] args) 
     {
         SkyLog.logFn(log, args);

@@ -220,7 +220,7 @@ public class TeuriaEngine : Game
     }
 
 
-    protected override void Draw(GameTime gameTime)
+    protected override sealed void Draw(GameTime gameTime)
     {
         Scene?.BeforeRender();
         // GraphicsDevice.SetRenderTarget(SceneRender);
@@ -230,9 +230,6 @@ public class TeuriaEngine : Game
         GraphicsDevice.SetRenderTarget(null);
         GraphicsDevice.Clear(Color.Black);
         GraphicsDevice.Viewport = viewport;
-        // spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
-        // spriteBatch.Draw(SceneRender, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 1f);
-        // spriteBatch.End();
         subViewport.Begin();
         Scene?.Render();
         subViewport.End();
@@ -258,8 +255,7 @@ public class TeuriaEngine : Game
         Exit();
     }
 
-    protected virtual void Init() { throw new Exception(@"
-    You don't have a game initialize yet! Make a game class first before you proceed."); }
+    protected virtual void Init() {}
     protected virtual void Load() {}
     protected virtual void Process(GameTime gameTime) {}
     protected virtual void CleanUp() {}

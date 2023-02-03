@@ -10,7 +10,7 @@ namespace Teuria;
 
 public class Entity : Node, IEnumerable<Component>
 {
-    private List<Component> components = new List<Component>();
+    private List<Component> componentList = new List<Component>();
     public Vector2 Position;
     public float Rotation;
     public Vector2 Scale;
@@ -22,14 +22,14 @@ public class Entity : Node, IEnumerable<Component>
 
     public override void EnterScene(Scene scene, ContentManager content) 
     {
-        foreach (var comp in components) 
+        foreach (var comp in componentList) 
             comp.EntityEntered(scene);
         
         base.EnterScene(scene, content);
     }
     public override void ExitScene() 
     {
-        foreach (var comp in components) 
+        foreach (var comp in componentList) 
         {
             comp.Removed();
             comp.EntityExited(Scene);
@@ -39,25 +39,25 @@ public class Entity : Node, IEnumerable<Component>
     public override void Ready() {}
     public override void Update() 
     {
-        for (int i = 0; i < components.Count; i++) 
+        for (int i = 0; i < componentList.Count; i++) 
         {
-            if (!components[i].Active) continue;
-            components[i].Update();
+            if (!componentList[i].Active) continue;
+            componentList[i].Update();
         }
     }
     public override void Draw(SpriteBatch spriteBatch) 
     {
         if (!Visible) return;
-        for (int i = 0; i < components.Count; i++) 
+        for (int i = 0; i < componentList.Count; i++) 
         {
-            if (!components[i].Active) continue;
-            components[i].Draw(spriteBatch);
+            if (!componentList[i].Active) continue;
+            componentList[i].Draw(spriteBatch);
         }
     }
 
     public void AddComponent(Component comp) 
     {
-        components.Add(comp);
+        componentList.Add(comp);
         comp.Added(this);
     }
 
@@ -66,20 +66,19 @@ public class Entity : Node, IEnumerable<Component>
     {
         foreach (var comp in comps) 
         {
-            components.Add(comp);
-            comp.Added(this);
+            AddComponent(comp);
         }
     }
 
 
     public T GetComponent<T>() where T : Component
     {
-        Span<Component> comps = CollectionsMarshal.AsSpan(components);
+        Span<Component> comps = CollectionsMarshal.AsSpan(componentList);
         foreach (var comp in comps) 
         {
-            if (comp is T) 
+            if (comp is T c) 
             {
-                return comp as T;
+                return c;
             }
         }
     
@@ -89,10 +88,10 @@ public class Entity : Node, IEnumerable<Component>
     public void RemoveComponent(Component comp) 
     {
         comp?.Removed();
-        components.Remove(comp);
+        componentList.Remove(comp);
     }
 
-    public IEnumerator<Component> GetEnumerator() => components.GetEnumerator();
+    public IEnumerator<Component> GetEnumerator() => componentList.GetEnumerator();
     
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

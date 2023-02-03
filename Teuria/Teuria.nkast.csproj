@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+    <TargetFrameworks>net6.0</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>11</LangVersion>
 
@@ -10,13 +10,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" />
-    <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
+    <PackageReference Include="nkast.Xna.Framework.Blazor" Version="3.8.9101" />
   </ItemGroup>
 
-  <ItemGroup Condition="$(DefineConstants.Contains(NEWTONSOFTJSON))">
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../LightJson/Sources/LightJson/LightJson.csproj">
       <PrivateAssets>false</PrivateAssets>

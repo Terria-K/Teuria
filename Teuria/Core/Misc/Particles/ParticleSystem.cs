@@ -39,6 +39,33 @@ public class ParticleSystem : Entity
         Slot += 1;
     }
 
+    public void EmitMany(ParticleMaterial material, Entity entity, int amount) 
+    {
+        for (int i = 0; i < amount; i++) 
+        {
+            material.Create(ref particles[slot], entity, Vector2.Zero);
+            Slot += 1;
+        }
+    }
+
+    public void EmitMany(ParticleMaterial material, Vector2 position, int amount) 
+    {
+        for (int i = 0; i < amount; i++) 
+        {
+            material.Create(ref particles[slot], position);
+            Slot += 1;
+        }
+    }
+
+    public void EmitMany(ParticleMaterial material, Entity entity, Vector2 position, int amount) 
+    {
+        for (int i = 0; i < amount; i++) 
+        {
+            material.Create(ref particles[slot], entity, position);
+            Slot += 1;
+        }
+    }
+
     public void Clear() 
     {
         for (int i = 0; i < particles.Length; i++)

@@ -77,4 +77,18 @@ public class RectangleShape : Shape
     {
         return grid.Collide(this, offset);
     }
+
+    public static AABB Intersect(RectangleShape a, RectangleShape b) 
+    {
+        var left = MathHelper.Max(a.GlobalX, b.GlobalX);
+        var top = MathHelper.Max(a.GlobalY, b.GlobalY);
+        var right = MathHelper.Min(a.GlobalRight, b.GlobalRight);
+        var bottom = MathHelper.Min(a.GlobalBottom, b.GlobalBottom);
+
+        if (right < left || bottom < top) 
+        {
+            return default;
+        }
+        return new AABB(left, top, right - left, bottom - top);
+    }
 }

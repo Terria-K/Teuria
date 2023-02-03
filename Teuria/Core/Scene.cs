@@ -6,17 +6,14 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
 
+
 public class Scene 
 {
-    internal Queue<Node> QueueToFree = new();
     private Entities entityList;
-    private List<CanvasLayer> layers = new();
     private Layers layerList;
     protected ContentManager Content;
     public Camera Camera;
     public SpriteBatch SpriteBatch;
-    public event Action OnPause;
-    public SceneCanvas MainCanvas;
     public float TimeActive;
     private bool paused;
     public bool Paused 
@@ -30,10 +27,10 @@ public class Scene
         }
     }
 
-    public Entities Entities 
-    {
-        get => entityList;
-    }
+    public Entities Entities => entityList;
+    public Action OnPause;
+    public Action<Entity> OnEntityCreated;
+    public Action<Entity> OnEntityDeleted;
 
     public Scene(ContentManager content, Camera camera) 
     {
@@ -52,17 +49,12 @@ public class Scene
 
     public bool HasCanvas(CanvasLayer canvas) 
     {
-        return layers.Contains(canvas);
+        return layerList.LayerList.Contains(canvas);
     }
 
     internal void Activate(SpriteBatch spriteBatch) 
     {
         SpriteBatch = spriteBatch;
-    }
-
-    internal void AddToQueue(Node entity)
-    {
-        QueueToFree.Enqueue(entity);
     }
 
     public void Add(Entity entity, PauseMode pauseMode = PauseMode.Inherit) 
@@ -94,15 +86,11 @@ public class Scene
     public void Remove(CanvasLayer layer) 
     {
         layerList.Remove(layer);
-        layers.Remove(layer);
     }
 
     public void Remove(Entity entity) 
     {
-        // entity.Active = false;
-        // entity.ExitScene();
         entityList.Remove(entity);
-        // nodeList.Remove(entity);
     }
 
     public void RemoveAllEntities() 
@@ -132,10 +120,7 @@ public class Scene
     }
 
     public virtual void Initialize() {}
-    public virtual void Hierarchy(GraphicsDevice device) 
-    {
-
-    }
+    public virtual void Hierarchy(GraphicsDevice device) {}
     public virtual void ProcessLoop() 
     {
         if (!Paused)
@@ -184,6 +169,8 @@ public class Scene
         return Content;
     }
 
+    public void ChangeScene(Scene scene) => TeuriaEngine.Instance.Scene = scene;
+
     public T CreateEntity<T>() 
     where T : Entity, new()
     {
@@ -216,4 +203,5 @@ public class Scene
         }
         return list;
     }
+
 }

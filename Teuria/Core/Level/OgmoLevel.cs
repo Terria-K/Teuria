@@ -15,7 +15,8 @@ public class OgmoLevel
 
     private OgmoLevel(string path) 
     {
-        var result = JsonConvert.DeserializeFromFile<OgmoLevelData>(path);
+        using var fs = TitleContainer.OpenStream(path);
+        var result = JsonConvert.DeserializeFromStream<OgmoLevelData>(fs);
 
         LevelData = result;
 

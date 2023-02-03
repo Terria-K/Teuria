@@ -13,7 +13,7 @@ public static class TextureImporter
     public static Texture2D LoadImage(ReadOnlySpan<char> path) 
     {
         var device = TeuriaEngine.Instance.GraphicsDevice;
-        using var fs = File.OpenRead($"Content/{path}");
+        using var fs = TitleContainer.OpenStream($"Content/{path}");
         var tex = Texture2D.FromStream(device, fs);
         var size = tex.Width * tex.Height;
         Color[] texColor = new Color[size];

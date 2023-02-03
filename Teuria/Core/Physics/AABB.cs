@@ -106,6 +106,20 @@ public struct AABB : IEqualityComparer<AABB>
         one.Width == two.Width &&
         one.Height == two.Height;
 
+    public static AABB Intersect(AABB a, AABB b) 
+    {
+        var left = MathHelper.Max(a.X, b.X);
+        var top = MathHelper.Max(a.Y, b.Y);
+        var right = MathHelper.Min(a.Right, b.Right);
+        var bottom = MathHelper.Min(a.Bottom, b.Bottom);
+
+        if (right < left || bottom < top) 
+        {
+            return default;
+        }
+        return new AABB(left, top, right - left, bottom - top);
+    }
+
     public int GetHashCode([DisallowNull] AABB obj)
     {
         throw new System.NotImplementedException();

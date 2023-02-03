@@ -5,6 +5,7 @@ namespace Teuria;
 
 public class ParticleMaterial 
 {
+    public enum Fade { None, Linear, Late, InAndOut };
     public SpriteTexture Texture;
     public Picker<SpriteTexture> TexturePicker;
     public Color Color = Color.White;
@@ -18,6 +19,7 @@ public class ParticleMaterial
     public float LifeTime = 1f;
     public float Scale = 1f;
     public float Spin;
+    public Fade FadeMode;
 
     public Particle Create(ref Particle particle, Vector2 pos) =>
         Create(ref particle, null, pos);
@@ -36,7 +38,7 @@ public class ParticleMaterial
         var moveDirection = Direction - DirectionRange / 2 + MathUtils.Randomizer.NextSingle() * DirectionRange;
         particle.Velocity = MathUtils.DegToVec(moveDirection, MathUtils.Randomizer.Range(MinSpeed, MaxSpeed));
 
-        particle.LifeTime = LifeTime;
+        particle.StartLife = particle.LifeTime = MathUtils.Randomizer.Range(0, LifeTime);
 
         particle.Rotation = RotationSpeed;
         particle.Spin = Spin;

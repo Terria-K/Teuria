@@ -63,8 +63,6 @@ public class Sprite : Component
         Rect = clipRect;
     }
 
-    public override void Update() {}
-    
     public override void Draw(SpriteBatch spriteBatch)
     {
         if (useNinePatch)  

@@ -51,6 +51,11 @@ public static class MathUtils
     }
 
 #region Vector2
+    public static float Angle(Vector2 from, Vector2 to)
+    {
+        return (float)Math.Atan2(to.Y - from.Y, to.X - from.X);
+    }
+
     public static Vector2 MoveTowards(Vector2 current, Vector2 target, float maxDelta)
     {
         var vecX = target.X - current.X;

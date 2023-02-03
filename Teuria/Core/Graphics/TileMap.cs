@@ -10,13 +10,22 @@ namespace Teuria;
 public class TileMap : Entity
 {
     public Point LevelSize { get; private set; }
-    public Dictionary<string, Layer> layer = new Dictionary<string, Layer>();
+    public Dictionary<string, Layer> Layers = new Dictionary<string, Layer>();
     private Dictionary<LayerType, List<string>> recognizeable = new Dictionary<LayerType, List<string>>();
     
     public enum LayerType { Tiles, Entities, Decal, Grid }
+    private RenderTarget2D renderTiles;
+    public bool Dirty => dirty;
+    private bool dirty = true;
 
-    public TileMap(OgmoLevel level, Dictionary<string, Tileset> tilesets) 
+    public TileMap(
+        OgmoLevel level, 
+        int width,
+        int height,
+        Dictionary<string, Tileset> tilesets
+    ) 
     {
+        renderTiles = new RenderTarget2D(TeuriaEngine.Instance.GraphicsDevice, width, height);
         Depth = 3;
         Active = false;
         LevelSize = level.LevelSize;
@@ -28,21 +37,21 @@ public class TileMap : Entity
             {
                 layerType = LayerType.Entities;   
                 var newLayer = new Layer(layer, null, layerType);
-                this.layer[layer.Name] = newLayer;
+                this.Layers[layer.Name] = newLayer;
             }
             else if (layer.Data != null) 
             {
                 layerType = LayerType.Tiles;
                 var tileset = tilesets[layer.Name];
                 var newLayer = new Layer(layer, tileset, layerType);
-                this.layer[layer.Name] = newLayer;
+                this.Layers[layer.Name] = newLayer;
             }
             else if (layer.Grid2D != null) 
             {
                 layerType = LayerType.Grid;
                 var tileset = tilesets[layer.Name];
                 var newLayer = new Layer(layer, tileset, layerType);
-                this.layer[layer.Name] = newLayer;
+                this.Layers[layer.Name] = newLayer;
             }
 
         }
@@ -69,7 +78,7 @@ public class TileMap : Entity
             }
             foreach (var str in entityLayer.Value)
             {
-                foreach (var entity in layer[str].entities)
+                foreach (var entity in Layers[str].entities)
                     spawnEntities?.Invoke(entity);
             }
         }
@@ -88,7 +97,7 @@ public class TileMap : Entity
             {
                 foreach (var str in grid.Value) 
                 {
-                    var gl = layer[str];
+                    var gl = Layers[str];
                     gridLayer?.Invoke(gl);
                 }
             }
@@ -96,9 +105,14 @@ public class TileMap : Entity
 
     }
 
-    private void DrawMap(SpriteBatch spriteBatch) 
+    public void BeforeRender(SpriteBatch spriteBatch) 
     {
-        foreach (var layer in this.layer) 
+        if (!dirty)
+            return;
+        TeuriaEngine.Instance.GraphicsDevice.SetRenderTarget(renderTiles);
+        TeuriaEngine.Instance.GraphicsDevice.Clear(Color.Transparent);
+        spriteBatch.Begin();
+        foreach (var layer in this.Layers) 
         {
             switch (layer.Value.LayerType) 
             {
@@ -112,12 +126,21 @@ public class TileMap : Entity
                     // break;
             }
         }
+        spriteBatch.End();
+        dirty = false;
     }
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        DrawMap(spriteBatch);
+        spriteBatch.Draw(renderTiles, Vector2.Zero, Color.White);
+        // DrawMap(spriteBatch);
         base.Draw(spriteBatch);
+    }
+
+    public override void ExitScene()
+    {
+        renderTiles.Dispose();
+        base.ExitScene();
     }
 
     public class Layer 
@@ -131,16 +154,7 @@ public class TileMap : Entity
         public Point LevelSize;
         public LayerType LayerType;
         private Array2D<SpriteTexture> textureGridData;
-#region Constants
-        private const int NorthWest = 1 << 0;
-        private const int North = 1 << 1;
-        private const int NorthEast = 1 << 2;
-        private const int West = 1 << 3;
-        private const int East = 1 << 4;
-        private const int SouthWest = 1 << 5;
-        private const int South = 1 << 6;
-        private const int SouthEast = 1 << 7;
-#endregion
+
 
         //TODO Optimize this further
         public Layer(OgmoLayer layer, Tileset tileset, LayerType layerType) 
@@ -188,6 +202,16 @@ public class TileMap : Entity
 
         public int[,] ApplyAutotile(string[,] grids, Picker<SpriteTexture> picker) 
         {
+#region Constants
+            const int NorthWest = 1 << 0;
+            const int North = 1 << 1;
+            const int NorthEast = 1 << 2;
+            const int West = 1 << 3;
+            const int East = 1 << 4;
+            const int SouthWest = 1 << 5;
+            const int South = 1 << 6;
+            const int SouthEast = 1 << 7;
+#endregion
             var newGrid = new int[LevelSize.Y, LevelSize.X];
 
             for (int x = 0; x < LevelSize.X; x++)

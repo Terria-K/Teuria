@@ -10,9 +10,10 @@ namespace Teuria;
 
 public interface IAtlasLoader
 {
-    Dictionary<string, SpriteTexture> Load(FileStream fs, Texture2D baseTexture);
+    Dictionary<string, SpriteTexture> Load(Stream fs, Texture2D baseTexture);
 }
 
+public delegate Dictionary<string, SpriteTexture> AtlasDelegate(Stream fs, Texture2D baseTexture);
 
 public class Atlas 
 {
@@ -32,19 +33,32 @@ public class Atlas
         }
     }
 
-    public static Atlas Create(FileStream fs, Texture2D baseTexture, IAtlasLoader loader) 
+    public static Atlas Create(Stream fs, Texture2D baseTexture, IAtlasLoader loader) 
     {
-        var atl = new Atlas() {
+        return new Atlas() {
             sprites = loader.Load(fs, baseTexture),
             BaseTexture = baseTexture
         };
-        return atl;
     }
 
     public static Atlas Create(string path, Texture2D baseTexture, IAtlasLoader loader) 
     {
-        using var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
+        using var fs = TitleContainer.OpenStream(path);
         return Create(fs, baseTexture, loader);
+    }
+
+    public static Atlas Create(Stream fs, Texture2D baseTexture, AtlasDelegate func) 
+    {
+        return new Atlas() {
+            sprites = func(fs, baseTexture),
+            BaseTexture = baseTexture
+        };
+    }
+
+    public static Atlas Create(string path, Texture2D baseTexture, AtlasDelegate func) 
+    {
+        using var fs = TitleContainer.OpenStream(path);
+        return Create(fs, baseTexture, func);
     }
 
     public bool Contains(string id) => sprites.ContainsKey(id);
@@ -78,9 +92,10 @@ public class Atlas
 /// </summary>
 public sealed class ClutterBinaryLoader : IAtlasLoader
 {
-    public Dictionary<string, SpriteTexture> Load(FileStream fs, Texture2D baseTexture)
+    public Dictionary<string, SpriteTexture> Load(Stream fs, Texture2D baseTexture)
     {
         var reader = new BinaryReader(fs);
+        reader.ReadString();
         var length = reader.ReadUInt32();
         var atlas = new Dictionary<string, SpriteTexture>();
         for (uint i = 0; i < length; i++) 
@@ -90,10 +105,19 @@ public sealed class ClutterBinaryLoader : IAtlasLoader
             var y = (int)reader.ReadUInt32();
             var w = (int)reader.ReadUInt32();
             var h = (int)reader.ReadUInt32();
+            var rotated = reader.ReadBoolean();
+            var rotatedValue = 0f;
+            var origin = Vector2.Zero;
+            if (rotated) {
+                rotatedValue = 270f * MathUtils.Radians;
+                origin.X = -w;
+            }
             var spriteTexture = new SpriteTexture(
                 baseTexture,
                 new Point(x, y),
                 w, h,
+                rotatedValue,
+                origin,
                 new Rectangle(4, 4, 4, 4)
             );
             atlas.Add(name, spriteTexture);
@@ -121,7 +145,7 @@ public sealed class ClutterBinaryLoader : IAtlasLoader
 /// </summary>
 public sealed class ClutterJsonLoader: IAtlasLoader
 {
-    public Dictionary<string, SpriteTexture> Load(FileStream fs, Texture2D baseTexture)
+    public Dictionary<string, SpriteTexture> Load(Stream fs, Texture2D baseTexture)
     {
         var val = JsonTextReader.ParseFile(fs);
         var frames = val["frames"].AsJsonObject;
@@ -133,10 +157,20 @@ public sealed class ClutterJsonLoader: IAtlasLoader
             var y = keyValue.Value["y"].AsInteger;
             var w = keyValue.Value["width"].AsInteger;
             var h = keyValue.Value["height"].AsInteger;
+            var rotated = keyValue.Value["rotated"].AsBoolean;
+            var rotatedValue = 0f;
+            var origin = Vector2.Zero;
+            if (rotated) {
+                rotatedValue = 270f * MathUtils.Radians;
+                origin.X = -w;
+            }
+
             var spriteTexture = new SpriteTexture(
                 baseTexture,
                 new Point(x, y),
                 w, h,
+                rotatedValue,
+                origin,
                 new Rectangle(4, 4, 4, 4)
             );
             atlas.Add(name, spriteTexture);

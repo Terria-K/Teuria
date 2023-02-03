@@ -76,11 +76,6 @@ public class Node
     //     }
     // }
 
-    public void QueueFree() 
-    {
-        Scene.AddToQueue(this);
-    }
-
     public virtual void EnterScene(Scene scene, ContentManager content) 
     {
         this.Scene = scene;

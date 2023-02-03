@@ -43,6 +43,11 @@ public static class Canvas
         spriteBatch.Draw(pixel, new Rectangle(x, (y + height - thickness), width, thickness), color);
     }
 
+    public static void DrawLine(SpriteBatch spriteBatch, Vector2 start, float angle, float length, Color color) 
+    {
+        spriteBatch.Draw(pixel, start, null, color, angle, Vector2.Zero, new Vector2(length, 1), SpriteEffects.None, 0);
+    }
+
 #region NormalText
     public static void DrawText(SpriteFont spriteFont, string text, Vector2 position, Color color) =>
         SpriteBatch.DrawString(spriteFont, text, MathUtils.Floor(position), color);    

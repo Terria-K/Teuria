@@ -16,7 +16,8 @@ public readonly ref struct SpriteFrameLoader
     
     public SpriteFrameLoader(string contentTexturePath, ContentManager content) 
     {
-        var result = JsonConvert.DeserializeFromFile<SpriteFactory>($"Content/{contentTexturePath}.sf");
+        using var fs = TitleContainer.OpenStream($"Content/{contentTexturePath}.sf");
+        var result = JsonConvert.DeserializeFromStream<SpriteFactory>(fs);
 
         Texture = SpriteTexture.FromContent(content, contentTexturePath);
         var atlas = result.SFAtlas;
@@ -27,7 +28,8 @@ public readonly ref struct SpriteFrameLoader
 
     public SpriteFrameLoader(string sfPath, SpriteTexture texture) 
     {
-        var result = JsonConvert.DeserializeFromFile<SpriteFactory>($"Content/{sfPath}.sf");
+        using var fs = TitleContainer.OpenStream($"Content/{sfPath}.sf");
+        var result = JsonConvert.DeserializeFromStream<SpriteFactory>(fs);
         
         var atlas = result.SFAtlas;
         Texture = texture;

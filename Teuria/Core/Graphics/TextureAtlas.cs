@@ -16,8 +16,16 @@ public class TextureAtlas
     public TextureAtlas(SpriteTexture texture, int tileWidth, int tileHeight) 
     {
         Texture = texture;
-        TileWidth = tileWidth;
-        TileHeight = tileHeight;
+        if (texture.Rotation == 90 * MathUtils.Radians) 
+        {
+            TileWidth = tileHeight;
+            TileHeight = tileWidth;
+        }
+        else 
+        {
+            TileWidth = tileWidth;
+            TileHeight = tileHeight;
+        }
 
         tiles = new SpriteTexture[Texture.Width / tileWidth, Texture.Height / tileHeight];
         for (int x = 0; x < Texture.Width / tileWidth; x++) 
