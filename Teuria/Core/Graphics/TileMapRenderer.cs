@@ -81,8 +81,8 @@ public class TileMapRenderer : IDisposable
         {
             if (!dirty)
                 return;
-            TeuriaEngine.Instance.GraphicsDevice.SetRenderTarget(layerRT);
-            TeuriaEngine.Instance.GraphicsDevice.Clear(Color.Transparent);
+            GameApp.Instance.GraphicsDevice.SetRenderTarget(layerRT);
+            GameApp.Instance.GraphicsDevice.Clear(Color.Transparent);
             spriteBatch.Begin();
             switch (layer.LayerType) 
             {

@@ -17,8 +17,8 @@ public class Node
     public Node(string name = "Node") 
     {
         this.name = name;
-        NodeID = TeuriaEngine.InternalID;
-        TeuriaEngine.InternalID++;
+        NodeID = GameApp.InternalID;
+        GameApp.InternalID++;
     }
 
     public void AddChild(string name, Node node) 
@@ -88,9 +88,7 @@ public class Node
         }
     }
     public virtual void Ready() {}
-    public virtual void Update() 
-    {
-    }
+    public virtual void Update() {}
     public virtual void Draw(SpriteBatch spriteBatch) 
     {
        

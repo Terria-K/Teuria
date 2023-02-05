@@ -20,10 +20,10 @@ public class MouseInput : BaseInput
 
     public Vector2 Position 
     {
-        get => Vector2.Transform(new Vector2(CurrentState.X, CurrentState.Y), Matrix.Invert(TeuriaEngine.ScreenMatrix));
+        get => Vector2.Transform(new Vector2(CurrentState.X, CurrentState.Y), Matrix.Invert(GameApp.ScreenMatrix));
         set 
         {
-            var vector = Vector2.Transform(value, TeuriaEngine.ScreenMatrix);
+            var vector = Vector2.Transform(value, GameApp.ScreenMatrix);
             Mouse.SetPosition((int)Math.Round(vector.X), (int)Math.Round(vector.Y));  
         } 
     }

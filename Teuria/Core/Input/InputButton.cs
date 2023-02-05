@@ -27,7 +27,7 @@ public class InputButton : BindableInput
 
     public override void Update() 
     {
-        buffer -= TeuriaEngine.DeltaTime;
+        buffer -= Time.Delta;
         var pressed = false;
         if (Binding.Pressed()) 
         {

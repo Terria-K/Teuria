@@ -8,12 +8,21 @@ public class Coroutine : Component
     private Stack<IEnumerator> coroutines = new Stack<IEnumerator>();
     private float timer;
     private bool done;
+    private bool freeWhenDone;
 
     public Coroutine() {}
 
     public Coroutine(IEnumerator corou) 
     {
         coroutines.Push(corou);
+    }
+
+    public static Coroutine Create(Entity entity, IEnumerator enumerator) 
+    {
+        var corou = new Coroutine(enumerator);
+        corou.freeWhenDone = true;
+        entity.AddComponent(corou);
+        return corou;
     }
 
     public RefCoroutine Run(IEnumerator coroutine) 
@@ -55,7 +64,7 @@ public class Coroutine : Component
 
         if (timer > 0) 
         {
-            timer -= TeuriaEngine.DeltaTime;
+            timer -= Time.Delta;
             return;
         }
         if (coroutines.Count == 0) return;
@@ -75,6 +84,8 @@ public class Coroutine : Component
         if (coroutines.Count == 0) 
         {
             Active = false;
+            if (freeWhenDone)
+                Entity.RemoveComponent(this);
         }
     }
 

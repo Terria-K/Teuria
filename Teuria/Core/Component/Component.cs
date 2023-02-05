@@ -38,13 +38,8 @@ public class Component
         Entity = null;
     }
 
-    public void Add(Component component) 
+    public void DetachSelf() 
     {
-        Entity.AddComponent(component);
-    }
-
-    public void Remove(Component component) 
-    {
-        Entity.RemoveComponent(component);
+        Entity.RemoveComponent(this);
     }
 }

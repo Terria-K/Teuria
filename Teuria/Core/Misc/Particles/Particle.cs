@@ -26,7 +26,7 @@ public struct Particle
 
     public void Update() 
     {
-        var dt = TeuriaEngine.DeltaTime;
+        var dt = Time.Delta;
         var ease = LifeTime / StartLife;
         LifeTime -= dt;
         if (LifeTime < 0f) 

@@ -195,10 +195,10 @@ public abstract class PhysicsComponent : Component
         return false;
     }
 
-    public List<T1> Checks<T1>(ICollidableEntity entity, Vector2 offset) 
+    public IEnumerable<T1> Checks<T1>(ICollidableEntity entity, Vector2 offset) 
     where T1 : ICollidableEntity
     {
-        var list = Enumerable.Empty<T1>().ToList();
+        // var list = Enumerable.Empty<T1>().ToList();
         foreach (var wall in Collided) 
         {
             if (!wall.Collideable) { continue; }
@@ -208,12 +208,11 @@ public abstract class PhysicsComponent : Component
 
                 if (wall.Entity is T1 t1) 
                 {
-                    list.Add(t1);
+                    yield return t1;
                 }
                 continue;
             }
         }
-        return list;
     }
 
     public T1 CheckFirst<T1>(ICollidableEntity entity, Vector2 offset) 

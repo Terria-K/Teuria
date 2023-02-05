@@ -24,7 +24,7 @@ public class Shaker : Component
         {
             return;
         }
-        Timer -= TeuriaEngine.DeltaTime;
+        Timer -= Time.Delta;
         if (Timer <= 0) 
         {
             Active = false;

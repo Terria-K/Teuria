@@ -104,7 +104,7 @@ public class AnimatedSprite : Component
     {
         if (IsFinished)
             return;
-        timer += TeuriaEngine.DeltaTime;
+        timer += Time.Delta;
 
         if (timer <= FPS)
         {

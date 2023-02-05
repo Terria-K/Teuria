@@ -45,6 +45,7 @@ public class Entity : Node, IEnumerable<Component>
             componentList[i].Update();
         }
     }
+
     public override void Draw(SpriteBatch spriteBatch) 
     {
         if (!Visible) return;
@@ -89,6 +90,11 @@ public class Entity : Node, IEnumerable<Component>
     {
         comp?.Removed();
         componentList.Remove(comp);
+    }
+
+    public void DestroySelf() 
+    {
+        Scene.Remove(this);
     }
 
     public IEnumerator<Component> GetEnumerator() => componentList.GetEnumerator();

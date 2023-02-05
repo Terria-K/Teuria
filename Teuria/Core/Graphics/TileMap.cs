@@ -25,7 +25,7 @@ public class TileMap : Entity
         Dictionary<string, Tileset> tilesets
     ) 
     {
-        renderTiles = new RenderTarget2D(TeuriaEngine.Instance.GraphicsDevice, width, height);
+        renderTiles = new RenderTarget2D(GameApp.Instance.GraphicsDevice, width, height);
         Depth = 3;
         Active = false;
         LevelSize = level.LevelSize;
@@ -109,8 +109,8 @@ public class TileMap : Entity
     {
         if (!dirty)
             return;
-        TeuriaEngine.Instance.GraphicsDevice.SetRenderTarget(renderTiles);
-        TeuriaEngine.Instance.GraphicsDevice.Clear(Color.Transparent);
+        GameApp.Instance.GraphicsDevice.SetRenderTarget(renderTiles);
+        GameApp.Instance.GraphicsDevice.Clear(Color.Transparent);
         spriteBatch.Begin();
         foreach (var layer in this.Layers) 
         {
@@ -214,6 +214,8 @@ public class TileMap : Entity
 #endregion
             var newGrid = new int[LevelSize.Y, LevelSize.X];
 
+            MathUtils.StartRandScope(28);
+
             for (int x = 0; x < LevelSize.X; x++)
                 for (int y = 0; y < LevelSize.Y; y++) 
                 {
@@ -250,6 +252,7 @@ public class TileMap : Entity
 
                     picker.Clear();
                 }
+            MathUtils.EndRandScope();
             return newGrid;
         }
 

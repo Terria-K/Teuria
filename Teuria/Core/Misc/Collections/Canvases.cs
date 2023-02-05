@@ -2,14 +2,14 @@ using System.Collections.Generic;
 
 namespace Teuria;
 
-public class Layers
+public class Canvases
 {
-    public List<CanvasLayer> LayerList = new List<CanvasLayer>();
+    public List<CanvasLayer> CanvasList = new List<CanvasLayer>();
     private List<CanvasLayer> adding = new List<CanvasLayer>();
     private List<CanvasLayer> removing = new List<CanvasLayer>();
     private Scene scene;
 
-    internal Layers(Scene scene) 
+    internal Canvases(Scene scene) 
     {
         this.scene = scene;
     }
@@ -20,7 +20,7 @@ public class Layers
         {
             foreach (var layer in adding) 
             {
-                LayerList.Add(layer);
+                CanvasList.Add(layer);
             }
         }
         adding.Clear();
@@ -28,7 +28,7 @@ public class Layers
         {
             foreach (var layer in removing) 
             {
-                LayerList.Remove(layer);
+                CanvasList.Remove(layer);
             }
         }
         removing.Clear();
@@ -36,7 +36,7 @@ public class Layers
 
     internal void PreDraw() 
     {
-        foreach (var layer in LayerList) 
+        foreach (var layer in CanvasList) 
         {
             if (!layer.Visible) { continue; }
             layer.PreDraw(scene);
@@ -45,7 +45,7 @@ public class Layers
 
     internal void Draw() 
     {
-        foreach (var layer in LayerList) 
+        foreach (var layer in CanvasList) 
         {
             if (!layer.Visible) { continue; }
             layer.Draw(scene);
@@ -54,7 +54,7 @@ public class Layers
 
     internal void PostDraw() 
     {
-        foreach (var layer in LayerList) 
+        foreach (var layer in CanvasList) 
         {
             if (!layer.Visible) { continue; }
             layer.PostDraw(scene);
@@ -63,7 +63,7 @@ public class Layers
 
     internal void Unload() 
     {
-        foreach (var layer in LayerList) 
+        foreach (var layer in CanvasList) 
         {
             layer.Unload();
         }

@@ -94,6 +94,11 @@ public class Entities : IEnumerable<Entity>
         }
     }
 
+    internal void SortEntities() 
+    {
+        unsorted = true;
+    }
+
     public void Add(Entity entity) 
     {
         if (!adding.Contains(entity) && !current.Contains(entity)) 

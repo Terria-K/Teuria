@@ -32,7 +32,7 @@ public class PrototypeCanvas : CanvasLayer
     public void ChangeScene(Scene scene) 
     {
         this.Scene = scene;
-        TeuriaEngine.Instance.Scene = scene;
+        GameApp.Instance.Scene = scene;
     }
 
     public override void Draw(Scene scene) 

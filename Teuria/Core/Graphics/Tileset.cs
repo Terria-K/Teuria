@@ -66,13 +66,13 @@ public class Tileset
 
     public void AddTerrain(string tilesetPath, SpriteTexture texture) 
     {
-        var path = Path.Join(TeuriaEngine.ContentPath, tilesetPath);
+        var path = Path.Join(GameApp.ContentPath, tilesetPath);
         AddToList(path, texture, null);
     }
 
     public static Tileset LoadTileset(string tilesetPath, ContentManager manager, SpriteTexture texture = null) 
     {
-        var path = Path.Join(TeuriaEngine.ContentPath, tilesetPath);
+        var path = Path.Join(GameApp.ContentPath, tilesetPath);
         return new Tileset(path, manager, texture);
     }
 

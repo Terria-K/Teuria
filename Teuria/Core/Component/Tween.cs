@@ -60,12 +60,12 @@ public class Tween : Component
     {
         if (Delay > 0) 
         {
-            Delay -= TeuriaEngine.DeltaTime;
+            Delay -= Time.Delta;
             base.Update();
             return;
         }
 
-        TimeLeft -= TeuriaEngine.DeltaTime;
+        TimeLeft -= Time.Delta;
 
         Progress = Math.Max(0, TimeLeft) / Duration;
 
@@ -87,7 +87,7 @@ public class Tween : Component
                     break;
                 case TweenMode.OneShot:
                     Active = false;
-                    Entity.RemoveComponent(this);
+                    DetachSelf();
                     break;
                 case TweenMode.Loop:
                     Start(Reverse, lastDelay);

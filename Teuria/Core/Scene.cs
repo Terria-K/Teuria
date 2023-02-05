@@ -10,7 +10,7 @@ namespace Teuria;
 public class Scene 
 {
     private Entities entityList;
-    private Layers layerList;
+    private Canvases canvasList;
     protected ContentManager Content;
     public Camera Camera;
     public SpriteBatch SpriteBatch;
@@ -37,19 +37,19 @@ public class Scene
         Content = content;
         Camera = camera;
         entityList = new Entities(this);
-        layerList = new Layers(this);
+        canvasList = new Canvases(this);
     }
 
     public Scene(ContentManager content)
     {
         Content = content;
         entityList = new Entities(this);
-        layerList = new Layers(this);
+        canvasList = new Canvases(this);
     }
 
     public bool HasCanvas(CanvasLayer canvas) 
     {
-        return layerList.LayerList.Contains(canvas);
+        return canvasList.CanvasList.Contains(canvas);
     }
 
     internal void Activate(SpriteBatch spriteBatch) 
@@ -80,12 +80,12 @@ public class Scene
     public void Add(CanvasLayer layer) 
     {
         layer.Obtain(this);
-        layerList.Add(layer);
+        canvasList.Add(layer);
     }
 
     public void Remove(CanvasLayer layer) 
     {
-        layerList.Remove(layer);
+        canvasList.Remove(layer);
     }
 
     public void Remove(Entity entity) 
@@ -121,13 +121,13 @@ public class Scene
 
     public virtual void Initialize() {}
     public virtual void Hierarchy(GraphicsDevice device) {}
-    public virtual void ProcessLoop() 
+    public virtual void Process() 
     {
         if (!Paused)
-            TimeActive += TeuriaEngine.DeltaTime;
+            TimeActive += Time.Delta;
         // if (QueueToFree.Count > 0)
         //     QueueToFree.Dequeue().Free();
-        layerList.UpdateLists();
+        canvasList.UpdateLists();
         entityList.UpdateSystem();
         entityList.Update();
 
@@ -140,7 +140,7 @@ public class Scene
 
     public virtual void BeforeRender() 
     {
-        layerList.PreDraw();
+        canvasList.PreDraw();
     }
 
     public virtual void Render() 
@@ -151,17 +151,17 @@ public class Scene
         //     if (!entity.Active) continue;
         //     entity.Draw(SpriteBatch);
         // }
-        layerList.Draw();
+        canvasList.Draw();
     }
 
     public virtual void AfterRender() 
     {
-        layerList.PostDraw();
+        canvasList.PostDraw();
     }
 
     public virtual void Exit() 
     {
-        layerList.Unload();
+        canvasList.Unload();
     }
 
     internal ContentManager GetContent() 
@@ -169,7 +169,12 @@ public class Scene
         return Content;
     }
 
-    public void ChangeScene(Scene scene) => TeuriaEngine.Instance.Scene = scene;
+    public void SortEntities() 
+    {
+        entityList.SortEntities();
+    }
+
+    public void ChangeScene(Scene scene) => GameApp.Instance.Scene = scene;
 
     public T CreateEntity<T>() 
     where T : Entity, new()
@@ -203,5 +208,4 @@ public class Scene
         }
         return list;
     }
-
 }

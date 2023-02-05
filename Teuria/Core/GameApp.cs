@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Teuria;
 
-public class TeuriaEngine : Game
+public abstract class GameApp : Game
 {
     private GraphicsDeviceManager graphics;
     private SpriteBatch spriteBatch;
@@ -21,9 +21,7 @@ public class TeuriaEngine : Game
     public static string ContentPath;
     public GraphicsDeviceManager GraphicsDeviceManager => graphics;
     
-    public static int FPS { get; private set; }
-    public static float DeltaTime { get; private set; }
-    public static TeuriaEngine Instance => instance;
+    public static GameApp Instance => instance;
     public Scene Scene 
     { 
         get => scene; 
@@ -33,7 +31,7 @@ public class TeuriaEngine : Game
             nextScene = value; 
         } 
     }
-    private static TeuriaEngine instance;
+    private static GameApp instance;
     private SubViewport subViewport;
     private bool resizing;
     private static bool fullscreen;
@@ -66,15 +64,15 @@ public class TeuriaEngine : Game
 
     public static int InternalID { get; internal set; }
 
-    public TeuriaEngine(int width, int height, int screenWidth, int screenHeight, string windowTitle, bool fullScreen)
+    public GameApp(int width, int height, int screenWidth, int screenHeight, string windowTitle, bool fullScreen)
     {
 #if DEBUG
 #if SYSTEMTEXTJSON
         Console.WriteLine("Using SYSTEMTEXTJSON");
 #else
         Console.WriteLine("Using Newtonsoft.JSON");
-#endif
-#endif
+#endif // SYSTEMTEXTJSON
+#endif // DEBUG
         instance = this;
         Window.Title = windowTitle;
         title = windowTitle;
@@ -198,7 +196,7 @@ public class TeuriaEngine : Game
 
     protected override sealed void Update(GameTime gameTime)
     {   
-        DeltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        Time.Delta = (float)gameTime.ElapsedGameTime.TotalSeconds * Time.DeltaScale;
         TInput.Update();
         Process(gameTime);
 
@@ -213,7 +211,9 @@ public class TeuriaEngine : Game
             scene?.Activate(spriteBatch);
             scene?.Hierarchy(graphics.GraphicsDevice);
         }
-        scene.ProcessLoop();
+
+
+        scene.Process();
 
 
         base.Update(gameTime);
@@ -244,7 +244,7 @@ public class TeuriaEngine : Game
 #if DEBUG
         Window.Title = $"{title} {fpsCounter} fps - {GC.GetTotalMemory(false) / 1048576f} MB";
 #endif
-        FPS = fpsCounter;
+        Time.FPS = fpsCounter;
         fpsCounter = 0;
         counterElapsed -= TimeSpan.FromSeconds(1);
 
@@ -255,7 +255,7 @@ public class TeuriaEngine : Game
         Exit();
     }
 
-    protected virtual void Init() {}
+    protected abstract void Init();
     protected virtual void Load() {}
     protected virtual void Process(GameTime gameTime) {}
     protected virtual void CleanUp() {}

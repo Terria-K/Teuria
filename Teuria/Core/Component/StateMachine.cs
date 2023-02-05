@@ -52,7 +52,7 @@ public class StateMachine : Component
     {
         CurrentState = 0;
         base.Added(entity);
-        Add(coroutine);
+        entity.AddComponent(coroutine);
     }
 
     internal void AddState(int id, Func<int> update, Action ready, Func<IEnumerator> coroutine, Action end) 
