@@ -13,7 +13,6 @@ public static class TInput
     public static KeyboardInput Keyboard { get; private set; }
     public static MouseInput Mouse { get; private set; }
 
-    public static bool Active = false;
     public static bool Disabled = false;
 
     internal static void Initialize() 

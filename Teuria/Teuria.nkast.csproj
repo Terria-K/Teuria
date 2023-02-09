@@ -6,11 +6,12 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>11</LangVersion>
 
-    <DefineConstants>SYSTEMTEXTJSON</DefineConstants>
+    <DefineConstants>SYSTEMTEXTJSON;MonoGame;Blazor;FontStashSharp</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="nkast.Xna.Framework.Blazor" Version="3.8.9101" />
+    <PackageReference Include="FontStashSharp.MonoGame" Version="1.2.8" />
   </ItemGroup>
 
   <ItemGroup>

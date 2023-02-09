@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -19,6 +20,23 @@ public class Entity : Node, IEnumerable<Component>
     public int Depth;
     public int Tags;
     public bool Visible = true;
+    public SpriteEffects SpriteEffects;
+    public bool FlipH
+    {
+        get => (SpriteEffects & SpriteEffects.FlipHorizontally) == SpriteEffects.FlipHorizontally;
+        
+        set => SpriteEffects = value 
+                ? SpriteEffects | SpriteEffects.FlipHorizontally 
+                : SpriteEffects & ~SpriteEffects.FlipHorizontally;
+        
+    }
+    public bool FlipV
+    {
+        get => (SpriteEffects & SpriteEffects.FlipVertically) == SpriteEffects.FlipVertically;
+        set => SpriteEffects = value 
+                ? SpriteEffects | SpriteEffects.FlipVertically 
+                : SpriteEffects & ~SpriteEffects.FlipVertically;
+    }
 
     public override void EnterScene(Scene scene, ContentManager content) 
     {
@@ -84,6 +102,13 @@ public class Entity : Node, IEnumerable<Component>
         }
     
         return default;
+    }
+
+    [Conditional("DEBUG")]
+    public void AssertComponent<T>() where T : Component 
+    {
+        var component = GetComponent<T>();
+        Debug.Assert(component != null, $"This entity does not have {component} Component!");
     }
 
     public void RemoveComponent(Component comp) 

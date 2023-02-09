@@ -31,31 +31,30 @@ public class AxisButton : BindableInput
             {
                 case WhenOverlap.Cancel:
                     Value = 0;
-                    break;
+                    return;
                 case WhenOverlap.Newer when !isTurned:
                     Value *= -1;
                     isTurned = true;
-                    break;
+                    return;
                 case WhenOverlap.Older:
                     Value = PreviousValue;
-                    break;
+                    return;
             }
         }
-        else if (positive) 
+        if (positive) 
         {
             isTurned = false;
             Value = 1;
+            return;
         }
-        else if (negative) 
+        if (negative) 
         {
             isTurned = false;
             Value = -1;
+            return;
         }
-        else 
-        {
-            isTurned = false;
-            Value = 0;
-        }
+        isTurned = false;
+        Value = 0;
     }
 
     public enum WhenOverlap { Cancel, Newer, Older }

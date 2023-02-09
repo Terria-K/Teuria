@@ -119,7 +119,6 @@ public class Scene
         }
     }
 
-    public virtual void Initialize() {}
     public virtual void Hierarchy(GraphicsDevice device) {}
     public virtual void Process() 
     {
@@ -187,25 +186,11 @@ public class Scene
     public List<T> GetEntities<T>() 
     where T : Entity
     {
-        var list = Enumerable.Empty<T>().ToList();
-        foreach (var entity in entityList) 
-        {
-            if (entity is T ent) 
-                list.Add(ent);
-        }
-        return list;
+        return entityList.GetEntities<T>();
     }
 
     public List<Entity> GetEntitiesByTag(int tags) 
     {
-        var list = Enumerable.Empty<Entity>().ToList();
-        foreach (var entity in entityList) 
-        {
-            if ((entity.Tags & tags) != 0) 
-            {
-                list.Add(entity);
-            }
-        }
-        return list;
+        return entityList.GetEntitiesByTag(tags);
     }
 }

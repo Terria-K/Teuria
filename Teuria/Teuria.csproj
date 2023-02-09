@@ -6,12 +6,13 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>11</LangVersion>
 
-    <DefineConstants>SYSTEMTEXTJSON</DefineConstants>
+    <DefineConstants>SYSTEMTEXTJSON;MonoGame;FontStashSharp</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
+    <PackageReference Include="FontStashSharp.MonoGame" Version="1.2.8" />
   </ItemGroup>
 
   <ItemGroup Condition="$(DefineConstants.Contains(NEWTONSOFTJSON))">
@@ -26,6 +27,12 @@
       ReferenceOutputAssembly="false">
       <PrivateAssets>true</PrivateAssets>
     </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="MonoSound">
+      <HintPath>MonoSound.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

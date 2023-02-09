@@ -53,7 +53,6 @@ public class TileMap : Entity
                 var newLayer = new Layer(layer, tileset, layerType);
                 this.Layers[layer.Name] = newLayer;
             }
-
         }
     }
 

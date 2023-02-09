@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,13 +10,21 @@ namespace Teuria;
 public class Label : Entity 
 {
     public enum LabelType { Normal, Outline }
+#if !FontStashSharp
     public SpriteFont SpriteFont { get; private set; }
+#else
+    public SpriteFontBase SpriteFont { get; private set; }
+#endif
     public string Text { get; set; }
     public float Size { get; set; } = 1;
     public LabelType TextType;
     public Rectangle Rect { get; set; }
 
+#if !FontStashSharp
     public Label(SpriteFont spriteFont, Rectangle rectangle = default)
+#else
+    public Label(SpriteFontBase spriteFont, Rectangle rectangle = default)
+#endif
     {
         this.SpriteFont = spriteFont;
         Rect = rectangle;

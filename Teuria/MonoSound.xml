@@ -1,0 +1,833 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MonoSound</name>
+    </assembly>
+    <members>
+        <member name="T:MonoSound.Controls">
+            <summary>
+            The class responsible for controlling how various aspects of MonoSound are handled.
+            </summary>
+        </member>
+        <member name="P:MonoSound.Controls.AllowEchoOversampling">
+            <summary>
+            Whether the Echo filter is allowed to generate over 30 seconds' worth of samples for a sound, which can happen when using high Delay and low Decay parameters.
+            </summary>
+        </member>
+        <member name="P:MonoSound.Controls.LogDirectory">
+            <summary>
+            If enabled, this folder path will be where filtered sounds are saved to. This property should be set after <seealso cref="M:MonoSound.MonoSoundLibrary.Init"/> is called.
+            </summary>
+        </member>
+        <member name="P:MonoSound.Controls.LogFilters">
+            <summary>
+            Enables or disables the saving of filtered sounds.  Set <seealso cref="P:MonoSound.Controls.LogDirectory"/> to where the filtered sounds will be saved to
+            </summary>
+        </member>
+        <member name="P:MonoSound.Controls.StreamBufferLengthInSeconds">
+            <summary>
+            How many seconds' worth of data is read from a data stream when streaming audio.  Defaults to <c>0.1</c> seconds.
+            </summary>
+        </member>
+        <member name="T:MonoSound.EffectLoader">
+            <summary>
+            The central class for loading sound effects
+            </summary>
+        </member>
+        <member name="M:MonoSound.EffectLoader.GetEffect(System.String)">
+            <summary>
+            Retrieves a <seealso cref="T:Microsoft.Xna.Framework.Audio.SoundEffect"/> from a compiled .xnb file, a .wav file, an .ogg file or an .mp3 file
+            </summary>
+            <param name="file">The file to get the sound from</param>
+        </member>
+        <member name="M:MonoSound.EffectLoader.GetFilteredEffect(System.String,System.Int32)">
+            <summary>
+            Applies the wanted filter to the sound file
+            </summary>
+            <param name="file">The path to the sound file. Extension required.</param>
+            <param name="filterID">The ID of the filter to use.</param>
+        </member>
+        <member name="M:MonoSound.EffectLoader.GetMultiFilteredEffect(System.String,System.Int32[])">
+            <summary>
+            Applies the wanted filters to the sound file in the order requested
+            </summary>
+            <param name="file">The path to the sound file. Extension required.</param>
+            <param name="filterIDs">The list of filter IDs to use.</param>
+        </member>
+        <member name="M:MonoSound.EffectLoader.GetEffect(System.IO.Stream,MonoSound.AudioType)">
+            <summary>
+            Retrieves a <seealso cref="T:Microsoft.Xna.Framework.Audio.SoundEffect"/> from a stream of data
+            </summary>
+            <param name="stream">The stream to retrieve the effect from</param>
+            <param name="fileType">The type of audio file the stream is supposed to represent</param>
+        </member>
+        <member name="M:MonoSound.EffectLoader.GetFilteredEffect(System.IO.Stream,MonoSound.AudioType,System.String,System.Int32)">
+            <summary>
+            Applies the wanted filter to the sound stream
+            </summary>
+            <param name="stream">The stream to retrieve the sound data from.  It is expected to be a full audio file</param>
+            <param name="type">The type of audio file the stream is supposed to represent</param>
+            <param name="nameIndicator">A string used to represent the filtered sound effect</param>
+            <param name="filterID">The ID of the filter to use.</param>
+        </member>
+        <member name="M:MonoSound.EffectLoader.GetMultiFilteredEffect(System.IO.Stream,MonoSound.AudioType,System.String,System.Int32[])">
+            <summary>
+            Applies the wanted filters to the sound stream in the order requested
+            </summary>
+            <param name="stream">The stream to retrieve the sound data from.  It is expected to be a full audio file</param>
+            <param name="type">The type of audio file the stream is supposed to represent</param>
+            <param name="nameIndicator">A string used to represent the filtered sound effect</param>
+            <param name="filterIDs">The list of filter IDs to use.</param>
+        </member>
+        <member name="M:MonoSound.EffectLoader.GetEffectFromBank(System.String,System.String,System.String)">
+            <summary>
+            Loads a sound effect directly from the given sound bank and wave bank
+            </summary>
+            <param name="soundBankFile">The path to the sound bank. Use the same path you would use in <seealso cref="T:Microsoft.Xna.Framework.Audio.SoundBank"/>'s contructor.</param>
+            <param name="waveBankFile">The path to the wave bank. Use the same path you would use in <seealso cref="T:Microsoft.Xna.Framework.Audio.WaveBank"/>'s constructor.</param>
+            <param name="cueName">The name of the sound ("cue") to get. Use the same name you would use in <seealso cref="M:Microsoft.Xna.Framework.Audio.SoundBank.GetCue(System.String)"/>.</param>
+        </member>
+        <member name="M:MonoSound.EffectLoader.GetBankFilteredEffect(System.String,System.String,System.String,System.Int32)">
+            <summary>
+            Retrieves a given sound using the requested sound bank and wave bank, then applies the wanted filter to it.
+            </summary>
+            <param name="soundBankFile">The path to the sound bank. Use the same path you would use in <seealso cref="T:Microsoft.Xna.Framework.Audio.SoundBank"/>'s constructor.</param>
+            <param name="waveBankFile">The path to the wave bank. Use the same path you would use in <seealso cref="T:Microsoft.Xna.Framework.Audio.WaveBank"/>'s constructor.</param>
+            <param name="cueName">The name of the cue. Use the same name you would use in <seealso cref="M:Microsoft.Xna.Framework.Audio.SoundBank.GetCue(System.String)"/>.</param>
+            <param name="filterID">The ID of the filter to use.</param>
+        </member>
+        <member name="M:MonoSound.EffectLoader.GetBankMultiFilteredEffect(System.String,System.String,System.String,System.Int32[])">
+            <summary>
+            Retrieves a given sound using the requested sound bank and wave bank, then applies the wanted filter to it.
+            </summary>
+            <param name="soundBankFile">The path to the sound bank. Use the same path you would use in <seealso cref="T:Microsoft.Xna.Framework.Audio.SoundBank"/>'s constructor.</param>
+            <param name="waveBankFile">The path to the wave bank. Use the same path you would use in <seealso cref="T:Microsoft.Xna.Framework.Audio.WaveBank"/>'s constructor.</param>
+            <param name="cueName">The name of the cue. Use the same name you would use in <seealso cref="M:Microsoft.Xna.Framework.Audio.SoundBank.GetCue(System.String)"/>.</param>
+            <param name="filterIDs">The list of filter IDs to use.</param>
+        </member>
+        <member name="M:MonoSound.EffectLoader.GetBankEffect(System.IO.Stream,System.String,System.IO.Stream,System.String,System.String)">
+            <summary>
+            Retrieves a given sound using the requested sound bank and wave bank, then applies the wanted filter to it.
+            </summary>
+            <param name="soundBankSource">A stream representing the sound bank's data</param>
+            <param name="soundBankIdentifier">A string used to identify the sound bank</param>
+            <param name="waveBankSource">A stream representing the wave bank's data</param>
+            <param name="waveBankIdentifier">A string used to identify the wave bank</param>
+            <param name="cueName">The name of the cue. Use the same name you would use in <seealso cref="M:Microsoft.Xna.Framework.Audio.SoundBank.GetCue(System.String)"/>.</param>
+        </member>
+        <member name="M:MonoSound.EffectLoader.GetBankFilteredEffect(System.IO.Stream,System.String,System.IO.Stream,System.String,System.String,System.Int32)">
+            <summary>
+            Retrieves a given sound using the requested sound bank and wave bank, then applies the wanted filter to it.
+            </summary>
+            <param name="soundBankSource">A stream representing the sound bank's data</param>
+            <param name="soundBankIdentifier">A string used to identify the sound bank</param>
+            <param name="waveBankSource">A stream representing the wave bank's data</param>
+            <param name="waveBankIdentifier">A string used to identify the wave bank</param>
+            <param name="cueName">The name of the cue. Use the same name you would use in <seealso cref="M:Microsoft.Xna.Framework.Audio.SoundBank.GetCue(System.String)"/>.</param>
+            <param name="filterID">The ID of the filter to use.</param>
+        </member>
+        <member name="M:MonoSound.EffectLoader.GetBankMultiFilteredEffect(System.IO.Stream,System.String,System.IO.Stream,System.String,System.String,System.Int32[])">
+            <summary>
+            Retrieves a given sound using the requested sound bank and wave bank, then applies the wanted filter to it.
+            </summary>
+            <param name="soundBankSource">A stream representing the sound bank's data</param>
+            <param name="soundBankIdentifier">A string used to identify the sound bank</param>
+            <param name="waveBankSource">A stream representing the wave bank's data</param>
+            <param name="waveBankIdentifier">A string used to identify the wave bank</param>
+            <param name="cueName">The name of the cue. Use the same name you would use in <seealso cref="M:Microsoft.Xna.Framework.Audio.SoundBank.GetCue(System.String)"/>.</param>
+            <param name="filterIDs">The list of filter IDs to use.</param>
+        </member>
+        <member name="T:MonoSound.FilterLoader">
+            <summary>
+            The central class for loading filters
+            </summary>
+        </member>
+        <member name="M:MonoSound.FilterLoader.RegisterBiquadResonantFilter(MonoSound.Filters.SoundFilterType,System.Single,System.Single,System.Single)">
+            <summary>
+            Registers a Biquad Resonant filter.
+            </summary>
+            <param name="type">The filter type to use. Must either be <seealso cref="F:MonoSound.Filters.SoundFilterType.LowPass"/>, <seealso cref="F:MonoSound.Filters.SoundFilterType.BandPass"/> or <seealso cref="F:MonoSound.Filters.SoundFilterType.HighPass"/></param>
+            <param name="strength">How strong the filter effect is. 0 = no effect, 1 = full effect</param>
+            <param name="frequencyCap">The frequency parameter. Expected values are between 1000 and 8000</param>
+            <param name="resonance">The resonance parameter. Expected values are between 2 and 20</param>
+            <returns></returns>
+        </member>
+        <member name="M:MonoSound.FilterLoader.RegisterEchoFilter(System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Registers an Echo filter.
+            </summary>
+            <param name="strength">How strong the filter effect is. 0 = no effect, 1 = full effect</param>
+            <param name="delay">The initial delay in seconds before each echo starts</param>
+            <param name="decayFactor">The factor applied to the volume of each successive echo.  Expected values are between 0 and 1</param>
+            <param name="filterStrength">How strongly this filter will prefer using old samples over new samples when processing the sound.  Expected values are between 0 (no effect) and 1 (full effect)</param>
+            <returns></returns>
+        </member>
+        <member name="M:MonoSound.FilterLoader.RegisterReverbFilter(System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Registers a Reverb filter
+            </summary>
+            <param name="filterStrength">How strong the filter effect is. 0 = no effect, 1 = full effect</param>
+            <param name="lowFrequencyReverbStrength">How much the filter affects low frequencies. 0 = fast decaying, 1 = slow decaying. Defaults to 0.5</param>
+            <param name="highFrequencyReverbStrength">How much the filter affects high frequencies. 0 = fast decaying, 1 = slow decaying. Defaults to 0.5</param>
+            <param name="reverbStrength">How strong the reverb effect is. Expected values are between 0 and 1. Defaults to 1</param>
+            <returns></returns>
+        </member>
+        <member name="M:MonoSound.MonoSoundLibrary.GetCancellationToken">
+            <summary>
+            Gets a cancellation token that can be watched for when MonoSound deinitializes
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:MonoSound.MonoSoundLibrary.NextFilterID">
+            <summary>
+            The next filter ID should one be registered.  Automatically assigned to new filters
+            </summary>
+        </member>
+        <member name="F:MonoSound.MonoSoundLibrary.Version">
+            <summary>
+            The version for MonoSound
+            </summary>
+        </member>
+        <member name="M:MonoSound.MonoSoundLibrary.Init">
+            <summary>
+            Initializes the MonoSound library
+            </summary>
+        </member>
+        <member name="M:MonoSound.MonoSoundLibrary.DeInit">
+            <summary>
+            Deinitializes MonoSound
+            </summary>
+        </member>
+        <member name="M:MonoSound.MonoSoundLibrary.RegisterFormat(System.String,System.Func{System.IO.Stream,MonoSound.Audio.FormatWav},System.Func{System.IO.Stream,MonoSound.Streaming.StreamPackage})">
+            <summary>
+            Assigns or overwrites how a custom file format is parsed into the <see cref="T:MonoSound.Audio.FormatWav"/> object format
+            </summary>
+            <param name="extension">The extension used to identify the file format</param>
+            <param name="readFull">
+            A function which generates a <see cref="T:MonoSound.Audio.FormatWav"/> object from a data stream.<br/>
+            If the data stream is invalid, make the function return <see langword="null"/>.<br/>
+            Disposing the <see cref="T:System.IO.Stream"/> parameter is <b>NOT</b> recommended.
+            </param>
+            <param name="readStreamed">
+            A function which generates a <see cref="T:MonoSound.Streaming.StreamPackage"/> object from a data stream.<br/>
+            If the data stream is invalid, make the function return <see langword="null"/>.<br/>
+            Disposing the <see cref="T:System.IO.Stream"/> parameter is <b>NOT</b> recommended.
+            </param>
+        </member>
+        <member name="M:MonoSound.MonoSoundLibrary.SetMaxFilterCount(System.Int32)">
+            <summary>
+            Sets how many filters can be loaded at once
+            </summary>
+        </member>
+        <member name="M:MonoSound.MonoSoundLibrary.ClearFilters">
+            <summary>
+            Clears any stored filters
+            </summary>
+        </member>
+        <member name="T:MonoSound.StreamLoader">
+            <summary>
+            The central class for loading streamed sounds
+            </summary>
+        </member>
+        <member name="M:MonoSound.StreamLoader.GetStreamedSound(System.String,System.Boolean)">
+            <summary>
+            Gets a streamed sound effect
+            </summary>
+            <param name="filePath">The path to the sound file.</param>
+            <param name="looping">Whether the sound should loop</param>
+        </member>
+        <member name="M:MonoSound.StreamLoader.GetStreamedSound(System.IO.Stream,MonoSound.AudioType,System.Boolean)">
+            <summary>
+            Gets a streamed sound effect
+            </summary>
+            <param name="sampleSource">The stream where the samples will be read from. It is expected to contain a full audio file's data</param>
+            <param name="fileIdentifier">An enumeration value indicating what type of audio <paramref name="sampleSource"/> contains.  Cannot be <seealso cref="F:MonoSound.AudioType.XWB"/></param>
+            <param name="looping">Whether the sound should loop</param>
+        </member>
+        <member name="M:MonoSound.StreamLoader.GetStreamedXACTSound(System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Gets a streamed sound effect from an XACT wave bank
+            </summary>
+            <param name="soundBankPath">The path to the sound bank</param>
+            <param name="waveBankPath">The path to the wave bank</param>
+            <param name="cueName">The name of the sound cue to stream</param>
+            <param name="looping">Whether the sound should loop</param>
+        </member>
+        <member name="M:MonoSound.StreamLoader.GetStreamedXACTSound(System.IO.Stream,System.String,System.IO.Stream,System.String,System.String,System.Boolean)">
+            <summary>
+            Gets a streamed sound effect from an XACT wave bank
+            </summary>
+            <param name="soundBankSource">A stream representing the sound bank's data</param>
+            <param name="soundBankIdentifier">A string used to identify the sound bank</param>
+            <param name="waveBankSource">A stream representing the wave bank's data</param>
+            <param name="waveBankIdentifier">A string used to identify the wave bank</param>
+            <param name="cueName">The name of the sound cue to stream</param>
+            <param name="looping">Whether the sound should loop</param>
+        </member>
+        <member name="M:MonoSound.StreamLoader.FreeStreamedSound(MonoSound.Streaming.StreamPackage@)">
+            <summary>
+            Stops streaming for a certain sound effect, stops playing it and then disposes it
+            </summary>
+            <param name="instance">The sound effect instance</param>
+        </member>
+        <member name="M:MonoSound.StreamLoader.FreeStreamedSound(Microsoft.Xna.Framework.Audio.SoundEffectInstance@)">
+            <summary>
+            Stops streaming for a certain sound effect, stops playing it and then disposes it
+            </summary>
+            <param name="instance">The sound effect instance</param>
+        </member>
+        <member name="T:MonoSound.AudioType">
+            <summary>
+            An enumeration representing the supported audio stream types
+            </summary>
+        </member>
+        <member name="F:MonoSound.AudioType.XNB">
+            <summary>
+            Compiled <seealso cref="T:Microsoft.Xna.Framework.Audio.SoundEffect"/> files
+            </summary>
+        </member>
+        <member name="F:MonoSound.AudioType.XWB">
+            <summary>
+            XACT wave banks
+            </summary>
+        </member>
+        <member name="F:MonoSound.AudioType.WAV">
+            <summary>
+            WAVE files (.wav)
+            </summary>
+        </member>
+        <member name="F:MonoSound.AudioType.OGG">
+            <summary>
+            OGG Vorbis files (.ogg)
+            </summary>
+        </member>
+        <member name="F:MonoSound.AudioType.MP3">
+            <summary>
+            MPEG Audio Layer 3 files (.mp3)
+            </summary>
+        </member>
+        <member name="F:MonoSound.AudioType.Custom">
+            <summary>
+            User-defined audio types.  Care needs to be taken when using this since MonoSound will not check the validity of the file.
+            </summary>
+        </member>
+        <member name="T:MonoSound.Audio.CustomFileFormat">
+            <summary>
+            An object representing a custom file format
+            </summary>
+        </member>
+        <member name="F:MonoSound.Audio.CustomFileFormat.extension">
+            <summary>
+            The extension for the format
+            </summary>
+        </member>
+        <member name="F:MonoSound.Audio.CustomFileFormat.read">
+            <summary>
+            A function which creates a <see cref="T:MonoSound.Audio.FormatWav"/> object from a data stream
+            </summary>
+        </member>
+        <member name="F:MonoSound.Audio.CustomFileFormat.readStreamed">
+            <summary>
+            A function which creates a <see cref="T:MonoSound.Streaming.StreamPackage"/> object from a data stream
+            </summary>
+        </member>
+        <member name="T:MonoSound.Audio.FormatWav">
+            <summary>
+            A class representing the data in WAVE-formatted audio
+            </summary>
+        </member>
+        <member name="P:MonoSound.Audio.FormatWav.Data">
+            <summary>
+            Gets a clone of the underlying byte stream
+            </summary>
+        </member>
+        <member name="P:MonoSound.Audio.FormatWav.EndianHeader">
+            <summary>
+            "RIFF" if the file stores its values as Little-Endian, "RIFX" otherwise
+            </summary>
+        </member>
+        <member name="P:MonoSound.Audio.FormatWav.Size">
+            <summary>
+            The total size of the file in bytes
+            </summary>
+        </member>
+        <member name="P:MonoSound.Audio.FormatWav.FileTypeHeader">
+            <summary>
+            The type of audio saved.  Always set to "WAVE"
+            </summary>
+        </member>
+        <member name="P:MonoSound.Audio.FormatWav.FormatChunkMarker">
+            <summary>
+            The format chunk marker.  Always set to "fmt "
+            </summary>
+        </member>
+        <member name="P:MonoSound.Audio.FormatWav.FormatLength">
+            <summary>
+            The length of the format data in bytes
+            </summary>
+        </member>
+        <member name="P:MonoSound.Audio.FormatWav.FormatType">
+            <summary>
+            The audio format each sample is saved as.
+            <para>PCM is 1</para>
+            <para>Any other values are assumed to be some other form of compression</para>
+            </summary>
+        </member>
+        <member name="P:MonoSound.Audio.FormatWav.ChannelCount">
+            <summary>
+            What channels this WAV sound will use.
+            <para>Mono is 1</para>
+            <para>Stereo is 2</para>
+            </summary>
+        </member>
+        <member name="P:MonoSound.Audio.FormatWav.SampleRate">
+            <summary>
+            How many samples are played per second.  Measured in Hertz (Hz)
+            </summary>
+        </member>
+        <member name="P:MonoSound.Audio.FormatWav.ByteRate">
+            <summary>
+            How many bytes are played per second
+            <para>Usually set to: <c>SampleRate * BitsPerSample * ChannelCount / 8</c></para>
+            </summary>
+        </member>
+        <member name="P:MonoSound.Audio.FormatWav.BlockAlign">
+            <summary>
+            The number of bytes per sample including all channels
+            <para>Usually set to: <c>BitsPerSample * ChannelCount / 8</c></para>
+            </summary>
+        </member>
+        <member name="P:MonoSound.Audio.FormatWav.BitsPerSample">
+            <summary>
+            How many bits PER CHANNEL are in one sample
+            </summary>
+        </member>
+        <member name="P:MonoSound.Audio.FormatWav.DataChunkMarker">
+            <summary>
+            The data chunk marker.  Always set to "data"
+            </summary>
+        </member>
+        <member name="P:MonoSound.Audio.FormatWav.DataLength">
+            <summary>
+            The length of the sample data in bytes
+            </summary>
+        </member>
+        <member name="M:MonoSound.Audio.FormatWav.GetSoundBytes">
+            <summary>
+            Retrieves a copy of the sample data
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MonoSound.Audio.FormatWav.FromFileWAV(System.String)">
+            <summary>
+            Loads a <see cref="T:MonoSound.Audio.FormatWav"/> from a .wav file
+            </summary>
+            <exception cref="T:System.ArgumentException"/>
+        </member>
+        <member name="M:MonoSound.Audio.FormatWav.FromFileWAV(System.IO.Stream)">
+            <summary>
+            Loads a <see cref="T:MonoSound.Audio.FormatWav"/> from a .wav stream
+            </summary>
+        </member>
+        <member name="M:MonoSound.Audio.FormatWav.FromFileOGG(System.String)">
+            <summary>
+            Loads a <see cref="T:MonoSound.Audio.FormatWav"/> from an .ogg file
+            </summary>
+            <exception cref="T:System.ArgumentException"/>
+        </member>
+        <member name="M:MonoSound.Audio.FormatWav.FromFileOGG(System.IO.Stream)">
+            <summary>
+            Loads a <see cref="T:MonoSound.Audio.FormatWav"/> from an .ogg stream
+            </summary>
+        </member>
+        <member name="M:MonoSound.Audio.FormatWav.FromFileMP3(System.String)">
+            <summary>
+            Loads a <see cref="T:MonoSound.Audio.FormatWav"/> from an .mp3 file
+            </summary>
+            <exception cref="T:System.ArgumentException"/>
+        </member>
+        <member name="M:MonoSound.Audio.FormatWav.FromFileMP3(System.IO.Stream)">
+            <summary>
+            Loads a <see cref="T:MonoSound.Audio.FormatWav"/> from an .mp3 stream
+            </summary>
+        </member>
+        <member name="M:MonoSound.Audio.FormatWav.FromBytes(System.Byte[])">
+            <summary>
+            Loads a <see cref="T:MonoSound.Audio.FormatWav"/> from a .wav byte stream
+            </summary>
+        </member>
+        <member name="M:MonoSound.Audio.FormatWav.ClampSample(System.Single@)">
+            <summary>
+            Forces the sample to be within (-1, 1)
+            </summary>
+        </member>
+        <member name="M:MonoSound.Decompressor.DecompressSoundEffectXNB(System.String,MonoSound.Audio.PCMData@,System.Byte[]@)">
+            <summary>
+            Converts the SoundEffect .xnb file into its uncompressed audio data
+            </summary>
+            <param name="path">The path to the file</param>
+            <param name="pcmData">The PCM data from the extracted sound, including things like channel count and sample rate</param>
+            <param name="header">The extracted header data from the XNB file</param>
+            <returns></returns>
+        </member>
+        <member name="M:MonoSound.Decompressor.DecompressSoundEffectXNB(System.IO.Stream,MonoSound.Audio.PCMData@,System.Byte[]@)">
+            <summary>
+            Converts the SoundEffect .xnb file into its uncompressed audio data
+            </summary>
+            <param name="stream">The stream to retrieve the audio data from</param>
+            <param name="pcmData">The PCM data from the extracted sound, including things like channel count and sample rate</param>
+            <param name="header">The extracted header data from the XNB file</param>
+            <returns></returns>
+        </member>
+        <member name="T:MonoSound.Filters.Instances.Filter">
+            <summary>
+            A port of SoLoud::Filter and SoLoud::FilterInstance
+            </summary>
+        </member>
+        <member name="M:MonoSound.Filters.Instances.Filter.SetStrength(System.Single)">
+            <summary>
+            Sets the strength (or "wetness") of the filter. 0 = no effect, 1 = full effect. Defaults to 1
+            </summary>
+            <param name="strength">How strong or weak the filter should be.  Ranges from 0 to 1.</param>
+        </member>
+        <member name="T:MonoSound.Filters.SoundFilterType">
+            <summary>
+            An enumeration of all implemented sound filter types
+            </summary>
+        </member>
+        <member name="F:MonoSound.Filters.SoundFilterType.None">
+            <summary>
+            No filtering.
+            </summary>
+        </member>
+        <member name="F:MonoSound.Filters.SoundFilterType.LowPass">
+            <summary>
+            (Biquad Resonant) Low Pass filtering.  Reduces the amplitude of higher frequencies than the set frequency
+            </summary>
+        </member>
+        <member name="F:MonoSound.Filters.SoundFilterType.BandPass">
+            <summary>
+            (Biquad Resonant) Band Pass filtering.  Reduces the amplitude of frequencies not within close proximity to the set frequency
+            </summary>
+        </member>
+        <member name="F:MonoSound.Filters.SoundFilterType.HighPass">
+            <summary>
+            (Biquad Resonant) High Pass filtering.  Reduces the amplitude of lower frequencies than the set frequency
+            </summary>
+        </member>
+        <member name="F:MonoSound.Filters.SoundFilterType.Reverb">
+            <summary>
+            Reverb filtering.  Makes a sound appear to "taper off" slower
+            </summary>
+        </member>
+        <member name="F:MonoSound.Filters.SoundFilterType.Echo">
+            <summary>
+            Echo filtering.  Repeats the same sound at smaller amplitudes several times
+            </summary>
+        </member>
+        <member name="T:MonoSound.MonoSoundManager">
+            <summary>
+            The class where all sound filtering is handled through.
+            </summary>
+        </member>
+        <member name="P:MonoSound.MonoSoundManager.NextFilterID">
+            <inheritdoc cref="P:MonoSound.MonoSoundLibrary.NextFilterID"/>
+        </member>
+        <member name="P:MonoSound.MonoSoundManager.AllowEchoOversampling">
+            <inheritdoc cref="P:MonoSound.Controls.AllowEchoOversampling"/>
+        </member>
+        <member name="P:MonoSound.MonoSoundManager.LogDirectory">
+            <inheritdoc cref="P:MonoSound.Controls.LogDirectory"/>
+        </member>
+        <member name="P:MonoSound.MonoSoundManager.LogFilters">
+            <inheritdoc cref="P:MonoSound.Controls.LogFilters"/>
+        </member>
+        <member name="F:MonoSound.MonoSoundManager.Version">
+            <inheritdoc cref="F:MonoSound.MonoSoundLibrary.Version"/>
+        </member>
+        <member name="M:MonoSound.MonoSoundManager.Init">
+            <inheritdoc cref="M:MonoSound.MonoSoundLibrary.Init"/>
+        </member>
+        <member name="M:MonoSound.MonoSoundManager.DeInit">
+            <inheritdoc cref="M:MonoSound.MonoSoundLibrary.DeInit"/>
+        </member>
+        <member name="M:MonoSound.MonoSoundManager.SetMaxFilterCount(System.Int32)">
+            <inheritdoc cref="M:MonoSound.MonoSoundLibrary.SetMaxFilterCount(System.Int32)"/>
+        </member>
+        <member name="M:MonoSound.MonoSoundManager.ClearFilters">
+            <inheritdoc cref="M:MonoSound.MonoSoundLibrary.ClearFilters"/>
+        </member>
+        <member name="M:MonoSound.MonoSoundManager.GetEffect(System.String)">
+            <inheritdoc cref="M:MonoSound.EffectLoader.GetEffect(System.String)"/>
+        </member>
+        <member name="M:MonoSound.MonoSoundManager.GetFilteredEffect(System.String,System.Int32)">
+            <inheritdoc cref="M:MonoSound.EffectLoader.GetFilteredEffect(System.String,System.Int32)"/>
+        </member>
+        <member name="M:MonoSound.MonoSoundManager.GetMultiFilteredEffect(System.String,System.Int32[])">
+            <inheritdoc cref="M:MonoSound.EffectLoader.GetMultiFilteredEffect(System.String,System.Int32[])"/>
+        </member>
+        <member name="M:MonoSound.MonoSoundManager.GetEffect(System.IO.Stream,MonoSound.AudioType)">
+            <inheritdoc cref="M:MonoSound.EffectLoader.GetEffect(System.IO.Stream,MonoSound.AudioType)"/>
+        </member>
+        <member name="M:MonoSound.MonoSoundManager.GetFilteredEffect(System.IO.Stream,MonoSound.AudioType,System.String,System.Int32)">
+            <inheritdoc cref="M:MonoSound.EffectLoader.GetFilteredEffect(System.IO.Stream,MonoSound.AudioType,System.String,System.Int32)"/>
+        </member>
+        <member name="M:MonoSound.MonoSoundManager.GetMultiFilteredEffect(System.IO.Stream,MonoSound.AudioType,System.String,System.Int32[])">
+            <inheritdoc cref="M:MonoSound.EffectLoader.GetMultiFilteredEffect(System.IO.Stream,MonoSound.AudioType,System.String,System.Int32[])"/>
+        </member>
+        <member name="M:MonoSound.MonoSoundManager.GetEffectFromBank(System.String,System.String,System.String)">
+            <inheritdoc cref="M:MonoSound.EffectLoader.GetEffectFromBank(System.String,System.String,System.String)"/>
+        </member>
+        <member name="M:MonoSound.MonoSoundManager.GetBankFilteredEffect(System.String,System.String,System.String,System.Int32)">
+            <inheritdoc cref="M:MonoSound.EffectLoader.GetBankFilteredEffect(System.String,System.String,System.String,System.Int32)"/>
+        </member>
+        <member name="M:MonoSound.MonoSoundManager.GetBankMultiFilteredEffect(System.String,System.String,System.String,System.Int32[])">
+            <inheritdoc cref="M:MonoSound.EffectLoader.GetBankMultiFilteredEffect(System.String,System.String,System.String,System.Int32[])"/>
+        </member>
+        <member name="M:MonoSound.MonoSoundManager.GetBankEffect(System.IO.Stream,System.String,System.IO.Stream,System.String,System.String)">
+            <inheritdoc cref="M:MonoSound.EffectLoader.GetMultiFilteredEffect(System.IO.Stream,MonoSound.AudioType,System.String,System.Int32[])"/>
+        </member>
+        <member name="M:MonoSound.MonoSoundManager.GetBankFilteredEffect(System.IO.Stream,System.String,System.IO.Stream,System.String,System.String,System.Int32)">
+            <inheritdoc cref="M:MonoSound.EffectLoader.GetBankFilteredEffect(System.IO.Stream,System.String,System.IO.Stream,System.String,System.String,System.Int32)"/>
+        </member>
+        <member name="M:MonoSound.MonoSoundManager.GetBankMultiFilteredEffect(System.IO.Stream,System.String,System.IO.Stream,System.String,System.String,System.Int32[])">
+            <inheritdoc cref="M:MonoSound.EffectLoader.GetBankMultiFilteredEffect(System.IO.Stream,System.String,System.IO.Stream,System.String,System.String,System.Int32[])"/>
+        </member>
+        <member name="M:MonoSound.MonoSoundManager.GetStreamedSound(System.String,System.Boolean)">
+            <inheritdoc cref="M:MonoSound.StreamLoader.GetStreamedSound(System.String,System.Boolean)"/>
+        </member>
+        <member name="M:MonoSound.MonoSoundManager.GetStreamedSound(System.IO.Stream,MonoSound.AudioType,System.Boolean)">
+            <inheritdoc cref="M:MonoSound.StreamLoader.GetStreamedSound(System.IO.Stream,MonoSound.AudioType,System.Boolean)"/>
+        </member>
+        <member name="M:MonoSound.MonoSoundManager.GetStreamedXACTSound(System.String,System.String,System.String,System.Boolean)">
+            <inheritdoc cref="M:MonoSound.StreamLoader.GetStreamedXACTSound(System.String,System.String,System.String,System.Boolean)"/>
+        </member>
+        <member name="M:MonoSound.MonoSoundManager.GetStreamedXACTSound(System.IO.Stream,System.String,System.IO.Stream,System.String,System.String,System.Boolean)">
+            <inheritdoc cref="M:MonoSound.StreamLoader.GetStreamedXACTSound(System.IO.Stream,System.String,System.IO.Stream,System.String,System.String,System.Boolean)"/>
+        </member>
+        <member name="M:MonoSound.MonoSoundManager.FreeStreamedSound(Microsoft.Xna.Framework.Audio.SoundEffectInstance@)">
+            <inheritdoc cref="M:MonoSound.StreamLoader.FreeStreamedSound(Microsoft.Xna.Framework.Audio.SoundEffectInstance@)"/>
+        </member>
+        <member name="M:MonoSound.MonoSoundManager.RegisterBiquadResonantFilter(MonoSound.Filters.SoundFilterType,System.Single,System.Single,System.Single)">
+            <inheritdoc cref="M:MonoSound.FilterLoader.RegisterBiquadResonantFilter(MonoSound.Filters.SoundFilterType,System.Single,System.Single,System.Single)"/>
+        </member>
+        <member name="M:MonoSound.MonoSoundManager.RegisterEchoFilter(System.Single,System.Single,System.Single,System.Single)">
+            <inheritdoc cref="M:MonoSound.FilterLoader.RegisterEchoFilter(System.Single,System.Single,System.Single,System.Single)"/>
+        </member>
+        <member name="M:MonoSound.MonoSoundManager.RegisterReverbFilter(System.Single,System.Single,System.Single,System.Single)">
+            <inheritdoc cref="M:MonoSound.FilterLoader.RegisterReverbFilter(System.Single,System.Single,System.Single,System.Single)"/>
+        </member>
+        <member name="T:MonoSound.ReflectionHelpers.SizeOf`1">
+            <summary>
+            Generics handler for Marshal.SizeOf
+            </summary>
+        </member>
+        <member name="M:MonoSound.ReflectionHelpers.ManagedSizeOf(System.Type)">
+            <summary>
+            Fallback handler for Marshal.SizeOf(type)
+            </summary>
+        </member>
+        <member name="M:MonoSound.ReflectionHelpers.GetAssembly(System.Type)">
+            <summary>
+            Returns the Assembly of a Type
+            </summary>
+        </member>
+        <member name="M:MonoSound.ReflectionHelpers.IsConcreteClass(System.Type)">
+            <summary>
+            Returns true if the given type represents a non-object type that is not abstract.
+            </summary>
+        </member>
+        <member name="M:MonoSound.ReflectionHelpers.PropertyIsPublic(System.Reflection.PropertyInfo)">
+            <summary>
+            Returns true if the get method of the given property exist and are public.
+            Note that we allow a getter-only property to be serialized (and deserialized),
+            *if* CanDeserializeIntoExistingObject is true for the property type.
+            </summary>
+        </member>
+        <member name="M:MonoSound.ReflectionHelpers.IsAssignableFrom(System.Type,System.Object)">
+            <summary>
+            Returns true if the given type can be assigned the given value
+            </summary>
+        </member>
+        <member name="M:MonoSound.ReflectionHelpers.IsAssignableFromType(System.Type,System.Type)">
+            <summary>
+            Returns true if the given type can be assigned a value with the given object type
+            </summary>
+        </member>
+        <member name="T:MonoSound.Streaming.WavStream">
+            <summary>
+            An object representing audio streaming from a WAVE (.wav) data stream
+            </summary>
+        </member>
+        <member name="M:MonoSound.Streaming.WavStream.#ctor(System.String)">
+            <summary>
+            Initializes a new <see cref="T:MonoSound.Streaming.WavStream"/> from a .wav file
+            </summary>
+            <param name="file">The absolute or relative location of the file to read from</param>
+        </member>
+        <member name="M:MonoSound.Streaming.WavStream.#ctor(System.IO.Stream)">
+            <summary>
+            Initializes a new <see cref="T:MonoSound.Streaming.WavStream"/> from a data stream in the .wav format
+            </summary>
+            <param name="stream">The data stream to read from</param>
+        </member>
+        <member name="M:MonoSound.Streaming.WavStream.#ctor(System.String,MonoSound.AudioType)">
+            <summary>
+            A copy of <see cref="M:MonoSound.Streaming.WavStream.#ctor(System.String)"/> for overwriting the type of audio stream
+            </summary>
+            <param name="file">The absolute or relative location of the file to read from</param>
+            <param name="typeOverride">Which type of audio stream should be used</param>
+        </member>
+        <member name="M:MonoSound.Streaming.WavStream.#ctor(System.IO.Stream,MonoSound.AudioType)">
+            <summary>
+            A copy of <see cref="M:MonoSound.Streaming.WavStream.#ctor(System.IO.Stream)"/> for overwriting the type of audio stream
+            </summary>
+            <param name="stream">The data stream to read from</param>
+            <param name="typeOverride">Which type of audio stream should be used</param>
+        </member>
+        <member name="T:MonoSound.Streaming.XnbStream">
+            <summary>
+            An object representing audio streaming from a compiled XNB (.xnb) data stream
+            </summary>
+        </member>
+        <member name="M:MonoSound.Streaming.XnbStream.#ctor(System.String)">
+            <summary>
+            Initializes a new <see cref="T:MonoSound.Streaming.XnbStream"/> from an .xnb file
+            </summary>
+            <param name="file">The absolute or relative location of the file to read from</param>
+        </member>
+        <member name="M:MonoSound.Streaming.XnbStream.#ctor(System.IO.Stream)">
+            <summary>
+            Initializes a new <see cref="T:MonoSound.Streaming.XnbStream"/> from a data stream in the .xnb format
+            </summary>
+            <param name="stream">The data stream to read from</param>
+        </member>
+        <member name="T:MonoSound.Streaming.Mp3Stream">
+            <summary>
+            An object representing audio streaming from an MPEG-1 Audio Layer 3 (.mp3) data stream
+            </summary>
+        </member>
+        <member name="M:MonoSound.Streaming.Mp3Stream.#ctor(System.String)">
+            <summary>
+            Initializes a new <see cref="T:MonoSound.Streaming.Mp3Stream"/> from an .mp3 file
+            </summary>
+            <param name="file">The absolute or relative location of the file to read from</param>
+        </member>
+        <member name="M:MonoSound.Streaming.Mp3Stream.#ctor(System.IO.Stream)">
+            <summary>
+            Initializes a new <see cref="T:MonoSound.Streaming.Mp3Stream"/> from a data stream in the .mp3 format
+            </summary>
+            <param name="stream">The data stream to read from</param>
+        </member>
+        <member name="T:MonoSound.Streaming.OggStream">
+            <summary>
+            An object representing audio streaming from an Ogg Vorbis (.ogg) data stream
+            </summary>
+        </member>
+        <member name="M:MonoSound.Streaming.OggStream.#ctor(System.String)">
+            <summary>
+            Initializes a new <see cref="T:MonoSound.Streaming.OggStream"/> from an .ogg file
+            </summary>
+            <param name="file">The absolute or relative location of the file to read from</param>
+        </member>
+        <member name="M:MonoSound.Streaming.OggStream.#ctor(System.IO.Stream)">
+            <summary>
+            Initializes a new <see cref="T:MonoSound.Streaming.OggStream"/> from a data stream in the .ogg format
+            </summary>
+            <param name="stream">The data stream to read from</param>
+        </member>
+        <member name="T:MonoSound.Streaming.WavebankStream">
+            <summary>
+            An object representing audio streaming from an XACT Wavebank (.xwb) data stream
+            </summary>
+        </member>
+        <member name="M:MonoSound.Streaming.WavebankStream.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Initializes a new <see cref="T:MonoSound.Streaming.WavebankStream"/> from an XACT Wavebank (.xwb) and XACT Soundbank (.xsb) file
+            </summary>
+            <param name="soundBank">The path to the sound bank</param>
+            <param name="waveBank">The path to the wave bank</param>
+            <param name="cueName">The name of the sound cue to stream</param>
+        </member>
+        <member name="M:MonoSound.Streaming.WavebankStream.#ctor(System.IO.Stream,System.String,System.IO.Stream,System.String,System.String)">
+            <summary>
+            Initializes a new <see cref="T:MonoSound.Streaming.WavebankStream"/> from an XACT Wavebank (.xwb) and XACT Soundbank (.xsb) data stream
+            </summary>
+            <param name="soundBank">The stream representing the sound bank</param>
+            <param name="soundBankIdentifier">The path to the sound bank</param>
+            <param name="waveBank">The stream representing the wave bank</param>
+            <param name="waveBankIdentifier">The path to the wave bank</param>
+            <param name="cueName">The name of the sound cue to stream</param>
+        </member>
+        <member name="T:MonoSound.Streaming.StreamPackage">
+            <summary>
+            An object representing streamed audio from a data stream
+            </summary>
+        </member>
+        <member name="P:MonoSound.Streaming.StreamPackage.PlayingSound">
+            <summary>
+            The object responsible for queuing samples and playing them
+            </summary>
+        </member>
+        <member name="F:MonoSound.Streaming.StreamPackage.sampleReadStart">
+            <summary>
+            The byte offset of the audio sample data in the streamed data
+            </summary>
+        </member>
+        <member name="P:MonoSound.Streaming.StreamPackage.SecondsRead">
+            <summary>
+            How many seconds' worth of audio have been read by this stream.  This variable is reset in <see cref="M:MonoSound.Streaming.StreamPackage.Reset"/>
+            </summary>
+        </member>
+        <member name="P:MonoSound.Streaming.StreamPackage.IsLooping">
+            <summary>
+            Whether this stream should loop to the beginning of the audio samples once it has completed.
+            </summary>
+        </member>
+        <member name="M:MonoSound.Streaming.StreamPackage.Reset">
+            <summary>
+            Reset the stream here.  By default, sets <see cref="P:MonoSound.Streaming.StreamPackage.ReadBytes"/> and <see cref="P:MonoSound.Streaming.StreamPackage.SecondsRead"/> to zero and sets the position of the underlying stream to the start of the sample data
+            </summary>
+        </member>
+        <member name="M:MonoSound.Streaming.StreamPackage.Initialize">
+            <summary>
+            Initialize information about the stream here.  <see cref="F:MonoSound.Streaming.StreamPackage.underlyingStream"/> has been initialized by the time this method is invoked.
+            </summary>
+        </member>
+        <member name="M:MonoSound.Streaming.StreamPackage.ReadSamples(System.Double,System.Byte[]@,System.Int32@,System.Boolean@)">
+            <summary>
+            Read samples of data here.
+            </summary>
+            <param name="seconds">How many seconds' worth of samples should be read.</param>
+            <param name="samples">An array of WAVE-formatted sample data.</param>
+            <param name="bytesRead">How many bytes of data were read.</param>
+            <param name="endOfStream">Whether the end of the stream has been reached.</param>
+        </member>
+        <member name="M:MonoSound.Streaming.StreamPackage.ApplyFilters(System.Int32[])">
+            <summary>
+            Applies a set of filters to any audio data streamed by this package.  Only certain filter types are supported, however.
+            </summary>
+            <param name="ids">The list of filters to use, or <see langword="null"/> if no filters should be used.</param>
+        </member>
+        <member name="P:MonoSound.XACT.MonoWaveBank.IsStreaming">
+            <summary>
+            Whether this bank is streaming its sound data or has the data already loaded
+            </summary>
+        </member>
+        <member name="M:MonoSound.XACT.MonoWaveBank.LoadFromXWBFile(System.String,System.Boolean)">
+            <summary>
+            Loads a wavebank from an .xwb file or returns the existing instance if it already exists
+            </summary>
+            <param name="file">The absolute or relative path to the file to read from</param>
+            <param name="streaming">Whether the bank should be opened for streaming</param>
+        </member>
+        <member name="M:MonoSound.XACT.MonoWaveBank.LoadFromXWBStream(System.IO.Stream,System.String,System.Boolean)">
+            <summary>
+            Loads a wavebank from a data stream or returns the existing instance if it already exists
+            </summary>
+            <param name="stream">The data stream to read from</param>
+            <param name="fileName">The identifier for the wavebank</param>
+            <param name="streaming">Whether the bank should be opened for streaming</param>
+        </member>
+    </members>
+</doc>

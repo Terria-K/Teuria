@@ -27,10 +27,9 @@ public class AnimatedSprite : Component
     public bool FlipH
     {
         get => (spriteEffects & SpriteEffects.FlipHorizontally) == SpriteEffects.FlipHorizontally;
-        
         set => spriteEffects = value 
-                ? spriteEffects | SpriteEffects.FlipHorizontally 
-                : spriteEffects & ~SpriteEffects.FlipHorizontally;
+                ? spriteEffects | SpriteEffects.FlipHorizontally
+                : spriteEffects & ~SpriteEffects.FlipHorizontally;       
     }
     public bool FlipV
     {

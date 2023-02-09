@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoSound;
 
 namespace Teuria;
 
@@ -66,13 +67,6 @@ public abstract class GameApp : Game
 
     public GameApp(int width, int height, int screenWidth, int screenHeight, string windowTitle, bool fullScreen)
     {
-#if DEBUG
-#if SYSTEMTEXTJSON
-        Console.WriteLine("Using SYSTEMTEXTJSON");
-#else
-        Console.WriteLine("Using Newtonsoft.JSON");
-#endif // SYSTEMTEXTJSON
-#endif // DEBUG
         instance = this;
         Window.Title = windowTitle;
         title = windowTitle;
@@ -167,19 +161,19 @@ public abstract class GameApp : Game
         subViewport.ScreenResolution = new Point(ScreenWidth, ScreenHeight);
         UpdateView();
         // ScreenMatrix = Matrix.CreateScale(ViewWidth / (float)ScreenHeight);
-        scene.Initialize();
 
         base.Initialize();
     }
 
     protected override sealed void LoadContent()
     {
+        MonoSoundLibrary.Init();
         TInput.Initialize();
         spriteBatch = new SpriteBatch(GraphicsDevice);
         Canvas.Initialize(graphics.GraphicsDevice, spriteBatch);
         Load();
-        scene.Activate(spriteBatch);
-        scene.Hierarchy(graphics.GraphicsDevice);
+        scene?.Activate(spriteBatch);
+        scene?.Hierarchy(graphics.GraphicsDevice);
     }
 
     protected override sealed void UnloadContent()
@@ -187,6 +181,7 @@ public abstract class GameApp : Game
         Scene.Exit();
         CleanUp();
         Canvas.Dispose();
+        MonoSoundLibrary.DeInit();
         foreach(var textures in TextureImporter.cleanupCache) 
         {
             textures?.Dispose();
@@ -222,6 +217,7 @@ public abstract class GameApp : Game
 
     protected override sealed void Draw(GameTime gameTime)
     {
+        Draw();
         Scene?.BeforeRender();
         // GraphicsDevice.SetRenderTarget(SceneRender);
         // GraphicsDevice.Clear(Color.Black);
@@ -247,8 +243,8 @@ public abstract class GameApp : Game
         Time.FPS = fpsCounter;
         fpsCounter = 0;
         counterElapsed -= TimeSpan.FromSeconds(1);
-
     }
+
 
     public void ExitGame() 
     {
@@ -257,6 +253,7 @@ public abstract class GameApp : Game
 
     protected abstract void Init();
     protected virtual void Load() {}
+    protected virtual void Draw() {}
     protected virtual void Process(GameTime gameTime) {}
     protected virtual void CleanUp() {}
 }

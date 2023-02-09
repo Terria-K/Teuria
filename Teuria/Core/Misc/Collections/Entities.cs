@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
@@ -141,6 +142,46 @@ public class Entities : IEnumerable<Entity>
         {
             if (entity.Visible) { entity.Draw(spriteBatch); }
         }
+    }
+
+
+    public List<T> GetEntities<T>() 
+    where T : Entity
+    {
+        var list = Enumerable.Empty<T>().ToList();
+        foreach (var entity in entities) 
+        {
+            if (entity is T ent) 
+                list.Add(ent);
+        }
+
+        foreach (var entity in adding) 
+        {
+            if (entity is T ent) 
+                list.Add(ent);
+        }
+        return list;
+    }
+
+    public List<Entity> GetEntitiesByTag(int tags) 
+    {
+        var list = Enumerable.Empty<Entity>().ToList();
+        foreach (var entity in entities) 
+        {
+            if ((entity.Tags & tags) != 0) 
+            {
+                list.Add(entity);
+            }
+        }
+
+        foreach (var entity in adding) 
+        {
+            if ((entity.Tags & tags) != 0) 
+            {
+                list.Add(entity);
+            }
+        }
+        return list;
     }
 
     public IEnumerator<Entity> GetEnumerator()

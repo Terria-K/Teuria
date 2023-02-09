@@ -5,7 +5,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <LangVersion>11</LangVersion>
 
-    <DefineConstants>SYSTEMTEXTJSON;FNA</DefineConstants>
+    <DefineConstants>SYSTEMTEXTJSON;FNA;FontStashSharp</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,6 +16,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="../FontStashSharp/src/XNA/FontStashSharp.FNA.Core.csproj"/>
     <ProjectReference Include="../LightJson/Sources/LightJson/LightJson.csproj">
       <PrivateAssets>false</PrivateAssets>
     </ProjectReference>

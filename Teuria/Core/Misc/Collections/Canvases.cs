@@ -29,6 +29,7 @@ public class Canvases
             foreach (var layer in removing) 
             {
                 CanvasList.Remove(layer);
+                layer.Unload();
             }
         }
         removing.Clear();

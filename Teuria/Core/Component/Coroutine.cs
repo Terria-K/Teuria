@@ -85,7 +85,7 @@ public class Coroutine : Component
         {
             Active = false;
             if (freeWhenDone)
-                Entity.RemoveComponent(this);
+                DetachSelf();
         }
     }
 
