@@ -44,9 +44,38 @@ public static partial class Canvas
         spriteBatch.Draw(Pixel, new Rectangle(x, (y + height - thickness), width, thickness), color);
     }
 
+    public static void DrawCircle(SpriteBatch spriteBatch, Vector2 position, float radius, Color color, int resolution)
+    {
+        Vector2 last = Vector2.UnitX * radius;
+        Vector2 lastP = new Vector2(-last.Y, last.X);
+        for (int i = 1; i <= resolution; i++)
+        {
+            Vector2 at = MathUtils.DegToVec(i * MathHelper.PiOver2 / resolution, radius);
+            Vector2 atP = new Vector2(-at.Y, at.X);
+
+            DrawLine(spriteBatch, position + last, position + at, color);
+            DrawLine(spriteBatch, position - last, position - at, color);
+            DrawLine(spriteBatch, position + lastP, position + atP, color);
+            DrawLine(spriteBatch, position - lastP, position - atP, color);
+
+            last = at;
+            lastP = atP;
+        }
+    }
+
+    public static void DrawCircle(SpriteBatch spriteBatch, float x, float y, float radius, Color color, int resolution)
+    {
+        DrawCircle(spriteBatch, new Vector2(x, y), radius, color, resolution);
+    }
+
     public static void DrawLine(SpriteBatch spriteBatch, Vector2 start, float angle, float length, Color color) 
     {
         spriteBatch.Draw(Pixel, start, null, color, angle, Vector2.Zero, new Vector2(length, 1), SpriteEffects.None, 0);
+    }
+
+    public static void DrawLine(SpriteBatch spriteBatch, Vector2 start, Vector2 end, Color color)
+    {
+        DrawLine(spriteBatch, start, MathUtils.Angle(start, end), Vector2.Distance(start, end), color);
     }
 
     public static void TextureCentered(SpriteTexture spriteTexture, Vector2 position, Color color)

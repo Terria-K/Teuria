@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
 
@@ -12,7 +13,6 @@ public abstract class PhysicsComponent : Component
     public bool Collideable;
     private readonly Shape collider;
     public Shape Collider => collider;
-    public AABB BoundingArea => collider.BoundingArea;    
 
 
     public ICollidableEntity PhysicsEntity;
@@ -38,6 +38,15 @@ public abstract class PhysicsComponent : Component
         if (collider != null)
             collider.Entity = null;
         base.Removed();
+    }
+
+    public override void Draw(SpriteBatch spriteBatch)
+    {
+        if (Collideable && collider.IsInTheWorld && RectangleShape.DebugRender) 
+        {
+            collider.DebugDraw(spriteBatch);
+        }
+        base.Draw(spriteBatch);
     }
 
     public void Detect(HashSet<PhysicsComponent> components) 

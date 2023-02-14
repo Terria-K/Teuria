@@ -12,8 +12,19 @@ public static class TextureImporter
 
     public static Texture2D LoadImage(ReadOnlySpan<char> path) 
     {
-        var device = GameApp.Instance.GraphicsDevice;
         using var fs = TitleContainer.OpenStream($"Content/{path}");
+
+        return InternalLoadTexture(fs);
+    }
+
+    public static Texture2D LoadImage(Stream fs) 
+    {
+        return InternalLoadTexture(fs);
+    }
+
+    private static Texture2D InternalLoadTexture(Stream fs) 
+    {
+        var device = GameApp.Instance.GraphicsDevice;
         var tex = Texture2D.FromStream(device, fs);
         var size = tex.Width * tex.Height;
         Color[] texColor = new Color[size];
@@ -30,14 +41,17 @@ public static class TextureImporter
             }
         }
         tex.SetData<Color>(texColor, 0, size);
-
         cleanupCache.Add(tex);
         return tex;
     }
 
     public static void CleanUp(Texture2D texture) 
     {
-        if (!cleanupCache.Remove(texture)) return;
+        if (!cleanupCache.Remove(texture)) 
+        {
+            texture?.Dispose();
+            return;
+        }
         texture.Dispose();
     }
 }

@@ -10,7 +10,7 @@ public class Entities : IEnumerable<Entity>
 {
     public Scene Scene { get; private set; }
 
-    private List<Entity> entities = new List<Entity>();
+    private WeakList<Entity> entities = new WeakList<Entity>();
     private List<Entity> add = new List<Entity>();
     private List<Entity> remove = new List<Entity>();
     private List<Entity> entering = new List<Entity>();
@@ -116,16 +116,18 @@ public class Entities : IEnumerable<Entity>
 
     public void Clear() 
     {
-        foreach (var entity in entities) 
+        for (int i = 0; i < entities.Count; i++)
         {
+            var entity = entities[i];
             remove.Add(entity);
         }
     }
 
     internal void Update() 
     {
-        foreach (var entity in entities)
+        for (int i = 0; i < entities.Count; i++)
         {
+            var entity = entities[i];
             if (!entity.Active)
                 continue;
             
@@ -138,8 +140,9 @@ public class Entities : IEnumerable<Entity>
 
     public void Draw(SpriteBatch spriteBatch) 
     {
-        foreach (var entity in entities) 
+        for (int i = 0; i < entities.Count; i++)
         {
+            var entity = entities[i];
             if (entity.Visible) { entity.Draw(spriteBatch); }
         }
     }
@@ -149,8 +152,9 @@ public class Entities : IEnumerable<Entity>
     where T : Entity
     {
         var list = Enumerable.Empty<T>().ToList();
-        foreach (var entity in entities) 
+        for (int i = 0; i < entities.Count; i++) 
         {
+            var entity = entities[i];
             if (entity is T ent) 
                 list.Add(ent);
         }
@@ -166,8 +170,9 @@ public class Entities : IEnumerable<Entity>
     public List<Entity> GetEntitiesByTag(int tags) 
     {
         var list = Enumerable.Empty<Entity>().ToList();
-        foreach (var entity in entities) 
+        for (int i = 0; i < entities.Count; i++) 
         {
+            var entity = entities[i];
             if ((entity.Tags & tags) != 0) 
             {
                 list.Add(entity);
@@ -186,7 +191,8 @@ public class Entities : IEnumerable<Entity>
 
     public IEnumerator<Entity> GetEnumerator()
     {
-        return entities.GetEnumerator();
+        for (int i = 0; i < entities.Count; i++)
+            yield return entities[i];
     }
 
     IEnumerator IEnumerable.GetEnumerator()

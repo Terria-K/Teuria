@@ -6,6 +6,7 @@ namespace Teuria;
 public class RectangleShape : Shape 
 {
 // #if DEBUG
+    // TODO: Put it in Shape class
     public static bool DebugRender = false;
 // #endif
     public override AABB BoundingArea => new AABB(GlobalX, GlobalY, Width, Height);
@@ -17,18 +18,6 @@ public class RectangleShape : Shape
         Position = pos;        
     }
     
-
-    public void Draw(SpriteBatch spriteBatch, Color color)
-    {
-        if (!DebugRender || !IsInTheWorld) return;
-        Canvas.DrawRect(spriteBatch, (int)GlobalX, (int)GlobalY, (int)Width, (int)Height, 1, color);
-    }
-
-    public void Draw(SpriteBatch spriteBatch)
-    {
-        Draw(spriteBatch, Color.Red);
-    }
-
     public override bool Collide(RectangleShape other, Vector2 offset = default) 
     {
         return GlobalLeft + offset.X < other.GlobalRight && 
@@ -90,5 +79,15 @@ public class RectangleShape : Shape
             return default;
         }
         return new AABB(left, top, right - left, bottom - top);
+    }
+
+    public override bool Collide(CircleShape other, Vector2 offset = default)
+    {
+        return other.Collide(this);
+    }
+
+    public override void DebugDraw(SpriteBatch spriteBatch)
+    {
+        Canvas.DrawRect(spriteBatch, (int)GlobalX, (int)GlobalY, (int)Width, (int)Height, 1, Color.Red);
     }
 }

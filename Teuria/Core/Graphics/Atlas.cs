@@ -105,19 +105,10 @@ public sealed class ClutterBinaryLoader : IAtlasLoader
             var y = (int)reader.ReadUInt32();
             var w = (int)reader.ReadUInt32();
             var h = (int)reader.ReadUInt32();
-            var rotated = reader.ReadBoolean();
-            var rotatedValue = 0f;
-            var origin = Vector2.Zero;
-            if (rotated) {
-                rotatedValue = 270f * MathUtils.Radians;
-                origin.X = -w;
-            }
             var spriteTexture = new SpriteTexture(
                 baseTexture,
                 new Point(x, y),
                 w, h,
-                rotatedValue,
-                origin,
                 new Rectangle(4, 4, 4, 4)
             );
             atlas.Add(name, spriteTexture);
@@ -157,20 +148,11 @@ public sealed class ClutterJsonLoader: IAtlasLoader
             var y = keyValue.Value["y"].AsInteger;
             var w = keyValue.Value["width"].AsInteger;
             var h = keyValue.Value["height"].AsInteger;
-            var rotated = keyValue.Value["rotated"].AsBoolean;
-            var rotatedValue = 0f;
-            var origin = Vector2.Zero;
-            if (rotated) {
-                rotatedValue = 270f * MathUtils.Radians;
-                origin.X = -w;
-            }
 
             var spriteTexture = new SpriteTexture(
                 baseTexture,
                 new Point(x, y),
                 w, h,
-                rotatedValue,
-                origin,
                 new Rectangle(4, 4, 4, 4)
             );
             atlas.Add(name, spriteTexture);

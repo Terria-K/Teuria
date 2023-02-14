@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
 
@@ -34,18 +35,22 @@ public abstract class Shape
     {
         RectangleShape => Collide(shape as RectangleShape, offset),
         TileGrid => Collide(shape as TileGrid, offset),
+        CircleShape => Collide(shape as CircleShape, offset),
         _ => throw new System.Exception("No Collider were implemented")
     };
 
     public abstract bool Collide(float x, float y, float width, float height, Vector2 offset = default);
     public abstract bool Collide(RectangleShape other, Vector2 offset = default);
     public abstract bool Collide(TileGrid grid, Vector2 offset = default);
+    public abstract bool Collide(CircleShape other, Vector2 offset = default);
 
     public abstract bool Collide(Rectangle rect, Vector2 offset = default);
     public abstract bool Collide(AABB aabb, Vector2 offset = default);
     public abstract bool Collide(Point value);
     public abstract bool Collide(Vector2 value);
+    public abstract void DebugDraw(SpriteBatch spriteBatch);
 
+    // TODO: Make BoundingArea be any struct
     public abstract AABB BoundingArea { get; }
 
     

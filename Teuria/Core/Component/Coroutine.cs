@@ -67,43 +67,37 @@ public class Coroutine : Component
             timer -= Time.Delta;
             return;
         }
-        if (coroutines.Count == 0) return;
+        if (coroutines.Count == 0) 
+            return;
         IEnumerator current = coroutines.Peek();
         if (current != null && current.MoveNext() && !done) 
         {
-            CheckReturnType(ref current);
+            // Check what's current
+            if (current.Current is float single) 
+            {
+                timer = single;
+                return;
+            }
+            if (current.Current is int integer) 
+            {
+                timer = integer;
+                return;
+            }
+            if (current.Current is IEnumerator corou) 
+            {
+                coroutines.Push(corou);
+            }
             return;
         }
-        if (!done)
-            Final();   
-    }
-
-    private void Final() 
-    {
-        coroutines.Pop();
-        if (coroutines.Count == 0) 
+        if (!done) 
         {
-            Active = false;
-            if (freeWhenDone)
-                DetachSelf();
-        }
-    }
-
-    private void CheckReturnType(ref IEnumerator current) 
-    {
-        if (current.Current is float single) 
-        {
-            timer = single;
-            return;
-        }
-        else if (current.Current is int integer) 
-        {
-            timer = integer;
-            return;
-        }
-        else if (current.Current is IEnumerator corou) 
-        {
-            coroutines.Push(corou);
+            coroutines.Pop();
+            if (coroutines.Count == 0) 
+            {
+                Active = false;
+                if (freeWhenDone)
+                    DetachSelf();
+            }
         }
     }
 }

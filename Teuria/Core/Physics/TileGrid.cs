@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
 
@@ -33,10 +34,10 @@ public sealed class TileGrid : Shape
             {
                 if (characters[y, x] == "0") 
                 {
-                    CollisionGrid[y, x] = false;
+                    CollisionGrid[x, y] = false;
                     continue;
                 } 
-                CollisionGrid[y, x] = true;
+                CollisionGrid[x, y] = true;
             }
     }
 
@@ -100,7 +101,7 @@ public sealed class TileGrid : Shape
         for (int xa = 0; xa < width; xa++) 
             for (int ya = 0; ya < height; ya++) 
             {
-                if (CollisionGrid[y + ya, x + xa]) { return true; }
+                if (CollisionGrid[x + xa, y + ya]) { return true; }
             }
 
         return false;
@@ -119,5 +120,14 @@ public sealed class TileGrid : Shape
     public override bool Collide(TileGrid grid, Vector2 offset)
     {
         return false;
+    }
+
+    public override bool Collide(CircleShape other, Vector2 offset = default)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public override void DebugDraw(SpriteBatch spriteBatch)
+    {
     }
 }

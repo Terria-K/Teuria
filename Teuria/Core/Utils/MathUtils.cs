@@ -113,6 +113,17 @@ public static class MathUtils
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2 ClosestPointOnLine(Vector2 lineA, Vector2 lineB, Vector2 closestTo)
+    {
+        var v = lineB - lineA;
+        var w = closestTo - lineA;
+        var t = Vector2.Dot(w, v) / Vector2.Dot(v, v);
+        t = MathHelper.Clamp(t, 0, 1);
+
+        return lineA + v * t;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2 ToInt(this Vector2 vec) 
     {
         var (x, y) = vec;
@@ -136,6 +147,27 @@ public static class MathUtils
     {
         return new Vector2((int)Math.Floor(vec.X), (int)Math.Floor(vec.Y));
     }
+
+#region Sector
+    public const int SectorCenter = 0;
+    public const int SectorLeft = 1;
+    public const int SectorRight = 2;
+    public const int SectorBottom = SectorLeft | SectorRight;
+    public const int SectorTop = 4;
+    public static int GetSector(float rX, float rY, float rW, float rH, Vector2 line) 
+    {
+        var sector = SectorCenter;
+        if (line.X < rX)
+            sector |= SectorLeft;
+        else if (line.X >= rX + rW)
+            sector |= SectorRight;
+        if (line.Y < rY)
+            sector |= SectorBottom;
+        else if (line.Y >= rY + rH)
+            sector |= SectorTop;
+        return sector;
+    }
+#endregion
 
 // MonoGame already has this functions, FNA doesn't
 #if FNA

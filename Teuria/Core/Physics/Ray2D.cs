@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 namespace Teuria;
 
 [Flags]
-public enum PointSectors { Inside, Left, Right, Bottom, Top }
+public enum PointSectors { Center, Left, Right, Bottom, Top }
 
 public struct Ray2D 
 {
@@ -121,7 +121,7 @@ public struct Ray2D
 
         if ((sector0 & sector1) != 0)
             return Vector2.Zero;
-        else if (sector0 == PointSectors.Inside || sector1 == PointSectors.Inside)
+        else if (sector0 == PointSectors.Center || sector1 == PointSectors.Center)
             return Vector2.Zero;
         else 
         {
@@ -162,7 +162,7 @@ public struct Ray2D
 
     private static PointSectors ComputeSector(AABB rect, Vector2 line) 
     {
-        var sector = PointSectors.Inside;
+        var sector = PointSectors.Center;
         if (line.X < rect.X)
             sector |= PointSectors.Left;
         else if (line.X >= rect.X + rect.Width)

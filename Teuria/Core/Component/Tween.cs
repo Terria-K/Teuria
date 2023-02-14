@@ -56,6 +56,13 @@ public class Tween : Component
         Entity = entity;
     }
 
+    public void Reset() 
+    {
+        TimeLeft = Duration;
+        Value = Progress = Reverse ? 1 : 0;
+        Progress = 0;
+    }
+
     public override void Update()
     {
         if (Delay > 0) 

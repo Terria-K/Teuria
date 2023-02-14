@@ -173,7 +173,7 @@ public class TileMap : Entity
                 case LayerType.Decal:
                     break;
                 case LayerType.Grid:
-                    textureGridData = new Array2D<SpriteTexture>(LevelSize.Y, LevelSize.X);
+                    textureGridData = new Array2D<SpriteTexture>(LevelSize.X, LevelSize.Y);
                     var picker = new Picker<SpriteTexture>();
                     if (layer.Grid2D is null) 
                     {
