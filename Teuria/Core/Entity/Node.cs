@@ -7,7 +7,7 @@ namespace Teuria;
 public class Node 
 {
     protected internal Node parent;
-    private string name;
+    public string Name;
     private Dictionary<string, Node> childs = new Dictionary<string, Node>();
     public bool Active { get; set; } = true;
     public PauseMode PauseMode = PauseMode.Inherit;
@@ -16,31 +16,31 @@ public class Node
 
     public Node(string name = "Node") 
     {
-        this.name = name;
+        this.Name = name;
         NodeID = GameApp.InternalID;
         GameApp.InternalID++;
     }
 
     public void AddChild(string name, Node node) 
     {
-        if (!string.IsNullOrEmpty(this.name)) 
+        if (!string.IsNullOrEmpty(this.Name)) 
         {
-            name = $"{this.name}/{name}";
+            name = $"{this.Name}/{name}";
         }
         childs.Add(name, node);
-        node.name = name;
+        node.Name = name;
         node.parent = this;
     }
 
     public bool TryAddChild(string name, Node node) 
     {
-        if (!string.IsNullOrEmpty(this.name)) 
+        if (!string.IsNullOrEmpty(this.Name)) 
         {
-            name = $"{this.name}/{name}";
+            name = $"{this.Name}/{name}";
         }
         if (childs.TryAdd(name, node)) 
         {
-            node.name = name;
+            node.Name = name;
             node.parent = this;
             return true;
         }

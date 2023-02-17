@@ -43,7 +43,7 @@ public class PrototypeCanvas : CanvasLayer
             rasterizerState: RasterizerState.CullCounterClockwise,
             depthStencilState: DepthStencilState.None,
 #else
-            transformMatrix: Camera?.Transform, 
+            // transformMatrix: Camera?.Transform, 
 #endif
             samplerState: SamplerState, 
             sortMode: SpriteSortMode.Immediate, 

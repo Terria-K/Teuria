@@ -92,7 +92,7 @@ public class Sprite : Component
     {
         if (cleanUpTexture) 
         {
-            TextureImporter.CleanUp(Texture.Texture);
+            TeuriaImporter.CleanUp(Texture.Texture);
         }
         base.Removed();
     }

@@ -162,7 +162,7 @@ public class SpriteTexture
 
     public static SpriteTexture FromFile(string filename) 
     {
-        return new SpriteTexture(TextureImporter.LoadImage(filename));
+        return new SpriteTexture(TeuriaImporter.LoadImage(filename));
     }
 
     public static SpriteTexture FromContent(ContentManager content, string filename) 

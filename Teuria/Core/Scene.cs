@@ -183,14 +183,14 @@ public class Scene
         return entity;
     }
 
-    public List<T> GetEntities<T>() 
-    where T : Entity
-    {
-        return entityList.GetEntities<T>();
-    }
+    public List<T> GetEntities<T>()
+    where T : Entity => entityList.GetEntities<T>();
+    public List<Entity> GetEntities(string name) => entityList.GetEntities(name);
+    public List<Entity> GetEntities(int tags) => entityList.GetEntities(tags);
 
-    public List<Entity> GetEntitiesByTag(int tags) 
-    {
-        return entityList.GetEntitiesByTag(tags);
-    }
+    public T GetEntity<T>()
+    where T : Entity => entityList.GetEntity<T>();
+    public T GetEntity<T>(string name) 
+    where T : Entity => entityList.GetEntity<T>(name);
+    public Entity GetEntity(int tags) => entityList.GetEntity(tags);
 }

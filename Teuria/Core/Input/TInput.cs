@@ -12,6 +12,9 @@ public static class TInput
     internal static List<BindableInput> BindableInputs = new List<BindableInput>();
     public static KeyboardInput Keyboard { get; private set; }
     public static MouseInput Mouse { get; private set; }
+#if ANDROID
+    public static TouchInput Touch { get; private set; }
+#endif
 
     public static bool Disabled = false;
 
@@ -21,6 +24,10 @@ public static class TInput
         Mouse = new MouseInput();
         AddInput(Keyboard);
         AddInput(Mouse);
+#if ANDROID
+        Touch = new TouchInput();
+        AddInput(Touch);
+#endif
     }
 
     internal static void Update() 

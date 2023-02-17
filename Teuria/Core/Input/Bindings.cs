@@ -3,55 +3,38 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Teuria;
 
-public class Binding
+public abstract class Binding
 {
-    public List<Keys> Keys = new List<Keys>();
+    // public List<Keys> Keys = new List<Keys>();
 
-    public void Add(params Keys[] keys) 
-    {
-        foreach (var key in keys) 
-        {
-            if (Keys.Contains(key))
-                continue;
-            Keys.Add(key);
-        }
-    }
+    // public Binding() {}
+    // public Binding(params Keys[] keys) 
+    // {
+    //     Add(keys);
+    // }
 
-    public void Replace(params Keys[] keys) 
-    {
-        if (Keys.Count > 0)
-            Keys.Clear();
+    // public void Add(params Keys[] keys) 
+    // {
+    //     foreach (var key in keys) 
+    //     {
+    //         if (Keys.Contains(key))
+    //             continue;
+    //         Keys.Add(key);
+    //     }
+    // }
 
-        Add(keys);
-    }
+    // public void Replace(params Keys[] keys) 
+    // {
+    //     if (Keys.Count > 0)
+    //         Keys.Clear();
 
-    public bool Pressed() 
-    {
-        foreach (var key in Keys) 
-        {
-            if (TInput.Keyboard.Pressed(key))
-                return true;
-        }
-        return false;
-    }
+    //     Add(keys);
+    // }
 
-    public bool JustPressed() 
-    {
-        foreach (var key in Keys) 
-        {
-            if (TInput.Keyboard.JustPressed(key))
-                return true;
-        }
-        return false;
-    }
+    public abstract bool Pressed();
+    
 
-    public bool Released() 
-    {
-        foreach (var key in Keys) 
-        {
-            if (TInput.Keyboard.Released(key))
-                return true;
-        }
-        return false;
-    }
+    public abstract bool JustPressed(); 
+
+    public abstract bool Released();
 }

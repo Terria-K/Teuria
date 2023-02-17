@@ -40,6 +40,5 @@ public class InputButton : BindableInput
         }
         if (!pressed) 
             buffer = 0;
-        
     }
 }

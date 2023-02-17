@@ -6,13 +6,21 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
 
-public static class TextureImporter 
+public static class TeuriaImporter 
 {
     internal static List<Texture2D> cleanupCache = new List<Texture2D>();
 
-    public static Texture2D LoadImage(ReadOnlySpan<char> path) 
+    public static Effect LoadEffect(string path) 
     {
-        using var fs = TitleContainer.OpenStream($"Content/{path}");
+        using var tc = TitleContainer.OpenStream(path);
+        using var ms = new MemoryStream();
+        tc.CopyTo(ms);
+        return new Effect(GameApp.Instance.GraphicsDevice, ms.ToArray());
+    }
+
+    public static Texture2D LoadImage(string path) 
+    {
+        using var fs = TitleContainer.OpenStream(path);
 
         return InternalLoadTexture(fs);
     }

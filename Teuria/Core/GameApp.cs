@@ -1,8 +1,8 @@
 ﻿using System;
+using Android.Util;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using MonoSound;
 
 namespace Teuria;
 
@@ -33,141 +33,138 @@ public abstract class GameApp : Game
         } 
     }
     private static GameApp instance;
-    private SubViewport subViewport;
-    private bool resizing;
-    private static bool fullscreen;
-    private static int padding = 0;
-    public static int Padding 
-    {
-        get => padding;
-        set 
-        {
-            padding = value;
-            Instance.UpdateView();
-        }
-    }
+    
 
     public static int ScreenHeight { get; private set; }
     public static int ScreenWidth { get; private set; }
     public static int ViewWidth { get; private set; }
     public static int ViewHeight { get; private set; }
-    public static bool Fullscreen 
-    { 
-        get => fullscreen;
-        set 
-        {
-            fullscreen = value;
-#if !FNA
-            Instance.graphics.HardwareModeSwitch = !fullscreen;
-#endif
-        }
-    }
 
     public static int InternalID { get; internal set; }
+#region NewFeatures
+    // public static ScreenView ScreenView;
+    private RenderTarget2D teuriaBackBuffer;
+    private Rectangle windowRect;
+    private Rectangle boxingRect;
+    public float WindowAspect => Window.ClientBounds.Width / (float)Window.ClientBounds.Height;
 
+    public Rectangle Screen => boxingRect;
+    private float aspect;
+#endregion
+
+#if ANDROID
+    public GameApp(int width, int height, string windowTitle)
+#else
     public GameApp(int width, int height, int screenWidth, int screenHeight, string windowTitle, bool fullScreen)
+#endif
     {
         instance = this;
         Window.Title = windowTitle;
         title = windowTitle;
+#if !ANDROID
         ScreenWidth = screenWidth;
         ScreenHeight = screenHeight;
+#endif
         ViewWidth = width;
         ViewHeight = height;
-        Window.ClientSizeChanged += OnClientSizeChanged;
+
         graphics = new GraphicsDeviceManager(this);
+#if !ANDROID
 #if !FNA
         graphics.HardwareModeSwitch = !fullScreen;
-#endif
+#endif //FNA
         graphics.IsFullScreen = fullScreen;
         graphics.PreferredBackBufferWidth = ScreenWidth;
         graphics.PreferredBackBufferHeight = ScreenHeight;
-        // graphics.ApplyChanges();
+#endif //ANDROID
         ContentPath = "Content";
-
-
         Content.RootDirectory = ContentPath;
         Window.AllowUserResizing = true;
         IsMouseVisible = true;
-
     }
 
     private void OnClientSizeChanged(object sender, EventArgs e) 
     {
-        if ((GraphicsDevice.Viewport.Width != graphics.PreferredBackBufferWidth || 
-            GraphicsDevice.Viewport.Height != graphics.PreferredBackBufferHeight) && !resizing) 
+        int windowWidth, windowHeight;
+
+        if (graphics.IsFullScreen) 
         {
-            resizing = true;
-            if (Window.ClientBounds.Width == 0)  
-            {
-                resizing = false;
-                return;
-            }
-            graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
-            graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
-            // graphics.ApplyChanges();
-            subViewport.ScreenResolution = new Point(
-                graphics.PreferredBackBufferWidth, 
-                graphics.PreferredBackBufferHeight);
-            UpdateView();
-            resizing = false;
+            windowWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            windowHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
         }
-    }
-
-    private void UpdateView() 
-    {
-        var screen = new Vector2(
-            GraphicsDevice.PresentationParameters.BackBufferWidth, 
-            GraphicsDevice.PresentationParameters.BackBufferHeight
-        );
-
-        ViewSize(ref screen);
-        var aspect = ViewHeight / (float)ViewWidth;
-        ViewWidth -= Padding * 2;
-        ViewHeight -= (int)(aspect * Padding * 2);
-
-        ScreenMatrix = Matrix.CreateScale(
-            ViewWidth / (float)ScreenWidth);
-
-        viewport = new Viewport() 
+        else 
         {
-            X = (int)(screen.X / 2 - ViewWidth / 2),
-            Y = (int)(screen.Y / 2 - ViewHeight / 2),
-            Width = ViewWidth,
-            Height = ViewHeight,
+            windowWidth = Window.ClientBounds.Width;
+            windowHeight = Window.ClientBounds.Height;
+        }
+
+        if (WindowAspect <= aspect) 
+        {
+            int presentHeight = (int)((windowWidth / aspect) + 0.5f);
+            int barHeight = (windowHeight - presentHeight) / 2;
+            boxingRect = new Rectangle(0, barHeight, windowWidth, presentHeight);
+        }
+        else 
+        {
+            int presentWidth = (int)((windowHeight * aspect) + 0.5f);
+            int barWidth = (windowWidth - presentWidth) / 2;
+            boxingRect = new Rectangle(barWidth, 0, presentWidth, windowHeight);
+        }
+        GraphicsDevice.Viewport = new Viewport() 
+        {
+            X = boxingRect.X,
+            Y = boxingRect.Y,
+            Width = boxingRect.Width,
+            Height = boxingRect.Height,
             MinDepth = 0,
             MaxDepth = 1
         };
+        GraphicsReset();
     }
-
-    private void ViewSize(ref Vector2 screen) 
+    
+    public void ToggleFullscreen() 
     {
-        if (screen.X / ScreenWidth > screen.Y / ScreenHeight) 
+        graphics.IsFullScreen = !graphics.IsFullScreen;
+#if !FNA
+        graphics.HardwareModeSwitch = !graphics.IsFullScreen;
+#endif
+        if (graphics.IsFullScreen) 
         {
-            ViewWidth = (int)(screen.Y / ScreenHeight * ScreenWidth);
-            ViewHeight = (int)screen.Y;
-            return;
+            graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
         }
-        ViewWidth = (int)screen.X;
-        ViewHeight = (int)(screen.X / ScreenWidth * ScreenHeight);
+        else 
+        {
+            graphics.PreferredBackBufferWidth = windowRect.Width;
+        }
+        graphics.ApplyChanges();
     }
 
     protected override sealed void Initialize()
     {
-        Init();
+        if (!graphics.IsFullScreen)
+            windowRect = new Rectangle(0, 0, ScreenWidth, ScreenHeight);
+        else    
+            windowRect = new Rectangle(
+                0, 0, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width, 
+                GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height);
+        boxingRect = windowRect;
+        Log.Debug("TeuriaLog", $"[Teuria] {boxingRect.Width} {boxingRect.Height}");
+        aspect = windowRect.Width / (float)windowRect.Height;
+        graphics.PreferredBackBufferWidth = windowRect.Width;
+        graphics.PreferredBackBufferHeight = windowRect.Height;
+        graphics.ApplyChanges();
 
-        subViewport = new SubViewport(new Point(ViewWidth, ViewHeight), GraphicsDevice, Color.Black);
-        subViewport.SamplerState = SamplerState.PointClamp;
-        subViewport.ScreenResolution = new Point(ScreenWidth, ScreenHeight);
-        UpdateView();
-        // ScreenMatrix = Matrix.CreateScale(ViewWidth / (float)ScreenHeight);
+        teuriaBackBuffer = new RenderTarget2D(GraphicsDevice, ViewWidth, ViewHeight);
+
+        Window.ClientSizeChanged += OnClientSizeChanged;
+        Init();
 
         base.Initialize();
     }
 
     protected override sealed void LoadContent()
     {
-        MonoSoundLibrary.Init();
         TInput.Initialize();
         spriteBatch = new SpriteBatch(GraphicsDevice);
         Canvas.Initialize(graphics.GraphicsDevice, spriteBatch);
@@ -181,8 +178,7 @@ public abstract class GameApp : Game
         Scene.Exit();
         CleanUp();
         Canvas.Dispose();
-        MonoSoundLibrary.DeInit();
-        foreach(var textures in TextureImporter.cleanupCache) 
+        foreach(var textures in TeuriaImporter.cleanupCache) 
         {
             textures?.Dispose();
         }
@@ -219,18 +215,20 @@ public abstract class GameApp : Game
     {
         Draw();
         Scene?.BeforeRender();
-        // GraphicsDevice.SetRenderTarget(SceneRender);
-        // GraphicsDevice.Clear(Color.Black);
-        // Scene?.Render();
+
+        GraphicsDevice.SetRenderTarget(teuriaBackBuffer);
+        GraphicsDevice.Clear(Color.Black);
+
+        Scene?.Render();
 
         GraphicsDevice.SetRenderTarget(null);
         GraphicsDevice.Clear(Color.Black);
-        GraphicsDevice.Viewport = viewport;
-        subViewport.Begin();
-        Scene?.Render();
-        subViewport.End();
-
+        spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
+        spriteBatch.Draw(teuriaBackBuffer, boxingRect, Color.White);
+        spriteBatch.End();
         Scene?.AfterRender();
+
+
 
         base.Draw(gameTime);
 
@@ -254,6 +252,7 @@ public abstract class GameApp : Game
     protected abstract void Init();
     protected virtual void Load() {}
     protected virtual void Draw() {}
+    protected virtual void GraphicsReset() {}
     protected virtual void Process(GameTime gameTime) {}
     protected virtual void CleanUp() {}
 }
