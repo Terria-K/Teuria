@@ -1,5 +1,4 @@
 ﻿using System;
-using Android.Util;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -49,6 +48,7 @@ public abstract class GameApp : Game
     public float WindowAspect => Window.ClientBounds.Width / (float)Window.ClientBounds.Height;
 
     public Rectangle Screen => boxingRect;
+    public Rectangle WindowScreen => windowRect;
     private float aspect;
 #endregion
 
@@ -149,7 +149,6 @@ public abstract class GameApp : Game
                 0, 0, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width, 
                 GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height);
         boxingRect = windowRect;
-        Log.Debug("TeuriaLog", $"[Teuria] {boxingRect.Width} {boxingRect.Height}");
         aspect = windowRect.Width / (float)windowRect.Height;
         graphics.PreferredBackBufferWidth = windowRect.Width;
         graphics.PreferredBackBufferHeight = windowRect.Height;
