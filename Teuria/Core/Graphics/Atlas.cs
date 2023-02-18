@@ -92,6 +92,7 @@ public class Atlas
 /// </summary>
 public sealed class ClutterBinaryLoader : IAtlasLoader
 {
+    public required bool NinePatchEnabled;
     public Dictionary<string, SpriteTexture> Load(Stream fs, Texture2D baseTexture)
     {
         var reader = new BinaryReader(fs);
@@ -105,13 +106,41 @@ public sealed class ClutterBinaryLoader : IAtlasLoader
             var y = (int)reader.ReadUInt32();
             var w = (int)reader.ReadUInt32();
             var h = (int)reader.ReadUInt32();
-            var spriteTexture = new SpriteTexture(
-                baseTexture,
-                new Point(x, y),
-                w, h,
-                new Rectangle(4, 4, 4, 4)
-            );
-            atlas.Add(name, spriteTexture);
+            if (!NinePatchEnabled) 
+            {
+                var spriteTexture = new SpriteTexture(
+                    baseTexture,
+                    new Point(x, y),
+                    w, h
+                );
+                atlas.Add(name, spriteTexture);
+                continue;
+            }
+            var hasNinePatch = (bool)reader.ReadBoolean();
+            SpriteTexture ninePatchTexture;
+            if (hasNinePatch) 
+            {
+                ninePatchTexture = new SpriteTexture(
+                    baseTexture,
+                    new Point(x, y),
+                    w, h
+                );
+            }
+            else 
+            {
+                var nx = (int)reader.ReadUInt32();
+                var ny = (int)reader.ReadUInt32();
+                var nw = (int)reader.ReadUInt32();
+                var nh = (int)reader.ReadUInt32();
+                ninePatchTexture = new SpriteTexture(
+                    baseTexture,
+                    new Point(x, y),
+                    w, h,
+                    new Rectangle(nx, ny, nw, nh)
+                );
+            }
+
+            atlas.Add(name, ninePatchTexture);
         }
         return atlas;
     }
@@ -148,14 +177,29 @@ public sealed class ClutterJsonLoader: IAtlasLoader
             var y = keyValue.Value["y"].AsInteger;
             var w = keyValue.Value["width"].AsInteger;
             var h = keyValue.Value["height"].AsInteger;
+            if (!keyValue.Value.Contains("nine_patch")) 
+            {
+                var spriteTexture = new SpriteTexture(
+                    baseTexture,
+                    new Point(x, y),
+                    w, h
+                );
+                atlas.Add(name, spriteTexture);
+                continue;
+            }
+            var ninePatch = keyValue.Value["nine_patch"].AsJsonObject;
+            var nx = ninePatch["x"].AsInteger;
+            var ny = ninePatch["y"].AsInteger;
+            var nw = ninePatch["w"].AsInteger;
+            var nh = ninePatch["h"].AsInteger;
 
-            var spriteTexture = new SpriteTexture(
+            var ninePatchTexture = new SpriteTexture(
                 baseTexture,
                 new Point(x, y),
                 w, h,
-                new Rectangle(4, 4, 4, 4)
+                new Rectangle(nx, ny, nw, nh)
             );
-            atlas.Add(name, spriteTexture);
+            atlas.Add(name, ninePatchTexture);
         }
 
         return atlas;
