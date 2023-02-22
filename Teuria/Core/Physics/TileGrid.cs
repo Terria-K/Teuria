@@ -6,26 +6,26 @@ namespace Teuria;
 public sealed class TileGrid : Shape
 {
     public Array2D<bool> CollisionGrid;
-    public float CellWidth { get; private set; }
-    public float CellHeight { get; private set; }
-    public override AABB BoundingArea { get; }
+    public int CellWidth { get; private set; }
+    public int CellHeight { get; private set; }
+    public AABB BoundingArea;
     public int CellX => CollisionGrid.Columns;
     public int CellY => CollisionGrid.Rows;
 
-    public TileGrid(int cellsX, int cellsY, float cellWidth, float cellHeight) 
+    public TileGrid(int cellsX, int cellsY, int cellWidth, int cellHeight) 
     {
-        BoundingArea = new AABB(0f, 0f, cellWidth, cellHeight);
+        BoundingArea = new AABB(0, 0, cellWidth, cellHeight);
         CollisionGrid = new Array2D<bool>(cellsX, cellsY);
 
         CellWidth = cellWidth;
         CellHeight = cellHeight;
     }
 
-    public TileGrid(float cellWidth, float cellHeight, string[,] characters) 
+    public TileGrid(int cellWidth, int cellHeight, string[,] characters) 
     {
         var columns = characters.GetLength(0);
         var rows = characters.GetLength(1);
-        BoundingArea = new AABB(0f, 0f, rows * 8.0f, columns * 8.0f);
+        BoundingArea = new AABB(0, 0, rows * 8, columns * 8);
         CollisionGrid = new Array2D<bool>(rows, columns);
         CellWidth = cellWidth;
         CellHeight = cellHeight;
@@ -124,7 +124,7 @@ public sealed class TileGrid : Shape
 
     public override bool Collide(CircleShape other, Vector2 offset = default)
     {
-        throw new System.NotImplementedException();
+        return false;
     }
 
     public override void DebugDraw(SpriteBatch spriteBatch)

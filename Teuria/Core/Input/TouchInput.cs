@@ -8,6 +8,9 @@ public class TouchInput : BaseInput
 {
     public TouchCollection CurrentState;
     public TouchCollection PreviousState;
+
+    internal TouchInput() {}
+
     public override void Update()
     {
         PreviousState = CurrentState;

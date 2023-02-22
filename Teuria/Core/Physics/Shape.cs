@@ -5,6 +5,7 @@ namespace Teuria;
 
 public abstract class Shape
 {
+    public static bool DebugRender = false;
     public Entity Entity;
     public Component Component;
     private float width;
@@ -49,9 +50,6 @@ public abstract class Shape
     public abstract bool Collide(Point value);
     public abstract bool Collide(Vector2 value);
     public abstract void DebugDraw(SpriteBatch spriteBatch);
-
-    // TODO: Make BoundingArea be any struct
-    public abstract AABB BoundingArea { get; }
 
     
     public virtual float Width 

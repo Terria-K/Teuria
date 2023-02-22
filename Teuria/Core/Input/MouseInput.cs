@@ -9,6 +9,8 @@ public class MouseInput : BaseInput
     public MouseState PreviousState;
     public MouseState CurrentState;
 
+    internal MouseInput() {}
+
     public override void Update()
     {
         PreviousState = CurrentState;

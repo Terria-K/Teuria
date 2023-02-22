@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Teuria;
 
-public class Canvases
+public sealed class Canvases
 {
     public List<CanvasLayer> CanvasList = new List<CanvasLayer>();
     private List<CanvasLayer> adding = new List<CanvasLayer>();

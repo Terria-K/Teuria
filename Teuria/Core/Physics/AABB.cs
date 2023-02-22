@@ -122,7 +122,7 @@ public struct AABB : IEqualityComparer<AABB>
 
     public int GetHashCode([DisallowNull] AABB obj)
     {
-        throw new System.NotImplementedException();
+        return obj.GetHashCode();
     }
 
     public static implicit operator Rectangle(AABB other) 

@@ -7,6 +7,8 @@ public class KeyboardInput : BaseInput
     public KeyboardState PreviousState;
     public KeyboardState CurrentState;
 
+    internal KeyboardInput() {}
+
     public override void Update()
     {
         PreviousState = CurrentState;

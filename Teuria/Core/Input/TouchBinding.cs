@@ -3,20 +3,20 @@ using Microsoft.Xna.Framework;
 
 namespace Teuria;
 
-public class TouchBinding : Binding
+public class TouchBinding : IBinding
 {
     internal Rectangle Rect;
-    public override bool JustPressed()
+    public bool JustPressed()
     {
         return TInput.Touch.JustPressed(Rect);
     }
 
-    public override bool Pressed()
+    public bool Pressed()
     {
         return TInput.Touch.Pressed(Rect);
     }
 
-    public override bool Released()
+    public bool Released()
     {
         return TInput.Touch.Released(Rect);
     }

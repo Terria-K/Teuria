@@ -2,59 +2,54 @@ namespace Teuria;
 
 public class AxisButton : BindableInput 
 {
-    public Binding Negative;
-    public Binding Positive;
+    public WeakList<IAxisBinding> AxisBindings = new WeakList<IAxisBinding>();
     public int Value;
     public int PreviousValue;
-    private bool isTurned;
-    private WhenOverlap whenOverlap;
 
-    public AxisButton(Binding negative, Binding positive, WhenOverlap overlap)
+    public AxisButton(IAxisBinding axisBinding) 
     {
-        Negative = negative;
-        Positive = positive;
-        whenOverlap = overlap;
+        AxisBindings.Add(axisBinding);
+    }
+
+    public AxisButton(params IAxisBinding[] axisBindings) 
+    {
+        Add(axisBindings);
+    }
+
+    public void Add(params IAxisBinding[] binding) 
+    {
+        for (int i = 0; i < binding.Length; i++) 
+        {
+            var axis = binding[i];
+            AxisBindings.Add(axis);
+        }
+    }
+
+    public override void Delete()
+    {
+        AxisBindings.Clear();
     }
 
     public override void Update()
     {
-        PreviousValue = Value;
-        if (TInput.Disabled) return;
-
-
-        var negative = Negative.Pressed();
-        var positive = Positive.Pressed();
-
-        if (negative && positive) 
+        for (int i = 0; i < AxisBindings.Count; i++) 
         {
-            switch (whenOverlap) 
+            AxisBindings[i].Update();
+        }
+
+
+        PreviousValue = Value;
+        Value = 0;
+
+        for (int i = 0; i < AxisBindings.Count; i++) 
+        {
+            var value = AxisBindings[i].GetValue();
+            if (value != 0) 
             {
-                case WhenOverlap.Cancel:
-                    Value = 0;
-                    return;
-                case WhenOverlap.Newer when !isTurned:
-                    Value *= -1;
-                    isTurned = true;
-                    return;
-                case WhenOverlap.Older:
-                    Value = PreviousValue;
-                    return;
+                Value = value;
+                break;
             }
         }
-        if (positive) 
-        {
-            isTurned = false;
-            Value = 1;
-            return;
-        }
-        if (negative) 
-        {
-            isTurned = false;
-            Value = -1;
-            return;
-        }
-        isTurned = false;
-        Value = 0;
     }
 
     public enum WhenOverlap { Cancel, Newer, Older }

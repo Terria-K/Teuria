@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Teuria.Level;
-using System.Linq;
 
 namespace Teuria;
 
@@ -187,7 +186,7 @@ public class TileMap : Entity
             }
         }
 
-        private bool Check(int x, int y, string[,] grids) 
+        private static bool Check(int x, int y, string[,] grids) 
         {
             if (!(x < grids.GetLength(0) && y < grids.GetLength(1) && x >= 0 && y >= 0)) 
             {

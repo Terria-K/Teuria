@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
 
-public class Entities : IEnumerable<Entity>
+public sealed class Entities : IEnumerable<Entity>
 {
     public Scene Scene { get; private set; }
 
@@ -76,7 +76,6 @@ public class Entities : IEnumerable<Entity>
         {
             unsorted = false;
             entities.Sort(CompareDepth);
-
         }
 
         if (add.Count > 0) 

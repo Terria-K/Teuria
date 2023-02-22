@@ -116,9 +116,9 @@ public sealed class ClutterBinaryLoader : IAtlasLoader
                 atlas.Add(name, spriteTexture);
                 continue;
             }
-            var hasNinePatch = (bool)reader.ReadBoolean();
+            var hasNinePatch = reader.ReadBoolean();
             SpriteTexture ninePatchTexture;
-            if (hasNinePatch) 
+            if (!hasNinePatch) 
             {
                 ninePatchTexture = new SpriteTexture(
                     baseTexture,

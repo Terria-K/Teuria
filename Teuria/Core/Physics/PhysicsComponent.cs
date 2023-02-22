@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -42,7 +40,7 @@ public abstract class PhysicsComponent : Component
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        if (Collideable && collider.IsInTheWorld && RectangleShape.DebugRender) 
+        if (Collideable && collider.IsInTheWorld && Shape.DebugRender) 
         {
             collider.DebugDraw(spriteBatch);
         }

@@ -30,6 +30,19 @@ public static class TeuriaImporter
         return InternalLoadTexture(fs);
     }
 
+    public static Texture2D LoadQoiImage(string path) 
+    {
+        using var fs = TitleContainer.OpenStream(path);
+        return LoadQoiImage(fs);
+    }
+
+    public static Texture2D LoadQoiImage(Stream fs) 
+    {
+        using var ms = new MemoryStream();
+        fs.CopyTo(ms);
+        return QoiSharp.QoiDecoder.Decode(ms.ToArray()).ToTexture2D();
+    }
+
     private static Texture2D InternalLoadTexture(Stream fs) 
     {
         var device = GameApp.Instance.GraphicsDevice;

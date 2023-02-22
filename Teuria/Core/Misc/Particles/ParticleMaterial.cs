@@ -52,7 +52,7 @@ public class ParticleMaterial
             return TexturePicker.Pick();
         if (Texture != null)
             return Texture;
-        Debug.Assert(Texture != null, "Must have a texture!");
+        SkyLog.Assert(Texture != null, "Must have a texture!");
         return null;
     }
 }

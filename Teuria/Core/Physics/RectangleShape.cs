@@ -5,11 +5,7 @@ namespace Teuria;
 
 public class RectangleShape : Shape 
 {
-// #if DEBUG
-    // TODO: Put it in Shape class
-    public static bool DebugRender = false;
-// #endif
-    public override AABB BoundingArea => new AABB(GlobalX, GlobalY, Width, Height);
+    public AABB BoundingArea => new AABB(GlobalX, GlobalY, Width, Height);
 
     public RectangleShape(float width, float height, Vector2 pos) 
     {

@@ -10,8 +10,9 @@ public static class MathUtils
 {
     public const float Radians = MathHelper.Pi / 180f;
     public const float Degrees = 180f / MathHelper.Pi;
+    public const float Epsilon = 1e-5f;
     public static Random Randomizer = new Random();
-    public const float Epsilon = 0.00000001f;
+
 
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -27,7 +28,7 @@ public static class MathUtils
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float Clamp(float value, float min, float max) 
     {
-        Debug.Assert(min > max, "Minimum value is greater than Maximum");
+        SkyLog.Assert(min > max, "Minimum value is greater than Maximum");
         return value < min ? min : value > max ? max : value;
     }
 
@@ -196,9 +197,7 @@ public static class MathUtils
     private static Stack<Random> random = new();
     public static void StartRandScope(int seed) 
     {
-#if DEBUG
-        Debug.Assert(random.Count == 0, "StartRandScope cannot be called when an existing scope has not been ended");
-#endif
+        SkyLog.Assert(random.Count == 0, "StartRandScope cannot be called when an existing scope has not been ended");
         random.Push(Randomizer);
         Randomizer = new Random(seed);
     }

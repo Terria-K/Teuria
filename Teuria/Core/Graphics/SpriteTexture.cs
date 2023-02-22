@@ -200,7 +200,7 @@ public class SpriteTexture
     public void DrawTexture(SpriteBatch spriteBatch, Rectangle rectangle, Color color) 
     {
 #if DEBUG
-        if (RectangleShape.DebugRender)
+        if (Shape.DebugRender)
             color = Color.White * 0.5f;
 #endif
         var destPatches = CreatePatches(rectangle, Padding.X, Padding.X + Padding.Width, Padding.Y, Padding.Y + Padding.Height);
@@ -219,7 +219,7 @@ public class SpriteTexture
     {
         var color = Color.White;
 #if DEBUG
-        if (RectangleShape.DebugRender)
+        if (Shape.DebugRender)
             color = color * 0.5f;
 #endif
 
@@ -230,7 +230,7 @@ public class SpriteTexture
     {
         var col = color;
 #if DEBUG
-        if (RectangleShape.DebugRender)
+        if (Shape.DebugRender)
             col = color * 0.5f;
 #endif
         spriteBatch.Draw(Texture, position, Clip, col, Rotation + rotation, -Origin, scale, spriteEffects, zIndex);
@@ -240,7 +240,7 @@ public class SpriteTexture
     {
         var col = color;
 #if DEBUG
-        if (RectangleShape.DebugRender)
+        if (Shape.DebugRender)
             col = color * 0.5f;
 #endif
         spriteBatch.Draw(Texture, position, Clip, col, Rotation + rotation, offset, scale, spriteEffects, zIndex);
@@ -254,7 +254,7 @@ public class SpriteTexture
             rect = GetAbsoluteRect(rectangle);
         else rect = Clip;
 #if DEBUG
-        if (RectangleShape.DebugRender)
+        if (Shape.DebugRender)
             col = color * 0.5f;
 #endif
         spriteBatch.Draw(Texture, position, rect, col, Rotation + rotation, offset - Origin, scale, spriteEffects, zIndex);
@@ -264,7 +264,7 @@ public class SpriteTexture
     {
         var col = color;
 #if DEBUG
-        if (RectangleShape.DebugRender)
+        if (Shape.DebugRender)
             col = color * 0.5f;
 #endif
         spriteBatch.Draw(Texture, position, rectangle, col, Rotation + rotation, offset, scale, spriteEffects, zIndex);
@@ -274,7 +274,7 @@ public class SpriteTexture
     {
         var col = color;
 #if DEBUG
-        if (RectangleShape.DebugRender)
+        if (Shape.DebugRender)
             col = color * 0.5f;
 #endif
         spriteBatch.Draw(Texture, destRect, Clip, col, Rotation + rotation, offset, spriteEffects, zIndex);

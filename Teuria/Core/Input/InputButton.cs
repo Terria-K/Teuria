@@ -7,21 +7,73 @@ public abstract class BindableInput
         TInput.BindableInputs.Add(this);
     }
     public abstract void Update();
+    public abstract void Delete();
 }
 
 public class InputButton : BindableInput 
 {
-    public Binding Binding;
+    public WeakList<IBinding> Bindings = new WeakList<IBinding>();
     public float BufferTime;
     private float buffer;
 
-    public bool JustPressed => Binding.JustPressed() || buffer > 0f;
-    public bool Pressed => Binding.Pressed();
-    public bool Released => Binding.Released();
-
-    public InputButton(Binding binding, float bufferTime) 
+    public bool JustPressed 
     {
-        this.Binding = binding;
+        get 
+        {
+            if (TInput.Disabled)
+                return false;
+
+            for (int i = 0; i < Bindings.Count; i++) 
+            {
+                if (Bindings[i].JustPressed() || buffer > 0f)
+                    return true;
+            }
+            return false;
+        }
+    }
+
+    public bool Pressed 
+    {
+        get 
+        {
+            if (TInput.Disabled)
+                return false;
+
+            for (int i = 0; i < Bindings.Count; i++) 
+            {
+                if (Bindings[i].Pressed())
+                    return true;
+            }
+            return false;
+        }
+    }
+
+    public bool Released 
+    {
+        get 
+        {
+            if (TInput.Disabled)
+                return false;
+
+            for (int i = 0; i < Bindings.Count; i++) 
+            {
+                if (Bindings[i].Released())
+                    return true;
+            }
+            return false;
+        }
+    }
+
+    public InputButton(IBinding binding, float bufferTime) 
+    {
+        this.Bindings.Add(binding);
+        BufferTime = bufferTime;
+    }
+
+    public InputButton(IBinding[] binding, float bufferTime) 
+    {
+        foreach (var bind in binding)
+            this.Bindings.Add(bind);
         BufferTime = bufferTime;
     }
 
@@ -29,16 +81,25 @@ public class InputButton : BindableInput
     {
         buffer -= Time.Delta;
         var pressed = false;
-        if (Binding.Pressed()) 
+        for (int i = 0; i < Bindings.Count; i++) 
         {
-            buffer = BufferTime;
-        }
-        else if (Binding.JustPressed()) 
-        {
-            buffer = BufferTime;
-            pressed = true;
+            var binding = Bindings[i];
+            if (binding.Pressed()) 
+            {
+                buffer = BufferTime;
+            }
+            else if (binding.JustPressed()) 
+            {
+                buffer = BufferTime;
+                pressed = true;
+            }
         }
         if (!pressed) 
             buffer = 0;
+    }
+
+    public override void Delete()
+    {
+        Bindings.Clear();
     }
 }

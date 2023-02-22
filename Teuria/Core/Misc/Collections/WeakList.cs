@@ -11,7 +11,21 @@ public class WeakList<T>
     private T[] buffer;
     public int Count;
 
-    public T this[int idx] => buffer[idx];
+    public T this[int idx] 
+    {
+        get => buffer[idx];
+        set 
+        {
+#if DEBUG
+            var objCheck = buffer[idx];
+            SkyLog.Assert(
+                objCheck != null, 
+                "You cannot replace an object that doesn't exist yet or null. If you meant to add an element, use Add(T)"
+            );
+#endif
+            buffer[idx] = value;
+        }
+    } 
 
     public WeakList(int size) 
     {
@@ -42,7 +56,7 @@ public class WeakList<T>
 
     public void RemoveAt(int index) 
     {
-        Debug.Assert(index < Count, $"Index {index} out of range!");
+        SkyLog.Assert(index < Count, $"Index {index} out of range!");
         Count--;
         if (index < Count)
             Array.Copy(buffer, index + 1, buffer, index, Count - index);
@@ -58,6 +72,11 @@ public class WeakList<T>
                 return true;
         }
         return false;
+    }
+
+    public int IndexOf(T item) 
+    {
+        return Array.IndexOf(buffer, item);
     }
 
     public void EnsureCapacity(int addition = 1) 

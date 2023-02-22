@@ -5,12 +5,10 @@ namespace Teuria;
 public class PhysicsCanvas : CanvasLayer
 {
     private readonly HashSet<PhysicsComponent> physicsComponents = new HashSet<PhysicsComponent>();
-    private bool showDebug;
     private bool isClearing;
 
-    public PhysicsCanvas(bool showDebug = false) 
+    public PhysicsCanvas() 
     {
-        this.showDebug = showDebug;
     }
 
     public void Add(ICollidableEntity entity) 

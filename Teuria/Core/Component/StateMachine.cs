@@ -1,8 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading.Tasks;
 
 namespace Teuria;
 
@@ -20,7 +17,7 @@ public class StateMachine : Component
         get => currentState;
         set 
         {
-            Debug.Assert(value <= totalStates, $"Total states is {totalStates}, you've reached {value}");
+            SkyLog.Assert(value <= totalStates, $"Total states is {totalStates}, you've reached {value}");
             if (currentState == value) 
                 return;
             previousState = currentState;

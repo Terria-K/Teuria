@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Teuria;
 
@@ -15,15 +14,15 @@ public class Tag
 
     public static Tag GetTag(string outputName) 
     {
-        Debug.Assert(name.ContainsKey(outputName), $"No tag with name '{outputName}' has been declared");
+        SkyLog.Assert(name.ContainsKey(outputName), $"No tag with name '{outputName}' has been declared");
 
         return Tag.name[outputName];
     }
 
     public Tag(string outputName) 
     {
-        Debug.Assert(TotalTags < 32, "Maximum tag limit of 32 exceeded");
-        Debug.Assert(!name.ContainsKey(outputName), $"The tags with {outputName} has already existed!");   
+        SkyLog.Assert(TotalTags < 32, "Maximum tag limit of 32 exceeded");
+        SkyLog.Assert(!name.ContainsKey(outputName), $"The tags with {outputName} has already existed!");   
 
         ID = TotalTags;
         Value = 1 << TotalTags;

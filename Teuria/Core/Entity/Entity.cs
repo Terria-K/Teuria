@@ -108,7 +108,7 @@ public class Entity : Node, IEnumerable<Component>
     public void AssertComponent<T>() where T : Component 
     {
         var component = GetComponent<T>();
-        Debug.Assert(component != null, $"This entity does not have {component} Component!");
+        SkyLog.Assert(component != null, $"This entity does not have {component} Component!");
     }
 
     public void RemoveComponent(Component comp) 

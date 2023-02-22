@@ -1,40 +1,14 @@
-using System.Collections.Generic;
-using Microsoft.Xna.Framework.Input;
-
 namespace Teuria;
 
-public abstract class Binding
+public interface IBinding 
 {
-    // public List<Keys> Keys = new List<Keys>();
+    bool Pressed();
+    bool JustPressed();
+    bool Released();
+}
 
-    // public Binding() {}
-    // public Binding(params Keys[] keys) 
-    // {
-    //     Add(keys);
-    // }
-
-    // public void Add(params Keys[] keys) 
-    // {
-    //     foreach (var key in keys) 
-    //     {
-    //         if (Keys.Contains(key))
-    //             continue;
-    //         Keys.Add(key);
-    //     }
-    // }
-
-    // public void Replace(params Keys[] keys) 
-    // {
-    //     if (Keys.Count > 0)
-    //         Keys.Clear();
-
-    //     Add(keys);
-    // }
-
-    public abstract bool Pressed();
-    
-
-    public abstract bool JustPressed(); 
-
-    public abstract bool Released();
+public interface IAxisBinding
+{
+    void Update();
+    int GetValue();
 }

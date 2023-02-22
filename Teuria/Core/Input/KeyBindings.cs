@@ -1,9 +1,66 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
+using static Teuria.AxisButton;
 
 namespace Teuria;
 
-public class KeyBinding : Binding 
+public class KeyAxisBinding : IAxisBinding
+{
+    public Keys Negative;
+    public Keys Positive;
+    public WhenOverlap WhenOverlap;
+    private int value;
+    private bool isTurned;
+
+    public KeyAxisBinding(Keys negative, Keys positive, WhenOverlap overlap) 
+    {
+        Negative = negative;
+        Positive = positive;
+        WhenOverlap = overlap;
+    }
+
+    public int GetValue()
+    {
+        return value;
+    }
+
+    public void Update() {
+        var negative = TInput.Keyboard.Pressed(Negative);
+        var positive = TInput.Keyboard.Pressed(Positive);
+
+        if (negative && positive) 
+        {
+            switch (WhenOverlap) 
+            {
+                case WhenOverlap.Cancel:
+                    value = 0;
+                    return;
+                case WhenOverlap.Newer when !isTurned:
+                    value *= -1;
+                    isTurned = true;
+                    return;
+                case WhenOverlap.Older:
+                    return;
+            }
+        }
+        if (positive) 
+        {
+            isTurned = false;
+            value = 1;
+            return;
+        }
+        if (negative) 
+        {
+            isTurned = false;
+            value = -1;
+            return;
+        }
+        isTurned = false;
+        value = 0;
+    }
+}
+
+public class KeyBinding : IBinding
 {
     public List<Keys> Keys = new List<Keys>();
 
@@ -31,7 +88,7 @@ public class KeyBinding : Binding
         Add(keys);
     }
 
-    public override bool Pressed() 
+    public bool Pressed() 
     {
         foreach (var key in Keys) 
         {
@@ -41,7 +98,7 @@ public class KeyBinding : Binding
         return false;
     }
 
-    public override bool JustPressed() 
+    public bool JustPressed() 
     {
         foreach (var key in Keys) 
         {
@@ -51,7 +108,7 @@ public class KeyBinding : Binding
         return false;
     }
 
-    public override bool Released() 
+    public bool Released() 
     {
         foreach (var key in Keys) 
         {

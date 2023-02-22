@@ -174,6 +174,8 @@ public abstract class GameApp : Game
 
     protected override sealed void UnloadContent()
     {
+        SkyLog.Log("Game Shutdown", SkyLog.LogLevel.Info);
+        TInput.Shutdown();
         Scene.Exit();
         CleanUp();
         Canvas.Dispose();
@@ -191,7 +193,7 @@ public abstract class GameApp : Game
         Process(gameTime);
 
 #if DEBUG
-        RectangleShape.DebugRender = Keyboard.GetState().IsKeyDown(Keys.F1);
+        Shape.DebugRender = Keyboard.GetState().IsKeyDown(Keys.F1);
 #endif
         
         if (scene != nextScene) 
