@@ -1,4 +1,3 @@
-#if ANDROID
 using Microsoft.Xna.Framework;
 
 namespace Teuria;
@@ -21,4 +20,3 @@ public class TouchBinding : IBinding
         return TInput.Touch.Released(Rect);
     }
 }
-#endif

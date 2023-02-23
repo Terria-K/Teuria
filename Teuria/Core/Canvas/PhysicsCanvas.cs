@@ -48,6 +48,12 @@ public class PhysicsCanvas : CanvasLayer
         isClearing = true;
         foreach (var comp in physicsComponents) 
         {
+            if (comp.Entity == null) 
+            {
+                physicsComponents.Remove(comp);
+                continue;
+            }
+
             if ((comp.Entity.Tags & tags) != 0) 
                 continue;
             physicsComponents.Remove(comp);

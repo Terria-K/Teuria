@@ -6,8 +6,8 @@ namespace Teuria;
 public class ParticleMaterial 
 {
     public enum Fade { None, Linear, Late, InAndOut };
-    public SpriteTexture Texture;
-    public Picker<SpriteTexture> TexturePicker;
+    public SpriteTexture? Texture;
+    public Picker<SpriteTexture>? TexturePicker;
     public Color Color = Color.White;
     public Vector2 Acceleration;
     public float MinSpeed;
@@ -24,12 +24,18 @@ public class ParticleMaterial
     public Particle Create(ref Particle particle, Vector2 pos) =>
         Create(ref particle, null, pos);
 
-    public Particle Create(ref Particle particle, Entity entity, Vector2 pos) 
+    public Particle Create(ref Particle particle, Entity? entity, Vector2 pos) 
     {
+        var texture = ChooseTexture();
+
+        if (texture != null) 
+        {
+            particle.Source = texture;
+        }
+
         particle.Material = this;
         particle.Emitting = true;
         particle.Position = pos;
-        particle.Source = ChooseTexture();
 
         particle.Scale = Scale;
 
@@ -46,7 +52,7 @@ public class ParticleMaterial
         return particle;
     }
 
-    private SpriteTexture ChooseTexture() 
+    private SpriteTexture? ChooseTexture() 
     {
         if (TexturePicker != null)
             return TexturePicker.Pick();

@@ -5,7 +5,7 @@ namespace Teuria;
 
 public class RustyFileDialog
 {
-    public static string Open(string directory = "/")
+    public static string? Open(string directory = "/")
     {
         var strPath = NativeFunctions.open_file(directory);
         if (strPath.error == 64)
@@ -14,7 +14,7 @@ public class RustyFileDialog
         return null;
     }
 
-    public static string Open(string directory = "/", string[] filters = null)
+    public static string? Open(string directory = "/", string[]? filters = null)
     {
         if (filters == null)
             return Open(directory);
@@ -26,7 +26,7 @@ public class RustyFileDialog
         return null;
     }
 
-    public static string Save(string directory = "/")
+    public static string? Save(string directory = "/")
     {
         var strPath = NativeFunctions.save_file(directory);
         if (strPath.error == 64)
@@ -34,7 +34,7 @@ public class RustyFileDialog
         return null;
     }
 
-    public static string Save(string directory = "/", string[] filters = null)
+    public static string? Save(string directory = "/", string[]? filters = null)
     {
         if (filters == null)
             return Save(directory);

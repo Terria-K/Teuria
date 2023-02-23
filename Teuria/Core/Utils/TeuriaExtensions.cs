@@ -1,11 +1,18 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 
 namespace Teuria;
 
 public static class TeuriaExtension 
 {
+    public static void PlayImmediate(this SoundEffectInstance soundEffectInstance) 
+    {
+        soundEffectInstance.Stop(true);
+        soundEffectInstance.Play();
+    }
+
     public static T[,] To2D<T>(this List<List<T>> list) 
     {
         var first = list.Count;

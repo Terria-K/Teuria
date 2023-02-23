@@ -38,7 +38,6 @@ public class GamePadBinding : IBinding
     {
         for (int i = 0; i < Controller.Count; i++) 
         {
-            SkyLog.Assert(TInput.GamePads[gamepadIndex].DeviceConnected, "Device is not connected");
             if (TInput.GamePads[gamepadIndex].JustPressed(Controller[i]))
                 return true;
         }
@@ -64,12 +63,12 @@ public class GamePadBinding : IBinding
     }
 }
 
-public class GamePadRightStickXAxisBinding : IAxisBinding
+public class GamePadRightStickHorizontalAxisBinding : IAxisBinding
 {
     public int GamepadIndex;
     public float Deadzone;
 
-    public GamePadRightStickXAxisBinding(int gamepadIndex, float deadZone) 
+    public GamePadRightStickHorizontalAxisBinding(int gamepadIndex, float deadZone) 
     {
         GamepadIndex = gamepadIndex;
         Deadzone = deadZone;
@@ -86,12 +85,12 @@ public class GamePadRightStickXAxisBinding : IAxisBinding
     public void Update() {}
 }
 
-public class GamePadLeftStickXAxisBinding : IAxisBinding
+public class GamePadLeftStickHorizontalAxisBinding : IAxisBinding
 {
     public int GamepadIndex;
     public float Deadzone;
 
-    public GamePadLeftStickXAxisBinding(int gamepadIndex, float deadZone) 
+    public GamePadLeftStickHorizontalAxisBinding(int gamepadIndex, float deadZone) 
     {
         GamepadIndex = gamepadIndex;
         Deadzone = deadZone;
@@ -108,12 +107,12 @@ public class GamePadLeftStickXAxisBinding : IAxisBinding
     public void Update() {}
 }
 
-public class GamePadRightStickYAxisBinding : IAxisBinding
+public class GamePadRightStickVerticalAxisBinding : IAxisBinding
 {
     public int GamepadIndex;
     public float Deadzone;
 
-    public GamePadRightStickYAxisBinding(int gamepadIndex, float deadZone) 
+    public GamePadRightStickVerticalAxisBinding(int gamepadIndex, float deadZone) 
     {
         GamepadIndex = gamepadIndex;
         Deadzone = deadZone;
@@ -130,12 +129,12 @@ public class GamePadRightStickYAxisBinding : IAxisBinding
     public void Update() {}
 }
 
-public class GamePadLeftStickYAxisBinding : IAxisBinding
+public class GamePadLeftStickVerticalAxisBinding : IAxisBinding
 {
     public int GamepadIndex;
     public float Deadzone;
 
-    public GamePadLeftStickYAxisBinding(int gamepadIndex, float deadZone) 
+    public GamePadLeftStickVerticalAxisBinding(int gamepadIndex, float deadZone) 
     {
         GamepadIndex = gamepadIndex;
         Deadzone = deadZone;

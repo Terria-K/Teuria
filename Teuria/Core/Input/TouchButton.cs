@@ -1,4 +1,3 @@
-#if ANDROID
 using Microsoft.Xna.Framework;
 
 namespace Teuria;
@@ -45,5 +44,8 @@ public class TouchButton : BindableInput
         if (!pressed) 
             buffer = 0;
     }
+
+    public override void Delete()
+    {
+    }
 }
-#endif

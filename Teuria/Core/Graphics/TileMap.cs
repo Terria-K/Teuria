@@ -6,6 +6,8 @@ using Teuria.Level;
 
 namespace Teuria;
 
+//TODO Make this null safe
+
 public class TileMap : Entity
 {
     public Point LevelSize { get; private set; }
@@ -65,7 +67,7 @@ public class TileMap : Entity
         recognizeable.Add(layerType, new List<string>() { layer });
     }
 
-    public void Begin(Action<OgmoEntity> spawnEntities = null) 
+    public void Begin(Action<OgmoEntity>? spawnEntities = null) 
     {
         Active = true;
         foreach (var entityLayer in recognizeable)
@@ -135,27 +137,27 @@ public class TileMap : Entity
         base.Draw(spriteBatch);
     }
 
-    public override void ExitScene()
+    public override void ExitScene(Scene scene)
     {
         renderTiles.Dispose();
-        base.ExitScene();
+        base.ExitScene(scene);
     }
 
     public class Layer 
     {
         public string LayerName;
-        public Tileset Tileset;
-        public int[,] data;
-        public string[,] gridData;
-        public string[] singleGridData;
-        public OgmoEntity[] entities;
+        public Tileset? Tileset;
+        public int[,]? data;
+        public string[,]? gridData;
+        public string[]? singleGridData;
+        public OgmoEntity[]? entities;
         public Point LevelSize;
         public LayerType LayerType;
         private Array2D<SpriteTexture> textureGridData;
 
 
         //TODO Optimize this further
-        public Layer(OgmoLayer layer, Tileset tileset, LayerType layerType) 
+        public Layer(OgmoLayer layer, Tileset? tileset, LayerType layerType) 
         {
             LayerType = layerType;
             LevelSize = new Point(layer.GridCellsX, layer.GridCellsY);

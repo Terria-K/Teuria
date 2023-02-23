@@ -14,28 +14,32 @@ public static class TInput
     public static KeyboardInput Keyboard { get; private set; }
     public static MouseInput Mouse { get; private set; }
     public static GamePadInput[] GamePads { get; private set; }
-#if ANDROID
-    public static TouchInput Touch { get; private set; }
-#endif
+    public static TouchInput Touch { get; private set; } = null!;
 
     public static bool Disabled = false;
 
-    internal static void Initialize() 
+    static TInput() 
     {
         Keyboard = new KeyboardInput();
         Mouse = new MouseInput();
+        GamePads = new GamePadInput[4];
+#if ANDROID || IOS
+        Touch = new TouchInput();
+#endif
+    }
+
+    internal static void Initialize() 
+    {
+
         AddInput(Keyboard);
         AddInput(Mouse);
-        GamePads = new GamePadInput[4];
         for (int i = 0; i < 4; i++) 
         {
             GamePads[i] = new GamePadInput((PlayerIndex)i);
             AddInput(GamePads[i]);
         }
 
-
-#if ANDROID
-        Touch = new TouchInput();
+#if ANDROID || IOS
         AddInput(Touch);
 #endif
     }

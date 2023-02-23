@@ -13,7 +13,7 @@ public class TextureAtlas
 
     public SpriteTexture this[int x, int y] => tiles[x, y];
     // public SpriteTexture this[int gid] => gid >= 0 ? tiles[gid % tiles.GetLength(0), gid / tiles.GetLength(0)] : null;
-    public SpriteTexture this[int gid] => gid >= 0 ? tiles[gid % tiles.Rows, gid / tiles.Rows] : null;
+    public SpriteTexture? this[int gid] => gid >= 0 ? tiles[gid % tiles.Rows, gid / tiles.Rows] : null;
 
 
     public TextureAtlas(SpriteTexture texture, int tileWidth, int tileHeight) 

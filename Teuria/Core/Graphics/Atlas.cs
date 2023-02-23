@@ -17,8 +17,8 @@ public delegate Dictionary<string, SpriteTexture> AtlasDelegate(Stream fs, Textu
 
 public class Atlas 
 {
-    private Dictionary<string, SpriteTexture> sprites;
-    public Texture2D BaseTexture;
+    private Dictionary<string, SpriteTexture> sprites = new Dictionary<string, SpriteTexture>();
+    public Texture2D? BaseTexture;
     private Atlas() {}
 
     public SpriteTexture this[string id] 
@@ -68,7 +68,7 @@ public class Atlas
     {
         return CollectionsMarshal.GetValueRefOrNullRef(sprites, id);
     }
-    public bool TryGetTexture(string id, out SpriteTexture texture) 
+    public bool TryGetTexture(string id, out SpriteTexture? texture) 
     {
         if (sprites.TryGetValue(id, out texture)) 
         {

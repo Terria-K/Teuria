@@ -15,7 +15,7 @@ public class Label : Entity
 #else
     public SpriteFontBase SpriteFont { get; private set; }
 #endif
-    public string Text { get; set; }
+    public string? Text { get; set; }
     public float Size { get; set; } = 1;
     public LabelType TextType;
     public Rectangle Rect { get; set; }
@@ -32,6 +32,8 @@ public class Label : Entity
 
     public string WrapText() 
     {
+        if (Text == null)
+            return "";
         string[] words = Text.Split(' ');
         var sb = new StringBuilder();
         float lineWidth = 0f;
@@ -67,19 +69,23 @@ public class Label : Entity
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        var text = Text;
-        if (Rect.Width > 0)
-            text = WrapText();
-        
-        switch (TextType) 
+        if (!string.IsNullOrEmpty(Text)) 
         {
-        case LabelType.Normal:
-            Canvas.DrawText(SpriteFont, text, Position, Modulate, Vector2.Zero, new Vector2(Size), Rotation);
-            break;
-        case LabelType.Outline:
-            Canvas.DrawOutlineTextAlign(SpriteFont, text, Position, Modulate, Color.Black, new Vector2(0, 0), Size);
-            break;
+            var text = Text;
+            if (Rect.Width > 0)
+                text = WrapText();
+            
+            switch (TextType) 
+            {
+            case LabelType.Normal:
+                Canvas.DrawText(SpriteFont, text, Position, Modulate, Vector2.Zero, new Vector2(Size), Rotation);
+                break;
+            case LabelType.Outline:
+                Canvas.DrawOutlineTextAlign(SpriteFont, text, Position, Modulate, Color.Black, new Vector2(0, 0), Size);
+                break;
+            }
         }
+
         base.Draw(spriteBatch);
     }
 }

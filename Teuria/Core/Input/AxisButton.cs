@@ -51,6 +51,4 @@ public class AxisButton : BindableInput
             }
         }
     }
-
-    public enum WhenOverlap { Cancel, Newer, Older }
 }

@@ -8,9 +8,9 @@ namespace Teuria;
 public abstract class GameApp : Game
 {
     private GraphicsDeviceManager graphics;
-    private SpriteBatch spriteBatch;
-    private Scene scene;
-    private Scene nextScene;
+    private SpriteBatch? spriteBatch;
+    private Scene? scene;
+    private Scene? nextScene;
     private int fpsCounter;
     private TimeSpan counterElapsed = TimeSpan.Zero;
     private string title;
@@ -18,20 +18,20 @@ public abstract class GameApp : Game
     public static Viewport Viewport { get => viewport; private set => viewport = value; }
     private static Viewport viewport;
 
-    public static string ContentPath;
+    public static string? ContentPath;
     public GraphicsDeviceManager GraphicsDeviceManager => graphics;
     
-    public static GameApp Instance => instance;
+    public static GameApp Instance => instance!;
     public Scene Scene 
     { 
-        get => scene; 
+        get => scene!; 
         set 
         { 
             scene ??= value;
             nextScene = value; 
         } 
     }
-    private static GameApp instance;
+    private static GameApp? instance;
     
 
     public static int ScreenHeight { get; private set; }
@@ -42,7 +42,7 @@ public abstract class GameApp : Game
     public static int InternalID { get; internal set; }
 #region NewFeatures
     // public static ScreenView ScreenView;
-    private RenderTarget2D teuriaBackBuffer;
+    private RenderTarget2D? teuriaBackBuffer;
     private Rectangle windowRect;
     private Rectangle boxingRect;
     public float WindowAspect => Window.ClientBounds.Width / (float)Window.ClientBounds.Height;
@@ -68,6 +68,7 @@ public abstract class GameApp : Game
         ViewWidth = width;
         ViewHeight = height;
 
+
         graphics = new GraphicsDeviceManager(this);
 #if !ANDROID
 #if !FNA
@@ -83,7 +84,7 @@ public abstract class GameApp : Game
         IsMouseVisible = true;
     }
 
-    private void OnClientSizeChanged(object sender, EventArgs e) 
+    private void OnClientSizeChanged(object? sender, EventArgs e) 
     {
         int windowWidth, windowHeight;
 
@@ -153,7 +154,6 @@ public abstract class GameApp : Game
         graphics.PreferredBackBufferWidth = windowRect.Width;
         graphics.PreferredBackBufferHeight = windowRect.Height;
         graphics.ApplyChanges();
-
         teuriaBackBuffer = new RenderTarget2D(GraphicsDevice, ViewWidth, ViewHeight);
 
         Window.ClientSizeChanged += OnClientSizeChanged;
@@ -168,7 +168,6 @@ public abstract class GameApp : Game
         spriteBatch = new SpriteBatch(GraphicsDevice);
         Canvas.Initialize(graphics.GraphicsDevice, spriteBatch);
         Load();
-        scene?.Activate(spriteBatch);
         scene?.Hierarchy(graphics.GraphicsDevice);
     }
 
@@ -198,14 +197,13 @@ public abstract class GameApp : Game
         
         if (scene != nextScene) 
         {
-            scene.Exit();
+            scene?.Exit();
             scene = nextScene;
-            scene?.Activate(spriteBatch);
             scene?.Hierarchy(graphics.GraphicsDevice);
         }
 
 
-        scene.Process();
+        scene?.Process();
 
 
         base.Update(gameTime);
@@ -224,7 +222,7 @@ public abstract class GameApp : Game
 
         GraphicsDevice.SetRenderTarget(null);
         GraphicsDevice.Clear(Color.Black);
-        spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
+        spriteBatch!.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
         spriteBatch.Draw(teuriaBackBuffer, boxingRect, Color.White);
         spriteBatch.End();
         Scene?.AfterRender();

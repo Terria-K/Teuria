@@ -13,7 +13,7 @@ public class Tween : Component
     public enum TweenMode { Persistent, OneShot, Loop, YoyoLoop }
 
     public TweenMode Mode { get; private set; }
-    public Ease.Easer Easer { get; private set; }
+    public Ease.Easer? Easer { get; private set; }
     public float Duration { get; private set; }
     public float TimeLeft { get; private set; }
     public float Progress { get; private set; }
@@ -23,16 +23,16 @@ public class Tween : Component
     private float lastDelay;
 
 
-    public Action<Tween> OnReady;
-    public Action<Tween> OnProcess;
-    public Action<Tween> OnEnd;
+    public Action<Tween>? OnReady;
+    public Action<Tween>? OnProcess;
+    public Action<Tween>? OnEnd;
 
     private static Stack<Tween> cached = new Stack<Tween>();
 
 
     public Tween() {}
 
-    public static Tween Create(Entity entity, TweenMode mode, Ease.Easer easer = null, float duration = 1f, bool start = false) 
+    public static Tween Create(Entity entity, TweenMode mode, Ease.Easer? easer = null, float duration = 1f, bool start = false) 
     {
         Tween tween;
         if (cached.Count == 0)

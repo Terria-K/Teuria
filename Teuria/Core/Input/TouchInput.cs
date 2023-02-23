@@ -1,4 +1,3 @@
-#if ANDROID
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input.Touch;
 
@@ -57,4 +56,3 @@ public class TouchInput : BaseInput
         return false;
     }
 }
-#endif

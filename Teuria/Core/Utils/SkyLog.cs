@@ -46,6 +46,11 @@ public static class SkyLog
             Debugger.Break();
     }
 
+    public static void Print(string messageToPrint) 
+    {
+        Console.Write(messageToPrint);
+    } 
+
     public static void Log(
         string log, 
         LogLevel logLevel = LogLevel.Debug,
@@ -63,7 +68,12 @@ public static class SkyLog
         [CallerLineNumber] int callerLineNumber = 0
     ) 
     {
-        LogInternal(logLevel, log.ToString(), callerFilePath, callerLineNumber);
+        string? message = log switch 
+        {
+            null => "null",
+            _ => log.ToString() ?? "null"
+        };
+        LogInternal(logLevel, message, callerFilePath, callerLineNumber);
     }
 
     [Conditional("DEBUG")]
@@ -89,12 +99,18 @@ public static class SkyLog
 
 
     public static void Error(
-        object log, 
+        object? log, 
         [CallerFilePath] string callerFilePath = "", 
         [CallerLineNumber] int callerLineNumber = 0
     ) 
     {
-        LogInternal(LogLevel.Error, log.ToString(), callerFilePath, callerLineNumber);
+        string? message = log switch 
+        {
+            null => "null",
+            _ => log.ToString() ?? "null"
+        };
+        
+        LogInternal(LogLevel.Error, message, callerFilePath, callerLineNumber);
     }
 
 #if !ANDROID && !Blazor
@@ -115,7 +131,7 @@ public static class SkyLog
     public static void WriteToFile(string path) 
     {
         var directory = Path.GetDirectoryName(path);
-        if (!Directory.Exists(directory))
+        if (directory != null && !Directory.Exists(directory))
             Directory.CreateDirectory(directory);
         using var fs = new FileStream(path, FileMode.Create, FileAccess.Write);
         WriteToFile(fs);
@@ -130,7 +146,7 @@ public static class SkyLog
     public static async Task WriteToFileAsync(string path, CancellationToken token = default) 
     {
         var directory = Path.GetDirectoryName(path);
-        if (!Directory.Exists(directory))
+        if (directory != null && !Directory.Exists(directory))
             Directory.CreateDirectory(directory);
         using var fs = new FileStream(path, FileMode.Create, FileAccess.Write);
         await WriteToFileAsync(fs, token);

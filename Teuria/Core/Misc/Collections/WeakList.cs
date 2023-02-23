@@ -60,7 +60,7 @@ public class WeakList<T>
         Count--;
         if (index < Count)
             Array.Copy(buffer, index + 1, buffer, index, Count - index);
-        buffer[Count] = default;
+        buffer[Count] = default!;
     }
 
     public bool Contains(T item) 
@@ -127,8 +127,14 @@ internal struct WeakComparer<T> : IComparer<T>
         this.comparison = comparison;
     }
 
-    public int Compare(T x, T y)
+    public int Compare(T? x, T? y)
     {
+        if (x == null && y == null)
+            return 0;
+        if (x == null)
+            return 1;
+        if (y == null)
+            return -1;
         return comparison(x, y);
     }
 }

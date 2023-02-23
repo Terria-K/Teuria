@@ -12,7 +12,27 @@ public class Sprite : Component
     public int Width { get; private set; }
     public int Height { get; private set; }
     public bool cleanUpTexture = false;
-    public Color Modulate { get => Entity.Modulate; set => Entity.Modulate = value;  }
+    public Transform Transform = new Transform();
+    public Color Modulate 
+    { 
+        get 
+        {
+            if (Entity != null) 
+                return Entity.Modulate;
+
+            throw new EntityDoesNotExistException();
+        }  
+        set 
+        {
+            if (Entity != null) 
+            {
+                Entity.Modulate = value;  
+                return;
+            }
+
+            throw new EntityDoesNotExistException();
+        } 
+    }
     public SpriteEffects SpriteEffects => spriteEffects;
     public bool FlipH
     {
@@ -33,7 +53,7 @@ public class Sprite : Component
 
     public Vector2 PivotOffset { get; set; }
 
-    public float Rotation { get; set; }
+    public float Rotation { get => Transform.Rotation; set => Transform.Rotation = value; }
     public Rectangle Rect;
     private bool useNinePatch;
 
@@ -63,13 +83,21 @@ public class Sprite : Component
         Rect = clipRect;
     }
 
+    public override void Added(Entity entity)
+    {
+        Transform.Parent = entity.Transform;
+        base.Added(entity);
+    }
+
     public override void Draw(SpriteBatch spriteBatch)
     {
+        if (Entity == null)
+            return;
         if (useNinePatch)  
         {
             Texture.DrawTexture(spriteBatch, new Rectangle(
-                (int)(Entity.Position.X + PivotOffset.X), 
-                (int)(Entity.Position.Y + PivotOffset.Y),
+                (int)(Transform.Position.X + PivotOffset.X), 
+                (int)(Transform.Position.Y + PivotOffset.Y),
                 Width, Height), 
                 Modulate
             );
@@ -77,10 +105,10 @@ public class Sprite : Component
         }
         Texture.DrawTexture(
             spriteBatch, 
-            Entity.Position, 
+            Transform.Position,
             Rect,
             Modulate, 
-            Rotation + Entity.Rotation, 
+            Transform.Rotation, 
             -PivotOffset, 
             Scale, 
             spriteEffects, 

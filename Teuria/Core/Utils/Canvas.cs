@@ -1,3 +1,4 @@
+#nullable disable
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -81,7 +82,7 @@ public static partial class Canvas
     public static void TextureCentered(SpriteTexture spriteTexture, Vector2 position, Color color)
     {
         position.Floor();
-        SpriteBatch.Draw(spriteTexture.Texture, 
+        SpriteBatch!.Draw(spriteTexture.Texture, 
             position, new Rectangle?(spriteTexture.Clip), color, 
             0f, new Vector2(spriteTexture.Width * 0.5f, spriteTexture.Height * 0.5f), 
             1f, SpriteEffects.None, 0f);
@@ -90,7 +91,7 @@ public static partial class Canvas
     public static void TextureHCentered(SpriteTexture spriteTexture, Vector2 position, Color color)
     {
         position.Floor();
-        SpriteBatch.Draw(spriteTexture.Texture, 
+        SpriteBatch!.Draw(spriteTexture.Texture, 
             position, new Rectangle?(spriteTexture.Clip), color, 
             0f, new Vector2(spriteTexture.Width * 0.5f, 0), 
             1f, SpriteEffects.None, 0f);
@@ -106,7 +107,7 @@ public static partial class Canvas
             spriteTexture.Padding.Height);
 
         for (int i = 0; i < spriteTexture.Patches.Length; i++)
-            SpriteBatch.Draw(
+            SpriteBatch!.Draw(
                 spriteTexture.Texture, sourceRectangle: spriteTexture.Patches[i], 
                 destinationRectangle: destPatches[i], color: color);
     }
@@ -114,7 +115,7 @@ public static partial class Canvas
     public static void TextureVCentered(SpriteTexture spriteTexture, Vector2 position, Color color)
     {
         position.Floor();
-        SpriteBatch.Draw(spriteTexture.Texture, 
+        SpriteBatch!.Draw(spriteTexture.Texture, 
             position, new Rectangle?(spriteTexture.Clip), color, 
             0f, new Vector2(0f, spriteTexture.Height * 0.5f), 
             1f, SpriteEffects.None, 0f);
@@ -124,6 +125,6 @@ public static partial class Canvas
 
     internal static void Dispose() 
     {
-        Pixel.Dispose();
+        Pixel?.Dispose();
     }
 }

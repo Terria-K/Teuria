@@ -5,8 +5,8 @@ namespace Teuria;
 
 public class PrototypeCanvas : CanvasLayer
 {
-    public Camera Camera;
-    public Effect Effect;
+    public Camera? Camera;
+    public Effect? Effect;
     public Color EnvironmentColor;
     public SamplerState SamplerState = SamplerState.PointClamp;
 
@@ -15,17 +15,17 @@ public class PrototypeCanvas : CanvasLayer
         this.Scene = scene;
     }
 
-    public PrototypeCanvas(Scene scene, Camera camera) 
+    public PrototypeCanvas(Scene scene, Camera? camera) 
     {
         this.Scene = scene;
         this.Camera = camera;
     }
 
-    public PrototypeCanvas(Scene scene, Camera camera, Color environemntColor, Effect effect = null) 
+    public PrototypeCanvas(Scene scene, Camera? camera, Color envColor, Effect? effect = null) 
     {
         this.Scene = scene;
         this.Camera = camera;
-        this.EnvironmentColor = environemntColor;
+        this.EnvironmentColor = envColor;
         Effect = effect;
     }
 
@@ -50,7 +50,7 @@ public class PrototypeCanvas : CanvasLayer
             blendState: BlendState.AlphaBlend,
             effect: Effect
         );
-        Scene.Entities.Draw(Canvas.SpriteBatch);
+        scene.Entities.Draw(Canvas.SpriteBatch);
         Canvas.SpriteBatch.End();
     }
 }

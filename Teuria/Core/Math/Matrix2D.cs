@@ -349,7 +349,7 @@ public struct Matrix2D : IEquatable<Matrix2D>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Invert(ref Matrix2D matrix, out Matrix2D result) 
     {
-        var det = 1 / matrix.Determinant();
+        var det = 1f/  matrix.Determinant();
 
         result.M11 = matrix.M22 * det;
         result.M12 = -matrix.M12 * det;
@@ -582,7 +582,7 @@ public struct Matrix2D : IEquatable<Matrix2D>
                 + " { M31:" + M31 + " M32:" + M32 + " }";
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (obj is Matrix2D mat)
             return Equals(mat);

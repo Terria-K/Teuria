@@ -6,13 +6,12 @@ namespace Teuria;
 
 public class Node 
 {
-    protected internal Node parent;
     public string Name;
     private Dictionary<string, Node> childs = new Dictionary<string, Node>();
     public bool Active { get; set; } = true;
     public PauseMode PauseMode = PauseMode.Inherit;
     public int NodeID { get; internal set; }
-    public Scene Scene;
+    public Scene? Scene;
 
     public Node(string name = "Node") 
     {
@@ -29,7 +28,6 @@ public class Node
         }
         childs.Add(name, node);
         node.Name = name;
-        node.parent = this;
     }
 
     public bool TryAddChild(string name, Node node) 
@@ -41,7 +39,6 @@ public class Node
         if (childs.TryAdd(name, node)) 
         {
             node.Name = name;
-            node.parent = this;
             return true;
         }
         return false;
@@ -53,14 +50,14 @@ public class Node
         childs.Remove(nodePath);
     }
 
-    public T GetNode<T>(string nodePath) where T : Node
+    public T? GetNode<T>(string nodePath) where T : Node
     {
         return childs[nodePath] as T;
     }
 
-    public T TryGetNode<T>(string nodePath) where T : Node 
+    public T? TryGetNode<T>(string nodePath) where T : Node 
     {
-        if (childs.TryGetValue(nodePath, out Node value)) 
+        if (childs.TryGetValue(nodePath, out Node? value)) 
         {
             return (T)value;
         }
@@ -80,7 +77,7 @@ public class Node
     {
         this.Scene = scene;
     }
-    public virtual void ExitScene() 
+    public virtual void ExitScene(Scene scene) 
     {
         foreach (var child in childs) 
         {

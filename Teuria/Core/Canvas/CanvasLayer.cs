@@ -4,7 +4,7 @@ namespace Teuria;
 
 public abstract class CanvasLayer 
 {
-    protected Scene Scene;
+    public Scene? Scene;
     public bool Visible = true;
 
     public virtual void PreDraw(Scene scene) {}

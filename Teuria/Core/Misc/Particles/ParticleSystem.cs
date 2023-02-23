@@ -96,9 +96,9 @@ public class ParticleSystem : Entity
         base.Draw(spriteBatch);
     }
 
-    public override void ExitScene()
+    public override void ExitScene(Scene scene)
     {
         Clear();
-        base.ExitScene();
+        base.ExitScene(scene);
     }
 }

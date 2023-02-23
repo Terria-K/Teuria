@@ -98,6 +98,13 @@ public static class MathUtils
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2 Transform(Vector2 position, Matrix2D matrix)
+    {
+        return new Vector2((position.X * matrix.M11) + (position.Y * matrix.M21) + matrix.M31,
+            (position.X * matrix.M12) + (position.Y * matrix.M22) + matrix.M32);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2 Approach(Vector2 val, Vector2 target, float maxMove)
     {
         if (maxMove == 0 || val == target)

@@ -63,6 +63,7 @@ public class TileMapRenderer : IDisposable
         }
     }
 
+#nullable disable
     public class LayerRender : IDisposable
     {
         private RenderTarget2D layerRT;

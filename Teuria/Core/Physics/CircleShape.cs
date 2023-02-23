@@ -5,7 +5,15 @@ namespace Teuria;
 
 public class CircleShape : Shape
 {
-    public Circle BoundingArea => new Circle(Entity.Position.X + Position.X, Entity.Position.Y + Position.Y, circleShape.Radius);
+    public Circle BoundingArea 
+    {
+        get 
+        {
+            if (Entity != null)
+                return new Circle(Entity.Position.X + Position.X, Entity.Position.Y + Position.Y, circleShape.Radius);
+            return new Circle(Position.X, Position.Y, circleShape.Radius);
+        }
+    } 
     private Circle circleShape;
     public new Vector2 Position;
     public float Radius => BoundingArea.Radius;
@@ -61,6 +69,11 @@ public class CircleShape : Shape
 
     public override void DebugDraw(SpriteBatch spriteBatch)
     {
-        Canvas.DrawCircle(spriteBatch, Entity.Position + Position, Radius, Color.Red, 4);
+        if (Entity != null) 
+        {
+            Canvas.DrawCircle(spriteBatch, Entity.Position + Position, Radius, Color.Red, 4);
+            return;
+        }
+        Canvas.DrawCircle(spriteBatch, Position, Radius, Color.Red, 4);
     }
 }

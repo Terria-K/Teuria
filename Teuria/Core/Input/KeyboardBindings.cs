@@ -1,21 +1,28 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
-using static Teuria.AxisButton;
 
 namespace Teuria;
+public enum KeyboardOverlap { Cancel, Newer, Older }
 
-public class KeyAxisBinding : IAxisBinding
+public class KeyboardAxisBinding : IAxisBinding
 {
     public Keys Negative;
     public Keys Positive;
-    public WhenOverlap WhenOverlap;
+    public KeyboardOverlap WhenOverlap;
     private int value;
     private bool isTurned;
 
-    public KeyAxisBinding(Keys negative, Keys positive, WhenOverlap overlap) 
+    public KeyboardAxisBinding(Keys negative, Keys positive, KeyboardOverlap overlap) 
     {
         Negative = negative;
         Positive = positive;
+        WhenOverlap = overlap;
+    }
+
+    public KeyboardAxisBinding(int negative, int positive, KeyboardOverlap overlap) 
+    {
+        Negative = (Keys)negative;
+        Positive = (Keys)positive;
         WhenOverlap = overlap;
     }
 
@@ -32,14 +39,14 @@ public class KeyAxisBinding : IAxisBinding
         {
             switch (WhenOverlap) 
             {
-                case WhenOverlap.Cancel:
+                case KeyboardOverlap.Cancel:
                     value = 0;
                     return;
-                case WhenOverlap.Newer when !isTurned:
+                case KeyboardOverlap.Newer when !isTurned:
                     value *= -1;
                     isTurned = true;
                     return;
-                case WhenOverlap.Older:
+                case KeyboardOverlap.Older:
                     return;
             }
         }
@@ -60,12 +67,17 @@ public class KeyAxisBinding : IAxisBinding
     }
 }
 
-public class KeyBinding : IBinding
+public class KeyboardBinding : IBinding
 {
     public List<Keys> Keys = new List<Keys>();
 
-    public KeyBinding() {}
-    public KeyBinding(params Keys[] keys) 
+    public KeyboardBinding() {}
+    public KeyboardBinding(params Keys[] keys) 
+    {
+        Add(keys);
+    }
+
+    public KeyboardBinding(params int[] keys) 
     {
         Add(keys);
     }
@@ -77,6 +89,16 @@ public class KeyBinding : IBinding
             if (Keys.Contains(key))
                 continue;
             Keys.Add(key);
+        }
+    }
+
+    public void Add(params int[] keys) 
+    {
+        foreach (var key in keys) 
+        {
+            if (Keys.Contains((Keys)key))
+                continue;
+            Keys.Add((Keys)key);
         }
     }
 

@@ -61,14 +61,13 @@ public class Picker<T>
         }
     }
 
-    public T Pick()
+    public T? Pick()
     {
         if (options.Count == 1)
             return options[0].Value;
         if (!CanPick)
-        {
             return default;
-        }
+        
         var w = 0f;
         var roll = MathUtils.Randomizer.NextDouble() * EvaluatedWeight;
         var optionCount = options.Count - 1;

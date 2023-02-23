@@ -6,14 +6,14 @@ namespace Teuria;
 public abstract class Shape
 {
     public static bool DebugRender = false;
-    public Entity Entity;
-    public Component Component;
+    public Entity? Entity;
+    public Component? Component;
     private float width;
     private float height;
     private Vector2 position;
-    private string groupName;
+    private string? groupName;
     internal bool IsInTheWorld;
-    public string GroupName { get => groupName; set => groupName = value; }
+    public string? GroupName { get => groupName; set => groupName = value; }
     public int Tags;
 
     internal virtual void Added(Component component) 
@@ -34,9 +34,9 @@ public abstract class Shape
 
     public bool Collide(Shape shape, Vector2 offset) => shape switch
     {
-        RectangleShape => Collide(shape as RectangleShape, offset),
-        TileGrid => Collide(shape as TileGrid, offset),
-        CircleShape => Collide(shape as CircleShape, offset),
+        RectangleShape rect => Collide(rect, offset),
+        TileGrid tileGrid => Collide(tileGrid, offset),
+        CircleShape circle => Collide(circle, offset),
         _ => throw new System.Exception("No Collider were implemented")
     };
 

@@ -12,8 +12,7 @@ public class Scene
     private Entities entityList;
     private Canvases canvasList;
     protected ContentManager Content;
-    public Camera Camera;
-    public SpriteBatch SpriteBatch;
+    public Camera? Camera;
     public float TimeActive;
     private bool paused;
     public bool Paused 
@@ -28,9 +27,9 @@ public class Scene
     }
 
     public Entities Entities => entityList;
-    public Action OnPause;
-    public Action<Entity> OnEntityCreated;
-    public Action<Entity> OnEntityDeleted;
+    public Action? OnPause;
+    public Action<Entity>? OnEntityCreated;
+    public Action<Entity>? OnEntityDeleted;
 
     public Scene(ContentManager content, Camera camera) 
     {
@@ -50,11 +49,6 @@ public class Scene
     public bool HasCanvas(CanvasLayer canvas) 
     {
         return canvasList.CanvasList.Contains(canvas);
-    }
-
-    internal void Activate(SpriteBatch spriteBatch) 
-    {
-        SpriteBatch = spriteBatch;
     }
 
     public void Add(Entity entity, PauseMode pauseMode = PauseMode.Inherit) 
@@ -175,6 +169,13 @@ public class Scene
 
     public void ChangeScene(Scene scene) => GameApp.Instance.Scene = scene;
 
+    public T SceneAs<T>() 
+    {
+        if (this is T scene)
+            return scene;
+        throw new InvalidCastException();
+    }
+
     public T CreateEntity<T>() 
     where T : Entity, new()
     {
@@ -188,9 +189,9 @@ public class Scene
     public List<Entity> GetEntities(string name) => entityList.GetEntities(name);
     public List<Entity> GetEntities(int tags) => entityList.GetEntities(tags);
 
-    public T GetEntity<T>()
+    public T? GetEntity<T>()
     where T : Entity => entityList.GetEntity<T>();
-    public T GetEntity<T>(string name) 
+    public T? GetEntity<T>(string name) 
     where T : Entity => entityList.GetEntity<T>(name);
-    public Entity GetEntity(int tags) => entityList.GetEntity(tags);
+    public Entity? GetEntity(int tags) => entityList.GetEntity(tags);
 }

@@ -12,9 +12,41 @@ namespace Teuria;
 public class Entity : Node, IEnumerable<Component>
 {
     private List<Component> componentList = new List<Component>();
-    public Vector2 Position;
-    public float Rotation;
-    public Vector2 Scale;
+    public Transform Transform = new Transform();
+    public Vector2 Position 
+    {
+        get => Transform.Position;
+        set => Transform.Position = value;
+    }
+    public float PosX
+    {
+        get => Transform.PosX;
+        set => Transform.PosX = value;
+    }
+
+    public float PosY
+    {
+        get => Transform.PosY;
+        set => Transform.PosY = value;
+    }
+
+    public Vector2 LocalPosition 
+    {
+        get => Transform.LocalPosition;
+        set => Transform.LocalPosition = value;
+    }
+
+    public float Rotation 
+    {
+        get => Transform.Rotation;
+        set => Transform.Rotation = value;
+    }
+
+    public Vector2 Scale 
+    {
+        get => Transform.Scale;
+        set => Transform.Scale = value;
+    }
     public Color Modulate = Color.White;
     public float ZIndex;
     public int Depth;
@@ -45,14 +77,14 @@ public class Entity : Node, IEnumerable<Component>
         
         base.EnterScene(scene, content);
     }
-    public override void ExitScene() 
+    public override void ExitScene(Scene scene) 
     {
         foreach (var comp in componentList) 
         {
             comp.Removed();
-            comp.EntityExited(Scene);
+            comp.EntityExited(scene);
         }
-        base.ExitScene();
+        base.ExitScene(scene);
     }
     public override void Ready() {}
     public override void Update() 
@@ -74,6 +106,16 @@ public class Entity : Node, IEnumerable<Component>
         }
     }
 
+    public void AddTransform(Entity entity, bool stay = false) 
+    {
+        entity.Transform.SetParent(Transform, stay);
+    }
+
+    public void AddTransform(Transform transform, bool stay = false) 
+    {
+        transform.SetParent(Transform, stay);
+    }
+
     public void AddComponent(Component comp) 
     {
         componentList.Add(comp);
@@ -90,7 +132,7 @@ public class Entity : Node, IEnumerable<Component>
     }
 
 
-    public T GetComponent<T>() where T : Component
+    public T? GetComponent<T>() where T : Component
     {
         Span<Component> comps = CollectionsMarshal.AsSpan(componentList);
         foreach (var comp in comps) 
@@ -113,13 +155,15 @@ public class Entity : Node, IEnumerable<Component>
 
     public void RemoveComponent(Component comp) 
     {
-        comp?.Removed();
+        if (comp == null)
+            return;
+        comp.Removed();
         componentList.Remove(comp);
     }
 
     public void DestroySelf() 
     {
-        Scene.Remove(this);
+        Scene?.Remove(this);
     }
 
     public IEnumerator<Component> GetEnumerator() => componentList.GetEnumerator();

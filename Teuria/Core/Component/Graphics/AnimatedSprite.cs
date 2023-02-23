@@ -9,13 +9,19 @@ public class AnimatedSprite : Component
     public float FPS { get; set; } = 0.09f;
     public bool IsFinished { get; private set; } = true;
     public bool Loop { get; set; }
-    public string Animation { get => currentAnimation;  }
+    public string Animation 
+    { 
+        get 
+        {
+            return currentAnimation ?? "";  
+        }
+    }
     public float Rotation { get; set; }
     public Vector2 Scale { get; set; }
     private float timer;
     private TextureAtlas atlas;
     private Dictionary<string, SFCyclesFrame> cycleFrame;
-    private string currentAnimation;
+    private string? currentAnimation;
     private int index;
     private int frameIndex;
     private Vector2 position;
@@ -50,10 +56,21 @@ public class AnimatedSprite : Component
 
     public Vector2 GlobalPosition 
     { 
-        get => position + Entity.Position;
+        get 
+        {
+            if (Entity != null)
+                return position + Entity.Transform.Position;
+            throw new EntityDoesNotExistException();
+        } 
         set 
         {
-            position = Entity.Position + value;
+            if (Entity != null) 
+            {
+                position = Entity.Transform.Position + value;
+                return;
+            }
+
+            throw new EntityDoesNotExistException();
         }
     }
 
@@ -105,7 +122,7 @@ public class AnimatedSprite : Component
             return;
         timer += Time.Delta;
 
-        if (timer <= FPS)
+        if (string.IsNullOrEmpty(currentAnimation) || timer <= FPS)
         {
             return;
         }
@@ -126,11 +143,16 @@ public class AnimatedSprite : Component
         Stop();
     }
 
-    public SpriteTexture GetSpriteTexture(int id) => atlas[frameIndex];
+    public SpriteTexture? GetSpriteTexture(int id) => atlas[frameIndex];
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        atlas[frameIndex].DrawTexture(spriteBatch, GlobalPosition, Entity.Modulate, Rotation, Scale, spriteEffects, Entity.ZIndex);
+        if (Entity != null) 
+        {
+            atlas[frameIndex]?.DrawTexture(
+                spriteBatch, GlobalPosition, Entity.Modulate, Rotation, Scale, spriteEffects, Entity.ZIndex);
+        }
+
         base.Draw(spriteBatch);
     }
 }

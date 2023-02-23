@@ -19,10 +19,15 @@ public class OgmoLevel
 
         LevelData = result;
 
-        var firstLayer = result.Layers[0];
-        LevelSize = new Point(firstLayer.GridCellsX, firstLayer.GridCellsY);
-        TileSize = new Point(firstLayer.GridCellWidth, firstLayer.GridCellHeight);
-        LevelPixelSize = LevelSize * TileSize;
+        if (result.Layers != null) 
+        {
+            var firstLayer = result.Layers[0];
+            LevelSize = new Point(firstLayer.GridCellsX, firstLayer.GridCellsY);
+            TileSize = new Point(firstLayer.GridCellWidth, firstLayer.GridCellHeight);
+            LevelPixelSize = LevelSize * TileSize;
+            return;
+        }
+        SkyLog.Log("There is no layer in this ogmo project, please add one.", SkyLog.LogLevel.Error);
     }
 
     public static OgmoLevel LoadLevel(string levelPath) 
@@ -39,12 +44,14 @@ public class OgmoLevel
 #if DEBUG
         } catch (IOException) 
         {
-            return null;
+            return null!;
         }
 #endif
 
     }
 }
+
+#nullable disable
 
 [JsonSerializable]
 public partial class OgmoLevelData 

@@ -15,8 +15,7 @@ public class SpriteTexture
     public float Rotation { get; private set; }
     public Rectangle Clip { get; private set; }
     public Vector2 Origin { get; private set; }
-    public string AtlasPath { get; private set; }
-    public Rectangle[] Patches { get; private set; }
+    public Rectangle[]? Patches { get; private set; }
     public Rectangle Padding { get; private set; }
     
     public SpriteTexture(Texture2D texture, Rectangle padding = default) 
@@ -114,10 +113,9 @@ public class SpriteTexture
         );
     }
 
-    public SpriteTexture(SpriteTexture spriteTexture, string atlasPath, Rectangle clip, Vector2 offset, int width, int height) 
+    public SpriteTexture(SpriteTexture spriteTexture, Rectangle clip, Vector2 offset, int width, int height) 
     {
         Texture = spriteTexture.Texture;
-        AtlasPath = atlasPath;
         Clip = clip;
         Origin = offset;
         Width = width;
@@ -204,7 +202,7 @@ public class SpriteTexture
             color = Color.White * 0.5f;
 #endif
         var destPatches = CreatePatches(rectangle, Padding.X, Padding.X + Padding.Width, Padding.Y, Padding.Y + Padding.Height);
-        for (int i = 0; i < Patches.Length; i++)
+        for (int i = 0; i < Patches?.Length; i++)
             spriteBatch.Draw(
                 Texture, destPatches[i], Patches[i], 
                 color, Rotation, -Origin, SpriteEffects.None, 0);

@@ -75,12 +75,12 @@ public static partial class Canvas
 
 #region NormalText
     public static void DrawText(SpriteFontBase spriteFont, string text, Vector2 position, Color color) =>
-        SpriteBatch.DrawText(spriteFont, text, MathUtils.Floor(position), color);    
+        SpriteBatch!.DrawText(spriteFont, text, MathUtils.Floor(position), color);    
     
 
     public static void DrawText(SpriteFontBase spriteFont, string text, Vector2 position, Color color,
         Vector2 origin, Vector2 scale, float rotation) =>
-        SpriteBatch.DrawText(spriteFont, text, MathUtils.Floor(position), color, 
+        SpriteBatch!.DrawText(spriteFont, text, MathUtils.Floor(position), color, 
             scale, rotation, origin, 0f);    
 #endregion
     
@@ -90,7 +90,7 @@ public static partial class Canvas
     {
         var origin = spriteFont.MeasureString(text);
         origin *= alignment;
-        SpriteBatch.DrawText(
+        SpriteBatch!.DrawText(
             spriteFont, text, MathUtils.Floor(position), color, new Vector2(scale), 0, origin, 0f);
     }
 #endregion
@@ -112,12 +112,12 @@ public static partial class Canvas
         for (int x = -1; x < 2; x++)
             for (int y = -1; y < 2; y++) 
                 if (x != 0 || y != 0)
-                    SpriteBatch.DrawText(
+                    SpriteBatch!.DrawText(
                         spriteFont, text, pos + new Vector2(x, y), 
                         outlineColor, new Vector2(scale), 0, origin, 0f, 
                         0f, 0f);
 
-        SpriteBatch.DrawText(
+        SpriteBatch!.DrawText(
             spriteFont, text, pos, 
             color, new Vector2(scale), 0, origin, 0f);
     }
@@ -135,12 +135,12 @@ public static partial class Canvas
             for (int y = -1; y < 2; y++) 
                 if (x != 0 || y != 0) 
                 {
-                    SpriteBatch.DrawText(
+                    SpriteBatch!.DrawText(
                         spriteFont, text, pos + new Vector2(x, y), 
                         outlineColor, new Vector2(scale), 0, origin, 0f);
                 }
 
-        SpriteBatch.DrawText(
+        SpriteBatch!.DrawText(
             spriteFont, text, pos, 
             color, new Vector2(scale), 0, origin, 0f);
     }

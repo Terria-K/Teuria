@@ -6,10 +6,10 @@ namespace Teuria;
 
 public class StateMachine : Component 
 {
-    private Func<IEnumerator>[] coroutineList;
-    private Action[] readyList;
-    private Func<int>[] updateList;
-    private Action[] endList;
+    private Func<IEnumerator>?[] coroutineList;
+    private Action?[] readyList;
+    private Func<int>?[] updateList;
+    private Action?[] endList;
     private Coroutine coroutine;
 
     public int CurrentState 
@@ -26,7 +26,7 @@ public class StateMachine : Component
             endList[currentState]?.Invoke();
             if (coroutineList[currentState] != null) 
             {
-                coroutine.Run(coroutineList[currentState]());
+                coroutine.Run(coroutineList[currentState]!());
             }
         }
     }
@@ -52,7 +52,7 @@ public class StateMachine : Component
         entity.AddComponent(coroutine);
     }
 
-    internal void AddState(int id, Func<int> update, Action ready, Func<IEnumerator> coroutine, Action end) 
+    internal void AddState(int id, Func<int>? update, Action? ready, Func<IEnumerator>? coroutine, Action? end) 
     {
         updateList[id] = update;
         readyList[id] = ready;
@@ -69,7 +69,7 @@ public class StateMachine : Component
     public override void Update()
     {
         if (updateList[currentState] != null)
-            CurrentState = updateList[currentState]();
+            CurrentState = updateList[currentState]!();
         base.Update();
     }
 }
@@ -77,10 +77,10 @@ public class StateMachine : Component
 public class StateBuilder 
 {
     private int id;
-    private Func<IEnumerator> coroutine;
-    private Action ready;
-    private Func<int> update;
-    private Action end;
+    private Func<IEnumerator>? coroutine;
+    private Action? ready;
+    private Func<int>? update;
+    private Action? end;
     private StateMachine stateMachine;
 
 
@@ -117,6 +117,6 @@ public class StateBuilder
     public void Build() 
     {
         stateMachine.AddState(id, update, ready, coroutine, end);
-        stateMachine = null;
+        stateMachine = null!;
     }
 }

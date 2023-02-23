@@ -4,11 +4,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
 
-[Obsolete("This Button Entity has some major issues from Mouse Input. Please use the KeyboardButton for now")]
+[Obsolete("This Button Entity has some major issues from Mouse Input. Please implement on your own for now")]
 public class Button : Entity 
 {
-    public Action OnHover;
-    public Action OnClick;
+    public Action? OnHover;
+    public Action? OnClick;
 
     private Sprite sprite;
     private bool isHovered;    

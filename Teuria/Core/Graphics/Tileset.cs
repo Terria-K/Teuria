@@ -1,5 +1,4 @@
 using System.IO;
-using Microsoft.Xna.Framework.Content;
 using System.Collections.Generic;
 using System;
 using System.Linq;
@@ -13,14 +12,14 @@ namespace Teuria;
 public class Tileset 
 {
     public List<Terrain> Terrains = new List<Terrain>();
-    public TextureAtlas TilesetAtlas;
+    public TextureAtlas? TilesetAtlas;
     public int Width { get; private set; }
     public int Height { get; private set ; }
     private List<Rules> rules = new List<Rules>();    
 
-    private Tileset(string path, ContentManager manager, SpriteTexture texture) 
+    private Tileset(string path, SpriteTexture texture) 
     {
-        AddToList(path, texture, manager);
+        AddToList(path, texture);
     }
 
     private Tileset(SpriteTexture texture, int width, int height) 
@@ -30,14 +29,12 @@ public class Tileset
         Height = height;
     }
 
-    private void AddToList(string path, SpriteTexture texture, ContentManager manager) 
+    private void AddToList(string path, SpriteTexture texture) 
     {
         using var fs = TitleContainer.OpenStream(path);
         var result = JsonConvert.DeserializeFromStream<TeuriaTileset>(fs);
 
-        var textureAtlas = new TextureAtlas(texture == null 
-            ? SpriteTexture.FromContent(manager, result.Path)
-            : texture, result.Width, result.Height);
+        var textureAtlas = new TextureAtlas(texture, result.Width, result.Height);
         TilesetAtlas = textureAtlas;
         Width = result.Width;
         Height = result.Height;
@@ -67,13 +64,13 @@ public class Tileset
     public void AddTerrain(string tilesetPath, SpriteTexture texture) 
     {
         var path = Path.Join(GameApp.ContentPath, tilesetPath);
-        AddToList(path, texture, null);
+        AddToList(path, texture);
     }
 
-    public static Tileset LoadTileset(string tilesetPath, ContentManager manager, SpriteTexture texture = null) 
+    public static Tileset LoadTileset(string tilesetPath, SpriteTexture texture) 
     {
         var path = Path.Join(GameApp.ContentPath, tilesetPath);
-        return new Tileset(path, manager, texture);
+        return new Tileset(path, texture);
     }
 
     public static Tileset LoadTileset(SpriteTexture texture, int width, int height) 

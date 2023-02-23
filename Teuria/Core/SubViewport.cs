@@ -30,9 +30,9 @@ public class SubViewport
     private Color environmentColor;
     private Vector2 scale;
     private GraphicsDevice device;
-    private RenderTarget2D rt;
+    private RenderTarget2D? rt = null;
     private SpriteBatch spriteBatch;
-    private RenderTargetBinding[] prevTargets;
+    private RenderTargetBinding[]? prevTargets;
     internal SamplerState SamplerState = SamplerState.PointClamp;
 
     public SubViewport(Point viewResolution, GraphicsDevice device, Color environmentColor) 

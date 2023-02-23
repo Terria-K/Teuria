@@ -65,7 +65,7 @@ public sealed class Entities : IEnumerable<Entity>
                     entities.Remove(entity);
 
                     if (Scene == null) { continue; }
-                    entity.ExitScene();
+                    entity.ExitScene(Scene);
                     Scene.OnEntityDeleted?.Invoke(entity);
                 }
             }
@@ -210,7 +210,7 @@ public sealed class Entities : IEnumerable<Entity>
         return list;
     }
 
-    public T GetEntity<T>() 
+    public T? GetEntity<T>() 
     where T : Entity
     {
         for (int i = 0; i < entities.Count; i++) 
@@ -228,7 +228,7 @@ public sealed class Entities : IEnumerable<Entity>
         return null;
     }
 
-    public T GetEntity<T>(string name) 
+    public T? GetEntity<T>(string name) 
     where T : Entity
     {
         for (int i = 0; i < entities.Count; i++) 
@@ -250,7 +250,7 @@ public sealed class Entities : IEnumerable<Entity>
         return null;
     }
 
-    public Entity GetEntity(int tags) 
+    public Entity? GetEntity(int tags) 
     {
         for (int i = 0; i < entities.Count; i++) 
         {

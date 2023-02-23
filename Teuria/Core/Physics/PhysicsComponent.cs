@@ -7,13 +7,13 @@ namespace Teuria;
 
 public abstract class PhysicsComponent : Component
 {
-    protected HashSet<PhysicsComponent> Collided = new HashSet<PhysicsComponent>();
+    public HashSet<PhysicsComponent> Collided = new HashSet<PhysicsComponent>();
     public bool Collideable;
     private readonly Shape collider;
     public Shape Collider => collider;
 
 
-    public ICollidableEntity PhysicsEntity;
+    public ICollidableEntity? PhysicsEntity;
 
     public PhysicsComponent(Shape collider, bool collidable = true) 
     {
@@ -139,7 +139,7 @@ public abstract class PhysicsComponent : Component
         return false;
     }
 
-    public bool Check<T>(ICollidableEntity entity, string groupName, Vector2 offset, out T ent) 
+    public bool Check<T>(ICollidableEntity entity, string groupName, Vector2 offset, out T? ent) 
     where T : ICollidableEntity
     {
         foreach (var wall in Collided) 
@@ -148,7 +148,7 @@ public abstract class PhysicsComponent : Component
             if (entity.Collider.Equals(wall.Collider)) { continue; }
             if (entity.Collider.Collide(wall.Collider, offset)) 
             {
-                if (wall.Collider.GroupName == groupName) 
+                if (wall.PhysicsEntity != null && wall.Collider.GroupName == groupName) 
                 {
                     ent = (T)wall.PhysicsEntity;
                     return true;
@@ -160,7 +160,7 @@ public abstract class PhysicsComponent : Component
         return false;
     }
 
-    public bool Check<T>(ICollidableEntity entity, int tags, Vector2 offset, out T ent) 
+    public bool Check<T>(ICollidableEntity entity, int tags, Vector2 offset, out T? ent) 
     where T : ICollidableEntity
     {
         foreach (var wall in Collided) 
@@ -169,7 +169,7 @@ public abstract class PhysicsComponent : Component
             if (entity.Collider.Equals(wall.Collider)) { continue; }
             if (entity.Collider.Collide(wall.Collider, offset)) 
             {
-                if ((wall.Collider.Tags & tags) !=  0)
+                if (wall.PhysicsEntity != null && (wall.Collider.Tags & tags) != 0)
                 {
                     ent = (T)wall.PhysicsEntity;
                     return true;
@@ -181,7 +181,7 @@ public abstract class PhysicsComponent : Component
         return false;
     }
 
-    public bool Check<T1>(ICollidableEntity entity, Vector2 offset, out T1 ent) 
+    public bool Check<T1>(ICollidableEntity entity, Vector2 offset, out T1? ent) 
     where T1 : ICollidableEntity
     {
         foreach (var wall in Collided) 
@@ -190,7 +190,7 @@ public abstract class PhysicsComponent : Component
             if (entity.Collider.Equals(wall.Collider)) { continue; }
             if (entity.Collider.Collide(wall.Collider, offset)) 
             {
-                if (wall.Entity is T1) 
+                if (wall.PhysicsEntity is T1) 
                 {
                     ent = (T1)wall.PhysicsEntity;
                     return true;
@@ -222,10 +222,10 @@ public abstract class PhysicsComponent : Component
         }
     }
 
-    public T1 CheckFirst<T1>(ICollidableEntity entity, Vector2 offset) 
+    public T1? CheckFirst<T1>(ICollidableEntity entity, Vector2 offset) 
     where T1 : ICollidableEntity
     {
-        var list = Enumerable.Empty<T1>().ToList();
+        List<T1> list = new List<T1>();
         foreach (var wall in Collided) 
         {
             if (!wall.Collideable) { continue; }

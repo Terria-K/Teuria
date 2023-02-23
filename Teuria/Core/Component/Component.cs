@@ -1,20 +1,21 @@
+using System;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
 
 public class Component
 {
-    public Scene Scene
+    public Scene? Scene
     {
         get
         {
             if (this.Entity == null)
-                return null;
+                throw new EntityDoesNotExistException();
             
             return this.Entity.Scene;
         }
     }
-    public Entity Entity;
+    public Entity? Entity;
     public bool Active { get; set; }
 
     public virtual void Added(Entity entity) 
@@ -40,6 +41,15 @@ public class Component
 
     public void DetachSelf() 
     {
-        Entity.RemoveComponent(this);
+        Entity?.RemoveComponent(this);
+    }
+}
+
+public class EntityDoesNotExistException : Exception 
+{
+    public EntityDoesNotExistException() {}
+    public EntityDoesNotExistException(string? message) : base(message) 
+    {
+
     }
 }
