@@ -6,7 +6,6 @@ using Teuria.Level;
 
 namespace Teuria;
 
-//TODO Make this null safe
 
 public class TileMap : Entity
 {
@@ -37,21 +36,21 @@ public class TileMap : Entity
             if (layer.Entities != null) 
             {
                 layerType = LayerType.Entities;   
-                var newLayer = new Layer(layer, null, layerType);
+                var newLayer = new EntityLayer(layer, layerType);
                 this.Layers[layer.Name] = newLayer;
             }
             else if (layer.Data != null) 
             {
                 layerType = LayerType.Tiles;
                 var tileset = tilesets[layer.Name];
-                var newLayer = new Layer(layer, tileset, layerType);
+                var newLayer = new TileLayer(layer, tileset, layerType);
                 this.Layers[layer.Name] = newLayer;
             }
             else if (layer.Grid2D != null) 
             {
                 layerType = LayerType.Grid;
                 var tileset = tilesets[layer.Name];
-                var newLayer = new Layer(layer, tileset, layerType);
+                var newLayer = new GridLayer(layer, tileset, layerType);
                 this.Layers[layer.Name] = newLayer;
             }
         }
@@ -70,16 +69,12 @@ public class TileMap : Entity
     public void Begin(Action<OgmoEntity>? spawnEntities = null) 
     {
         Active = true;
-        foreach (var entityLayer in recognizeable)
+        foreach (var layer in Layers.Values) 
         {
-            if (entityLayer.Key != LayerType.Entities)
+            if (layer is EntityLayer entityLayer) 
             {
-                continue;
-            }
-            foreach (var str in entityLayer.Value)
-            {
-                foreach (var entity in Layers[str].entities)
-                    spawnEntities?.Invoke(entity);
+                foreach (var entity in entityLayer.Entities) 
+                    spawnEntities?.Invoke(entity); 
             }
         }
     }
@@ -120,7 +115,7 @@ public class TileMap : Entity
                     layer.Value.Draw(spriteBatch);
                     break;
                 case LayerType.Grid:
-                    layer.Value.DrawTextures(spriteBatch);
+                    layer.Value.Draw(spriteBatch);
                     break;
                     // layer.Value.DrawGrid(spriteBatch);
                     // break;
@@ -143,50 +138,66 @@ public class TileMap : Entity
         base.ExitScene(scene);
     }
 
-    public class Layer 
+    public abstract class Layer 
     {
         public string LayerName;
-        public Tileset? Tileset;
-        public int[,]? data;
-        public string[,]? gridData;
-        public string[]? singleGridData;
-        public OgmoEntity[]? entities;
         public Point LevelSize;
         public LayerType LayerType;
+
+        public Layer(OgmoLayer layer, LayerType layerType) 
+        {
+            LayerName = layer.Name;
+            LevelSize = new Point(layer.GridCellsX, layer.GridCellsY);
+            LayerType = layerType;
+        }
+
+        public abstract void Draw(SpriteBatch spriteBatch);
+    }
+
+    public class EntityLayer : Layer
+    {
+        public OgmoEntity[] Entities;
+
+        public EntityLayer(OgmoLayer layer, LayerType layerType) : base(layer, layerType) 
+        {
+            Entities = layer.Entities;
+        }
+
+        public override void Draw(SpriteBatch spriteBatch) {}
+    }
+
+    public class GridLayer : Layer 
+    {
+        public int[,] GridData;
+        public string[,] StringData;
+        public Tileset Tileset;
         private Array2D<SpriteTexture> textureGridData;
 
-
-        //TODO Optimize this further
-        public Layer(OgmoLayer layer, Tileset? tileset, LayerType layerType) 
+        public GridLayer(OgmoLayer layer, Tileset tileset, LayerType layerType) : base(layer, layerType) 
         {
-            LayerType = layerType;
-            LevelSize = new Point(layer.GridCellsX, layer.GridCellsY);
+            textureGridData = new Array2D<SpriteTexture>(LevelSize.X, LevelSize.Y);
             Tileset = tileset;
-            LayerName = layer.Name;
-            switch (LayerType) 
-            {
-                case LayerType.Tiles:
-                    data = layer.Data; 
-                    break;
-                case LayerType.Entities:
-                    entities = layer.Entities;
-                    break;
-                case LayerType.Decal:
-                    break;
-                case LayerType.Grid:
-                    textureGridData = new Array2D<SpriteTexture>(LevelSize.X, LevelSize.Y);
-                    var picker = new Picker<SpriteTexture>();
-                    if (layer.Grid2D is null) 
-                    {
-                        singleGridData = layer.Grid;
-                        return;
-                    }
+            StringData = layer.Grid2D;
+            var picker = new Picker<SpriteTexture>();
+            GridData = ApplyAutotile(StringData, picker);
+        }
 
-                    gridData = layer.Grid2D;
-                    data = ApplyAutotile(gridData, picker);
-                    break;
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            if (textureGridData == null) return; 
+            for (int w = 0; w < LevelSize.X; w++) 
+            {
+                for (int x = 0; x < LevelSize.Y; x++) 
+                {
+                    var gid = textureGridData[w, x];
+                    if (gid == null) continue;
+                    gid.DrawTexture(
+                        spriteBatch, 
+                        new Vector2(w * 8, x * 8));
+                }
             }
         }
+
 
         private static bool Check(int x, int y, string[,] grids) 
         {
@@ -248,31 +259,30 @@ public class TileMap : Entity
                     var rule = masker[(byte)mask];
 
                     picker.AddOption(rule.Textures, 1f);
-                    textureGridData[x, y] = picker.Pick();
+                    textureGridData[x, y] = picker.Pick()!;
 
                     picker.Clear();
                 }
             MathUtils.EndRandScope();
             return newGrid;
         }
+    }
 
-        public void DrawTextures(SpriteBatch spriteBatch) 
+    public class TileLayer : Layer
+    {
+        public Tileset Tileset;
+        public int[,] data;
+
+        public TileLayer(OgmoLayer layer, Tileset tileset, LayerType layerType) : base(layer, layerType)
         {
-            if (textureGridData == null) return; 
-            for (int w = 0; w < LevelSize.X; w++) 
-            {
-                for (int x = 0; x < LevelSize.Y; x++) 
-                {
-                    var gid = textureGridData[w, x];
-                    if (gid == null) continue;
-                    gid.DrawTexture(
-                        spriteBatch, 
-                        new Vector2(w * 8, x * 8));
-                }
-            }
+            LayerType = layerType;
+            LevelSize = new Point(layer.GridCellsX, layer.GridCellsY);
+            Tileset = tileset;
+            LayerName = layer.Name;
+            data = layer.Data; 
         }
 
-        public void Draw(SpriteBatch spriteBatch) 
+        public override void Draw(SpriteBatch spriteBatch) 
         {
             if (data == null) return;
             for (int y = 0; y < LevelSize.X; y++) 

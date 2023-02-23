@@ -12,8 +12,7 @@ public class TextureAtlas
     public int TileHeight { get; private set; }
 
     public SpriteTexture this[int x, int y] => tiles[x, y];
-    // public SpriteTexture this[int gid] => gid >= 0 ? tiles[gid % tiles.GetLength(0), gid / tiles.GetLength(0)] : null;
-    public SpriteTexture? this[int gid] => gid >= 0 ? tiles[gid % tiles.Rows, gid / tiles.Rows] : null;
+    public SpriteTexture this[int gid] => tiles[gid % tiles.Rows, gid / tiles.Rows];
 
 
     public TextureAtlas(SpriteTexture texture, int tileWidth, int tileHeight) 
@@ -37,16 +36,17 @@ public class TextureAtlas
         }
     }
 
-    public int GetIndex(int column, int row) 
+    public SpriteTexture GetTexture(int x, int y) 
     {
-        var width = Texture.Width / this.TileWidth;
-        var height = Texture.Height / this.TileHeight;
+        return tiles[x, y];
+    }
 
-        if (column < width && row < height ) 
+    public SpriteTexture? GetTexture(int gid) 
+    {
+        if (gid >= 0) 
         {
-            var gid = row * width + column;
-            return gid; 
+            return tiles[gid % tiles.Rows, gid / tiles.Rows];
         }
-        return 0;
+        return null;
     }
 }

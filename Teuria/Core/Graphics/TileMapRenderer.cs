@@ -91,7 +91,7 @@ public class TileMapRenderer : IDisposable
                     layer.Draw(spriteBatch);
                     break;
                 case LayerType.Grid:
-                    layer.DrawTextures(spriteBatch);
+                    layer.Draw(spriteBatch);
                     break;
                     // layer.Value.DrawGrid(spriteBatch);
                     // break;

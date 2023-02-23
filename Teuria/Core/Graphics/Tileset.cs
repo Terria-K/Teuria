@@ -12,14 +12,41 @@ namespace Teuria;
 public class Tileset 
 {
     public List<Terrain> Terrains = new List<Terrain>();
-    public TextureAtlas? TilesetAtlas;
+    public TextureAtlas TilesetAtlas;
     public int Width { get; private set; }
     public int Height { get; private set ; }
     private List<Rules> rules = new List<Rules>();    
 
     private Tileset(string path, SpriteTexture texture) 
     {
-        AddToList(path, texture);
+        using var fs = TitleContainer.OpenStream(path);
+        var result = JsonConvert.DeserializeFromStream<TeuriaTileset>(fs);
+
+        var textureAtlas = new TextureAtlas(texture, result.Width, result.Height);
+        TilesetAtlas = textureAtlas;
+        Width = result.Width;
+        Height = result.Height;
+        var terrain = new Terrain(result.Name);
+
+        for (int i = 0; i < result.Rules.Length; i++) 
+        {
+            var rule = new Rules();
+            var teuriaRule = result.Rules[i];
+            var tile = teuriaRule.Tiles;
+
+            if (teuriaRule.Mask == null) { continue; }
+            for (int mask = 0; mask < teuriaRule.Mask.Length; mask++) 
+            {
+                rule.Mask[mask] = ((byte)teuriaRule.Mask[mask]);
+            }
+            for (int j = 0; j < tile.GetLength(0); j++) 
+            {
+                rule.Textures.Add(TilesetAtlas[tile[j, 0] - 1, tile[j, 1] - 1]);
+            }
+            rules.Add(rule);
+            terrain.RulesList.Add(rule);
+        }
+        Terrains.Add(terrain);
     }
 
     private Tileset(SpriteTexture texture, int width, int height) 
