@@ -11,7 +11,6 @@ public class TileMap : Entity
 {
     public Point LevelSize { get; private set; }
     public Dictionary<string, Layer> Layers = new Dictionary<string, Layer>();
-    private Dictionary<LayerType, List<string>> recognizeable = new Dictionary<LayerType, List<string>>();
     
     public enum LayerType { Tiles, Entities, Decal, Grid }
     private RenderTarget2D renderTiles;
@@ -56,16 +55,6 @@ public class TileMap : Entity
         }
     }
 
-    public void RecognizeLayer(string layer, LayerType layerType) 
-    {
-        if (recognizeable.ContainsKey(layerType)) 
-        {
-            recognizeable[layerType].Add(layer);
-            return;
-        }
-        recognizeable.Add(layerType, new List<string>() { layer });
-    }
-
     public void Begin(Action<OgmoEntity>? spawnEntities = null) 
     {
         Active = true;
@@ -81,23 +70,13 @@ public class TileMap : Entity
 
     public void InitGrid(Action<Layer> gridLayer) 
     { 
-        // if (!Active) 
-        // {
-        //     Console.WriteLine("The TileMap is inactive, unable to initialize grids");
-        //     return;
-        // }
-        foreach (var grid in recognizeable) 
+        foreach (var layer in Layers.Values) 
         {
-            if (grid.Key == LayerType.Grid) 
+            if (layer is GridLayer gl) 
             {
-                foreach (var str in grid.Value) 
-                {
-                    var gl = Layers[str];
-                    gridLayer?.Invoke(gl);
-                }
+                gridLayer?.Invoke(gl);
             }
         }
-
     }
 
     public void BeforeRender(SpriteBatch spriteBatch) 
