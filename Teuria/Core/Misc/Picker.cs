@@ -5,18 +5,15 @@ namespace Teuria;
 
 public class Picker<T>
 {
-    private List<Option> options;
+    private List<Option> options = new List<Option>();
 
     public float EvaluatedWeight { get; private set; }
     public bool CanPick => EvaluatedWeight > 0;
     public int Count => options.Count;
 
-    public Picker() 
-    {
-        options = new List<Option>();
-    }
+    public Picker() {}
 
-    public Picker(T firstOption, float weight) : this()
+    public Picker(T firstOption, float weight) 
     {
         AddOption(firstOption, weight);
     }
@@ -59,6 +56,25 @@ public class Picker<T>
         {
             AddOption(option, weight);
         }
+    }
+
+    public T ForcePick() 
+    {
+        if (options.Count == 1)
+            return options[0].Value;
+
+        var w = 0f;
+        var roll = MathUtils.Randomizer.NextDouble() * EvaluatedWeight;
+        var optionCount = options.Count - 1;
+
+        for (int i = 0; i < optionCount; i++)
+        {
+            var option = options[i];
+            w += option.Weight;
+            if (roll < w)
+                return option.Value;
+        }
+        return options[optionCount].Value;
     }
 
     public T? Pick()

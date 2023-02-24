@@ -45,7 +45,7 @@ public class TileMap : Entity
                 var newLayer = new TileLayer(layer, tileset, layerType);
                 this.Layers[layer.Name] = newLayer;
             }
-            else if (layer.Grid2D != null) 
+            else if (layer.Grid2D != null || layer.Grid != null) 
             {
                 layerType = LayerType.Grid;
                 var tileset = tilesets[layer.Name];
@@ -96,8 +96,6 @@ public class TileMap : Entity
                 case LayerType.Grid:
                     layer.Value.Draw(spriteBatch);
                     break;
-                    // layer.Value.DrawGrid(spriteBatch);
-                    // break;
             }
         }
         spriteBatch.End();
@@ -107,7 +105,6 @@ public class TileMap : Entity
     public override void Draw(SpriteBatch spriteBatch)
     {
         spriteBatch.Draw(renderTiles, Vector2.Zero, Color.White);
-        // DrawMap(spriteBatch);
         base.Draw(spriteBatch);
     }
 
@@ -147,32 +144,41 @@ public class TileMap : Entity
 
     public class GridLayer : Layer 
     {
-        public int[,] GridData;
-        public string[,] StringData;
-        public Tileset Tileset;
-        private Array2D<SpriteTexture> textureGridData;
+        // public readonly int[,] GridData;
+        public readonly string[,]? StringData2D;
+        public readonly string[]? StringData;
+        public readonly Tileset Tileset;
+        public readonly int Rows;
+        public readonly int Columns;
+        private readonly Array2D<SpriteTexture> textureGridData;
 
+// TODO 1D Array
         public GridLayer(OgmoLayer layer, Tileset tileset, LayerType layerType) : base(layer, layerType) 
         {
             textureGridData = new Array2D<SpriteTexture>(LevelSize.X, LevelSize.Y);
             Tileset = tileset;
-            StringData = layer.Grid2D;
+            Rows = LevelSize.X;
+            Columns = LevelSize.Y;
             var picker = new Picker<SpriteTexture>();
-            GridData = ApplyAutotile(StringData, picker);
+            if (layer.Grid2D != null) 
+            {
+                StringData2D = layer.Grid2D;
+                ApplyAutotile(StringData2D, picker);
+                return;
+            }
+            StringData = layer.Grid;
+            ApplyAutotile(Array2D<string>.FromArray(Columns, Rows, StringData), picker);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if (textureGridData == null) return; 
-            for (int w = 0; w < LevelSize.X; w++) 
+            for (int y = 0; y < LevelSize.Y; y++) 
             {
-                for (int x = 0; x < LevelSize.Y; x++) 
+                for (int x = 0; x < LevelSize.X; x++) 
                 {
-                    var gid = textureGridData[w, x];
+                    var gid = textureGridData[x, y];
                     if (gid == null) continue;
-                    gid.DrawTexture(
-                        spriteBatch, 
-                        new Vector2(w * 8, x * 8));
+                    gid.DrawTexture(spriteBatch, new Vector2(x * 8, y * 8));
                 }
             }
         }
@@ -181,16 +187,26 @@ public class TileMap : Entity
         private static bool Check(int x, int y, string[,] grids) 
         {
             if (!(x < grids.GetLength(0) && y < grids.GetLength(1) && x >= 0 && y >= 0)) 
-            {
                 return true;
-            }
+            
             var gr = grids[x, y];
             if (gr == "0")
                 return false;
             return true;
         }
 
-        public int[,] ApplyAutotile(string[,] grids, Picker<SpriteTexture> picker) 
+        private static bool Check(int x, int y, Array2D<string> grids) 
+        {
+            if (!(x < grids.Rows && y < grids.Columns && x >= 0 && y >= 0)) 
+                return true;
+            
+            var gr = grids[x, y];
+            if (gr == "0")
+                return false;
+            return true;
+        }
+
+        public void ApplyAutotile(Array2D<string> grids, Picker<SpriteTexture> picker) 
         {
 #region Constants
             const int NorthWest = 1 << 0;
@@ -202,19 +218,66 @@ public class TileMap : Entity
             const int South = 1 << 6;
             const int SouthEast = 1 << 7;
 #endregion
-            var newGrid = new int[LevelSize.Y, LevelSize.X];
+            MathUtils.StartRandScope(28);
+            for (int y = 0; y < grids.Columns; y++) 
+                for (int x = 0; x < grids.Rows; x++) 
+                {
+                    var check = (int x, int y) => Check(x, y, grids);
+                    if (grids[x, y] == "0") 
+                        continue;
+                    
+                    var mask = 0;
 
+                    if (check(x, y + 1)) mask += East;
+                    if (check(x, y - 1)) mask += West;
+                    if (check(x + 1, y)) mask += South;
+                    if (check(x - 1, y)) mask += North;
+
+                    if ((mask & (South | West)) == (South | West) && check(x + 1, y - 1))
+                        mask += SouthWest;
+
+                    if ((mask & (South | East)) == (South | East) && check(x + 1, y + 1))
+                        mask += SouthEast;
+
+                    if ((mask & (North | West)) == (North | West) && check(x - 1, y - 1))
+                        mask += NorthWest;
+
+                    if ((mask & (North | East)) == (North | East) && check(x - 1, y + 1))
+                        mask += NorthEast;
+
+                    var masker = Tileset.GetTerrainRules(grids[x, y]);
+                    var rule = masker[(byte)mask];
+
+                    picker.AddOption(rule.Textures, 1f);
+                    textureGridData[y, x] = picker.ForcePick();
+                    SkyLog.Assert(textureGridData[y, x] != null, "Tile Texture is null!");
+
+                    picker.Clear();
+                }
+            MathUtils.EndRandScope();
+        }
+
+        public void ApplyAutotile(string[,] grids, Picker<SpriteTexture> picker) 
+        {
+#region Constants
+            const int NorthWest = 1 << 0;
+            const int North = 1 << 1;
+            const int NorthEast = 1 << 2;
+            const int West = 1 << 3;
+            const int East = 1 << 4;
+            const int SouthWest = 1 << 5;
+            const int South = 1 << 6;
+            const int SouthEast = 1 << 7;
+#endregion
             MathUtils.StartRandScope(28);
 
-            for (int x = 0; x < LevelSize.X; x++)
-                for (int y = 0; y < LevelSize.Y; y++) 
+            for (int y = 0; y < LevelSize.Y; y++) 
+                for (int x = 0; x < LevelSize.X; x++)
                 {
                     var check = (int x, int y) => Check(x, y, grids);
                     if (grids[y, x] == "0") 
-                    {
-                        newGrid[y, x] = -1;
                         continue;
-                    }
+                    
                     var mask = 0;
 
                     if (check(y, x + 1)) mask += East;
@@ -238,19 +301,18 @@ public class TileMap : Entity
                     var rule = masker[(byte)mask];
 
                     picker.AddOption(rule.Textures, 1f);
-                    textureGridData[x, y] = picker.Pick()!;
+                    textureGridData[x, y] = picker.ForcePick();
 
                     picker.Clear();
                 }
             MathUtils.EndRandScope();
-            return newGrid;
         }
     }
 
     public class TileLayer : Layer
     {
-        public Tileset Tileset;
-        public int[,] data;
+        public readonly Tileset Tileset;
+        public readonly int[,] data;
 
         public TileLayer(OgmoLayer layer, Tileset tileset, LayerType layerType) : base(layer, layerType)
         {
@@ -263,7 +325,6 @@ public class TileMap : Entity
 
         public override void Draw(SpriteBatch spriteBatch) 
         {
-            if (data == null) return;
             for (int y = 0; y < LevelSize.X; y++) 
             {
                 for (int x = 0; x < LevelSize.Y; x++)

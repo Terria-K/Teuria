@@ -38,7 +38,14 @@ public sealed class Array2D<T>
         array = new T[numRows * numColumns];
     }
 
-    public static Array2D<T> FromArrays(int numRows, int numColumns, T[,] grid2D) 
+    public static Array2D<T> FromArray(int numRows, int numColumns, T[] grid) 
+    {
+        var array = new Array2D<T>(numRows, numColumns);
+        array.array = grid;
+        return array;
+    }
+
+    public static Array2D<T> FromArray2D(int numRows, int numColumns, T[,] grid2D) 
     {
         var array = new Array2D<T>(numRows, numColumns);
         for (int x = 0; x < numColumns; x++) 
@@ -97,7 +104,14 @@ public ref struct StackArray2D<T>
         array = new T[numRows * numColumns];
     }
 
-    public static StackArray2D<T> FromArrays(int numRows, int numColumns, T[,] grid2D) 
+    public static StackArray2D<T> FromArray(int numRows, int numColumns, T[] grid) 
+    {
+        var array = new StackArray2D<T>(numRows, numColumns);
+        array.array = grid;
+        return array;
+    }
+
+    public static StackArray2D<T> FromArray2D(int numRows, int numColumns, T[,] grid2D) 
     {
         var array = new StackArray2D<T>(numRows, numColumns);
         for (int x = 0; x < numColumns; x++) 

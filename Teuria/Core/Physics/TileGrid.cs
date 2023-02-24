@@ -41,6 +41,25 @@ public sealed class TileGrid : Shape
             }
     }
 
+    public TileGrid(int cellWidth, int cellHeight, int columns, int rows, string[] characters) 
+    {
+        var characters2D = StackArray2D<string>.FromArray(columns, rows, characters);
+        BoundingArea = new AABB(0, 0, rows * 8, columns * 8);
+        CollisionGrid = new Array2D<bool>(rows, columns);
+        CellWidth = cellWidth;
+        CellHeight = cellHeight;
+        for (int y = 0; y < columns; y++) 
+            for (int x = 0; x < rows; x++) 
+            {
+                if (characters2D[y, x] == "0") 
+                {
+                    CollisionGrid[x, y] = false;
+                    continue;
+                } 
+                CollisionGrid[x, y] = true;
+            }
+    }
+
     public override float Width => CellWidth * CellX;
     public override float Height => CellHeight * CellY;
 
