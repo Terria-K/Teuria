@@ -40,7 +40,7 @@ public sealed class Canvases
         foreach (var layer in CanvasList) 
         {
             if (!layer.Visible) { continue; }
-            layer.PreDraw(scene);
+            layer.PreDraw(scene, Canvas.SpriteBatch);
         }
     }
 
@@ -49,7 +49,7 @@ public sealed class Canvases
         foreach (var layer in CanvasList) 
         {
             if (!layer.Visible) { continue; }
-            layer.Draw(scene);
+            layer.Draw(scene, Canvas.SpriteBatch);
         }
     }
 

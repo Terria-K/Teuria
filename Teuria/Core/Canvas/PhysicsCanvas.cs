@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
 
@@ -66,7 +67,7 @@ public class PhysicsCanvas : CanvasLayer
         physicsComponents.Remove(entity.PhysicsComponent);
     }
 
-    public override void Draw(Scene scene)
+    public override void Draw(Scene scene, SpriteBatch spriteBatch)
     {
 #if DEBUG
 #endif

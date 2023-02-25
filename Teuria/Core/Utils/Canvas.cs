@@ -1,4 +1,5 @@
 #nullable disable
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -19,6 +20,15 @@ public static partial class Canvas
         Pixel = new Texture2D(device, 1, 1);
         Pixel.SetData(new[] { Color.White });
     }
+
+#nullable enable
+    public static void SetRenderTarget(RenderTarget2D? target) 
+    {
+        if (target == null)
+            target = GameApp.Instance.TeuriaBackBuffer;
+        GameApp.Instance.GraphicsDevice.SetRenderTarget(target);
+    } 
+#nullable disable
 
     public static void DrawRectangle(SpriteBatch spriteBatch, float x, float y, float width, float height, Color color) 
     {
@@ -122,7 +132,6 @@ public static partial class Canvas
     }
     
     
-
     internal static void Dispose() 
     {
         Pixel?.Dispose();

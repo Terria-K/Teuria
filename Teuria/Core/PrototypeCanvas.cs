@@ -35,7 +35,7 @@ public class PrototypeCanvas : CanvasLayer
         GameApp.Instance.Scene = scene;
     }
 
-    public override void Draw(Scene scene) 
+    public override void Draw(Scene scene, SpriteBatch spriteBatch) 
     {
         Canvas.SpriteBatch.Begin(
 #if FNA

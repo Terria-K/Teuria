@@ -43,7 +43,7 @@ public abstract class GameApp : Game
     public static int InternalID { get; internal set; }
 #region NewFeatures
     // public static ScreenView ScreenView;
-    private RenderTarget2D? teuriaBackBuffer;
+    internal RenderTarget2D? TeuriaBackBuffer;
     private Rectangle windowRect;
     private Rectangle boxingRect;
     public float WindowAspect => Window.ClientBounds.Width / (float)Window.ClientBounds.Height;
@@ -155,7 +155,7 @@ public abstract class GameApp : Game
         graphics.PreferredBackBufferWidth = windowRect.Width;
         graphics.PreferredBackBufferHeight = windowRect.Height;
         graphics.ApplyChanges();
-        teuriaBackBuffer = new RenderTarget2D(GraphicsDevice, ViewWidth, ViewHeight);
+        TeuriaBackBuffer = new RenderTarget2D(GraphicsDevice, ViewWidth, ViewHeight);
 
         Window.ClientSizeChanged += OnClientSizeChanged;
         Init();
@@ -216,7 +216,7 @@ public abstract class GameApp : Game
         Draw();
         Scene?.BeforeRender();
 
-        GraphicsDevice.SetRenderTarget(teuriaBackBuffer);
+        GraphicsDevice.SetRenderTarget(TeuriaBackBuffer);
         GraphicsDevice.Clear(Color.Black);
 
         Scene?.Render();
@@ -224,7 +224,7 @@ public abstract class GameApp : Game
         GraphicsDevice.SetRenderTarget(null);
         GraphicsDevice.Clear(Color.Black);
         spriteBatch!.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
-        spriteBatch.Draw(teuriaBackBuffer, boxingRect, Color.White);
+        spriteBatch.Draw(TeuriaBackBuffer, boxingRect, Color.White);
         spriteBatch.End();
         Scene?.AfterRender();
 
