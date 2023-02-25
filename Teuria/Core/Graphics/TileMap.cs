@@ -152,7 +152,6 @@ public class TileMap : Entity
         public readonly int Columns;
         private readonly Array2D<SpriteTexture> textureGridData;
 
-// TODO 1D Array
         public GridLayer(OgmoLayer layer, Tileset tileset, LayerType layerType) : base(layer, layerType) 
         {
             textureGridData = new Array2D<SpriteTexture>(LevelSize.X, LevelSize.Y);
@@ -183,67 +182,16 @@ public class TileMap : Entity
             }
         }
 
-
-        private static bool Check(int x, int y, string[,] grids) 
-        {
-            if (!(x < grids.GetLength(0) && y < grids.GetLength(1) && x >= 0 && y >= 0)) 
-                return true;
-            
-            var gr = grids[x, y];
-            if (gr == "0")
-                return false;
-            return true;
-        }
-
-        private static bool Check(int x, int y, Array2D<string> grids) 
-        {
-            if (!(x < grids.Rows && y < grids.Columns && x >= 0 && y >= 0)) 
-                return true;
-            
-            var gr = grids[x, y];
-            if (gr == "0")
-                return false;
-            return true;
-        }
-
         public void ApplyAutotile(Array2D<string> grids, Picker<SpriteTexture> picker) 
         {
-#region Constants
-            const int NorthWest = 1 << 0;
-            const int North = 1 << 1;
-            const int NorthEast = 1 << 2;
-            const int West = 1 << 3;
-            const int East = 1 << 4;
-            const int SouthWest = 1 << 5;
-            const int South = 1 << 6;
-            const int SouthEast = 1 << 7;
-#endregion
             MathUtils.StartRandScope(28);
             for (int y = 0; y < grids.Columns; y++) 
                 for (int x = 0; x < grids.Rows; x++) 
                 {
-                    var check = (int x, int y) => Check(x, y, grids);
                     if (grids[x, y] == "0") 
                         continue;
-                    
-                    var mask = 0;
 
-                    if (check(x, y + 1)) mask += East;
-                    if (check(x, y - 1)) mask += West;
-                    if (check(x + 1, y)) mask += South;
-                    if (check(x - 1, y)) mask += North;
-
-                    if ((mask & (South | West)) == (South | West) && check(x + 1, y - 1))
-                        mask += SouthWest;
-
-                    if ((mask & (South | East)) == (South | East) && check(x + 1, y + 1))
-                        mask += SouthEast;
-
-                    if ((mask & (North | West)) == (North | West) && check(x - 1, y - 1))
-                        mask += NorthWest;
-
-                    if ((mask & (North | East)) == (North | East) && check(x - 1, y + 1))
-                        mask += NorthEast;
+                    var mask = ArrayUtils.GetNeighbourMask(x, y, grids, t => t != "0", true);
 
                     var masker = Tileset.GetTerrainRules(grids[x, y]);
                     var rule = masker[(byte)mask];
@@ -259,43 +207,15 @@ public class TileMap : Entity
 
         public void ApplyAutotile(string[,] grids, Picker<SpriteTexture> picker) 
         {
-#region Constants
-            const int NorthWest = 1 << 0;
-            const int North = 1 << 1;
-            const int NorthEast = 1 << 2;
-            const int West = 1 << 3;
-            const int East = 1 << 4;
-            const int SouthWest = 1 << 5;
-            const int South = 1 << 6;
-            const int SouthEast = 1 << 7;
-#endregion
             MathUtils.StartRandScope(28);
 
             for (int y = 0; y < LevelSize.Y; y++) 
                 for (int x = 0; x < LevelSize.X; x++)
                 {
-                    var check = (int x, int y) => Check(x, y, grids);
                     if (grids[y, x] == "0") 
                         continue;
                     
-                    var mask = 0;
-
-                    if (check(y, x + 1)) mask += East;
-                    if (check(y, x - 1)) mask += West;
-                    if (check(y + 1, x)) mask += South;
-                    if (check(y - 1, x)) mask += North;
-
-                    if ((mask & (South | West)) == (South | West) && check(y + 1, x - 1))
-                        mask += SouthWest;
-
-                    if ((mask & (South | East)) == (South | East) && check(y + 1, x + 1))
-                        mask += SouthEast;
-
-                    if ((mask & (North | West)) == (North | West) && check(y - 1, x - 1))
-                        mask += NorthWest;
-
-                    if ((mask & (North | East)) == (North | East) && check(y - 1, x + 1))
-                        mask += NorthEast;
+                    var mask = ArrayUtils.GetNeighbourMask(y, x, grids, t => t != "0", true);
 
                     var masker = Tileset.GetTerrainRules(grids[y, x]);
                     var rule = masker[(byte)mask];

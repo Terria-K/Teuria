@@ -6,15 +6,30 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using Teuria.Unsafe;
 
 namespace Teuria;
 
 
 public static class SkyLog 
 {
+    private const uint ENABLE_VIRTUAL_TERM_PROCESS = 0x0004;
+    private const int STD_OUT_HANDLE = -11;
     public enum LogLevel { Debug, Warning, Error, Assert, Info }
     private static readonly StringBuilder writeLog = new StringBuilder();
+    private static bool colored = false;
     public static LogLevel Verbosity = LogLevel.Info;
+
+    static SkyLog() 
+    {
+        if (OperatingSystem.IsWindows()) 
+        {
+            var stdOut = NativeFunctions.GetStdHandle(STD_OUT_HANDLE);
+
+            colored = NativeFunctions.GetConsoleMode(stdOut, out uint consoleMode) && 
+                NativeFunctions.SetConsoleMode(stdOut, consoleMode | ENABLE_VIRTUAL_TERM_PROCESS);
+        }
+    }
 
     private static void LogInternal(LogLevel level, string message, string cfp, int cln) 
     {
@@ -23,11 +38,11 @@ public static class SkyLog
         
         var logName = level switch
         {
-            LogLevel.Debug => "[DEBUG]",
-            LogLevel.Info => "[INFO]",
-            LogLevel.Error => "[ERROR]",
-            LogLevel.Warning => "[WARNING]",
-            LogLevel.Assert => "[ASSERT]",
+            LogLevel.Debug => "\u001b[92m[DEBUG]",
+            LogLevel.Info => "\u001b[94m[INFO]",
+            LogLevel.Error => "\u001b[91m[ERROR]",
+            LogLevel.Warning => "\u001b[93m[WARNING]",
+            LogLevel.Assert => "\u001b[91m[ASSERT]",
             _ => throw new InvalidOperationException()
         };
         var callSite = $"{Path.GetFileName(cfp)}:{cln}";
@@ -35,7 +50,9 @@ public static class SkyLog
 #if DEBUG
         {    
             Console.WriteLine(
-                $"[{DateTime.Now.ToString("HH:mm:ss")}]{logName} {callSite} {message}"
+                colored 
+                ? $"\u001b[37m[{DateTime.Now.ToString("HH:mm:ss")}]{logName} \u001b[37m{callSite}\u001b[97m {message}" 
+                : $"[{DateTime.Now.ToString("HH:mm:ss")}]{logName} {callSite} {message}"
             );
         }
 #endif

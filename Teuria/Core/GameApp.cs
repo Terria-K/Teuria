@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Teuria.Unsafe;
 
 namespace Teuria;
 
@@ -242,6 +243,11 @@ public abstract class GameApp : Game
         counterElapsed -= TimeSpan.FromSeconds(1);
     }
 
+    public static bool IsWindowFocus() 
+    {
+        var flags = (SDL_WindowFlags)NativeFunctions.SDL_GetWindowFlags(Instance.Window.Handle);
+        return (flags & SDL_WindowFlags.SDL_WINDOW_INPUT_FOCUS) != 0;
+    }
 
     public void ExitGame() 
     {
