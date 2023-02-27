@@ -134,6 +134,7 @@ public sealed class Entities : IEnumerable<Entity>
                 continue;
 
             entity.Update();
+            entity.Input();
         }
     }
 

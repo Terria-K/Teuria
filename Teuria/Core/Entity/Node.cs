@@ -86,10 +86,9 @@ public class Node
     }
     public virtual void Ready() {}
     public virtual void Update() {}
-    public virtual void Draw(SpriteBatch spriteBatch) 
-    {
-       
-    }
+    public virtual void Draw(SpriteBatch spriteBatch) {}
+    // TODO Handle it with InputEvent
+    public virtual void Input() {}
 
     public override string ToString()
     {

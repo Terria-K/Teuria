@@ -41,6 +41,14 @@ public static class MathUtils
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float Snapped(float px, float step) 
+    {
+        if (step != 0)
+            return (float)Math.Floor((px/ step) + 0.5f) * step;
+        return px;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int MoveTowards(int current, int target, int maxDelta)
     {
         if (Math.Abs(target - current) <= maxDelta)
@@ -154,6 +162,12 @@ public static class MathUtils
     public static Vector2 Floor(this Vector2 vec) 
     {
         return new Vector2((int)Math.Floor(vec.X), (int)Math.Floor(vec.Y));
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2 Snapped(this Vector2 vec, Vector2 step) 
+    {
+        return new Vector2(Snapped(vec.X, step.X), Snapped(vec.Y, step.Y));
     }
 
 #region Sector
