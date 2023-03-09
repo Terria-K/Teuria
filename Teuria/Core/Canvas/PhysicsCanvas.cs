@@ -69,8 +69,6 @@ public class PhysicsCanvas : CanvasLayer
 
     public override void Draw(Scene scene, SpriteBatch spriteBatch)
     {
-#if DEBUG
-#endif
     }
 
     public override void Unload()

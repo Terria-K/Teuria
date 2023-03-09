@@ -17,7 +17,8 @@ public class SpriteTexture
     public Vector2 Origin { get; private set; }
     public Rectangle[]? Patches { get; private set; }
     public Rectangle Padding { get; private set; }
-    
+
+
     public SpriteTexture(Texture2D texture, Rectangle padding = default) 
     {
         Texture = texture;
@@ -161,6 +162,11 @@ public class SpriteTexture
     public static SpriteTexture FromFile(string filename) 
     {
         return new SpriteTexture(TeuriaImporter.LoadImage(filename));
+    }
+
+    public static SpriteTexture FromFile(string filename, int x, int y, int width, int height) 
+    {
+        return new SpriteTexture(TeuriaImporter.LoadImage(filename), new Point(x, y), width, height);
     }
 
     public static SpriteTexture FromContent(ContentManager content, string filename) 

@@ -89,25 +89,25 @@ public static partial class Canvas
         DrawLine(spriteBatch, start, MathUtils.Angle(start, end), Vector2.Distance(start, end), color);
     }
 
-    public static void TextureCentered(SpriteTexture spriteTexture, Vector2 position, Color color)
+    public static void TextureCentered(SpriteBatch spriteBatch, SpriteTexture spriteTexture, Vector2 position, Color color)
     {
         position.Floor();
-        SpriteBatch!.Draw(spriteTexture.Texture, 
+        spriteBatch.Draw(spriteTexture.Texture, 
             position, new Rectangle?(spriteTexture.Clip), color, 
             0f, new Vector2(spriteTexture.Width * 0.5f, spriteTexture.Height * 0.5f), 
             1f, SpriteEffects.None, 0f);
     }
 
-    public static void TextureHCentered(SpriteTexture spriteTexture, Vector2 position, Color color)
+    public static void TextureHCentered(SpriteBatch spriteBatch, SpriteTexture spriteTexture, Vector2 position, Color color)
     {
         position.Floor();
-        SpriteBatch!.Draw(spriteTexture.Texture, 
+        spriteBatch.Draw(spriteTexture.Texture, 
             position, new Rectangle?(spriteTexture.Clip), color, 
             0f, new Vector2(spriteTexture.Width * 0.5f, 0), 
             1f, SpriteEffects.None, 0f);
     }
 
-    public static void TextureHCentered(SpriteTexture spriteTexture, Rectangle rectangle, Color color)
+    public static void TextureHCentered(SpriteBatch spriteBatch, SpriteTexture spriteTexture, Rectangle rectangle, Color color)
     {
         var centeredHRectangle = new Rectangle(
             (int)(rectangle.X - (spriteTexture.Width * 0.5f)), (int)(rectangle.Y), rectangle.Width, rectangle.Height);
@@ -117,15 +117,15 @@ public static partial class Canvas
             spriteTexture.Padding.Height);
 
         for (int i = 0; i < spriteTexture.Patches.Length; i++)
-            SpriteBatch!.Draw(
+            spriteBatch.Draw(
                 spriteTexture.Texture, sourceRectangle: spriteTexture.Patches[i], 
                 destinationRectangle: destPatches[i], color: color);
     }
 
-    public static void TextureVCentered(SpriteTexture spriteTexture, Vector2 position, Color color)
+    public static void TextureVCentered(SpriteBatch spriteBatch, SpriteTexture spriteTexture, Vector2 position, Color color)
     {
         position.Floor();
-        SpriteBatch!.Draw(spriteTexture.Texture, 
+        spriteBatch.Draw(spriteTexture.Texture, 
             position, new Rectangle?(spriteTexture.Clip), color, 
             0f, new Vector2(0f, spriteTexture.Height * 0.5f), 
             1f, SpriteEffects.None, 0f);

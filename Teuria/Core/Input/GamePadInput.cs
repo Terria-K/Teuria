@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Teuria;
 
-public class GamePadInput : BaseInput
+public partial class GamePadInput : BaseInput
 {
     public readonly PlayerIndex Index;
     public GamePadState PreviousState;

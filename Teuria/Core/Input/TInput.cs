@@ -8,7 +8,6 @@ namespace Teuria;
 
 public static class TInput 
 {
-    private static Dictionary<string, Keys> keyActions = new Dictionary<string, Keys>();
     internal static List<BaseInput> InputList = new List<BaseInput>();
     internal static List<BindableInput> BindableInputs = new List<BindableInput>();
     public static KeyboardInput Keyboard { get; private set; }
@@ -70,33 +69,6 @@ public static class TInput
         InputList.Add(baseInput);
     }
 
-    public static void AppendAction(string name, Keys keys) 
-    {
-        SkyLog.Assert(keyActions.ContainsKey(name) && keyActions.ContainsValue(keys), 
-        $"The action keys named {name} has already exists with a same key as {keys}.");
-        keyActions[name] = keys;
-    }
-
-#region Action Helper
-    public static bool IsActionPressed(string name) 
-    {
-        if (!keyActions.ContainsKey(name)) { return false; }
-        return Keyboard.Pressed(keyActions[name]);
-    }
-
-    public static bool IsActionReleased(string name) 
-    {
-        if (!keyActions.ContainsKey(name)) { return false; }
-        return Keyboard.Released(keyActions[name]);
-    }
-
-    public static bool IsActionJustPressed(string name) 
-    {
-        if (!keyActions.ContainsKey(name)) { return false; }
-        return Keyboard.JustPressed(keyActions[name]);
-    }
-
-#endregion
 
 #region Keyboard Helper
     public static bool IsKeyPressed(Keys keys) 

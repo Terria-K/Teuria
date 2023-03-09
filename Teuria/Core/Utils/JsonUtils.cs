@@ -1,6 +1,5 @@
 using System.IO;
-using LightJson;
-using LightJson.Serialization;
+using TeuJson;
 using Microsoft.Xna.Framework;
 
 namespace Teuria;
@@ -25,12 +24,12 @@ public static class JsonLoader
     public static JsonValue LoadText(string path) 
     {
         using var container = TitleContainer.OpenStream(path);
-        return JsonTextReader.ParseFile(container);
+        return JsonTextReader.FromStream(container);
     }
 
     public static JsonValue LoadBin(string path) 
     {
         using var container = TitleContainer.OpenStream(path);
-        return JsonBinaryReader.Parse(container);
+        return JsonBinaryReader.FromStream(container);
     }
 }

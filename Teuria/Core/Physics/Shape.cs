@@ -194,4 +194,16 @@ public abstract class Shape
             return Top + Position.Y;
         }
     }
+
+    public float CenterX 
+    {
+        get => Left + width / 2f;
+        set => Left = value - width / 2f;
+    }
+
+    public float CenterY 
+    {
+        get => Top + height / 2f;
+        set => Top = value - height / 2f;
+    }
 }

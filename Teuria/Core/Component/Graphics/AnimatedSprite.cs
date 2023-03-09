@@ -19,7 +19,7 @@ public class AnimatedSprite : Component
     public float Rotation { get; set; }
     public Vector2 Scale { get; set; }
     private float timer;
-    private TextureAtlas atlas;
+    private Spritesheet atlas;
     private Dictionary<string, SFCyclesFrame> cycleFrame;
     private string? currentAnimation;
     private int index;
@@ -27,7 +27,7 @@ public class AnimatedSprite : Component
     private Vector2 position;
     private SpriteEffects spriteEffects = SpriteEffects.None;
 
-    public TextureAtlas Atlas => atlas;
+    public Spritesheet Atlas => atlas;
     public SpriteEffects SpriteEffects => spriteEffects;
 
     public bool FlipH
@@ -85,7 +85,7 @@ public class AnimatedSprite : Component
     // Since SpriteFrameLoader is readonly ref struct, we can use 'in' here
     public AnimatedSprite(in SpriteFrameLoader loader) 
     {
-        atlas = loader.Atlas;
+        atlas = loader.Sheet;
         cycleFrame = loader.CycleFrame;
         Scale = Vector2.One;
         Width = Texture.Width;

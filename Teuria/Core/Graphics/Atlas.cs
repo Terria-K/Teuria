@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
-using LightJson.Serialization;
+using TeuJson.Attributes;
+using TeuJson;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -19,7 +20,6 @@ public class Atlas
 {
     private Dictionary<string, SpriteTexture> sprites = new Dictionary<string, SpriteTexture>();
     public Texture2D? BaseTexture;
-    private Atlas() {}
 
     public SpriteTexture this[string id] 
     {
@@ -33,32 +33,30 @@ public class Atlas
         }
     }
 
-    public static Atlas Create(Stream fs, Texture2D baseTexture, IAtlasLoader loader) 
+    public Atlas(Stream fs, Texture2D baseTexture, IAtlasLoader loader) 
     {
-        return new Atlas() {
-            sprites = loader.Load(fs, baseTexture),
-            BaseTexture = baseTexture
-        };
+        sprites = loader.Load(fs, baseTexture);
+        BaseTexture = baseTexture;
     }
 
-    public static Atlas Create(string path, Texture2D baseTexture, IAtlasLoader loader) 
+    public Atlas(string path, Texture2D baseTexture, IAtlasLoader loader) 
     {
-        using var fs = TitleContainer.OpenStream(path);
-        return Create(fs, baseTexture, loader);
+        using var tc = TitleContainer.OpenStream(path);
+        sprites = loader.Load(tc, baseTexture);
+        BaseTexture = baseTexture;
     }
 
-    public static Atlas Create(Stream fs, Texture2D baseTexture, AtlasDelegate func) 
+    public Atlas(Stream fs, Texture2D baseTexture, AtlasDelegate func) 
     {
-        return new Atlas() {
-            sprites = func(fs, baseTexture),
-            BaseTexture = baseTexture
-        };
+        sprites = func(fs, baseTexture);
+        BaseTexture = baseTexture;
     }
 
-    public static Atlas Create(string path, Texture2D baseTexture, AtlasDelegate func) 
+    public Atlas(string path, Texture2D baseTexture, AtlasDelegate func) 
     {
-        using var fs = TitleContainer.OpenStream(path);
-        return Create(fs, baseTexture, func);
+        using var tc = TitleContainer.OpenStream(path);
+        sprites = func(tc, baseTexture);
+        BaseTexture = baseTexture;
     }
 
     public bool Contains(string id) => sprites.ContainsKey(id);
@@ -167,16 +165,16 @@ public sealed class ClutterJsonLoader: IAtlasLoader
 {
     public Dictionary<string, SpriteTexture> Load(Stream fs, Texture2D baseTexture)
     {
-        var val = JsonTextReader.ParseFile(fs);
+        var val = JsonTextReader.FromStream(fs);
         var frames = val["frames"].AsJsonObject;
         var atlas = new Dictionary<string, SpriteTexture>();
-        foreach (var keyValue in frames) 
+        foreach (var keyValue in frames.Pairs) 
         {
             var name = keyValue.Key;
-            var x = keyValue.Value["x"].AsInteger;
-            var y = keyValue.Value["y"].AsInteger;
-            var w = keyValue.Value["width"].AsInteger;
-            var h = keyValue.Value["height"].AsInteger;
+            var x = keyValue.Value["x"].AsInt32;
+            var y = keyValue.Value["y"].AsInt32;
+            var w = keyValue.Value["width"].AsInt32;
+            var h = keyValue.Value["height"].AsInt32;
             if (!keyValue.Value.Contains("nine_patch")) 
             {
                 var spriteTexture = new SpriteTexture(
@@ -188,10 +186,10 @@ public sealed class ClutterJsonLoader: IAtlasLoader
                 continue;
             }
             var ninePatch = keyValue.Value["nine_patch"].AsJsonObject;
-            var nx = ninePatch["x"].AsInteger;
-            var ny = ninePatch["y"].AsInteger;
-            var nw = ninePatch["w"].AsInteger;
-            var nh = ninePatch["h"].AsInteger;
+            var nx = ninePatch["x"].AsInt32;
+            var ny = ninePatch["y"].AsInt32;
+            var nw = ninePatch["w"].AsInt32;
+            var nh = ninePatch["h"].AsInt32;
 
             var ninePatchTexture = new SpriteTexture(
                 baseTexture,

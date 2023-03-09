@@ -23,6 +23,7 @@ public abstract class GameApp : Game
     public GraphicsDeviceManager GraphicsDeviceManager => graphics;
     
     public static GameApp Instance => instance!;
+    private static GameApp? instance;
     public Scene Scene 
     { 
         get => scene!; 
@@ -32,16 +33,14 @@ public abstract class GameApp : Game
             nextScene = value; 
         } 
     }
-    private static GameApp? instance;
-    
+
 
     public static int ScreenHeight { get; private set; }
     public static int ScreenWidth { get; private set; }
     public static int ViewWidth { get; private set; }
     public static int ViewHeight { get; private set; }
 
-    public static int InternalID { get; internal set; }
-#region NewFeatures
+
     // public static ScreenView ScreenView;
     internal RenderTarget2D? TeuriaBackBuffer;
     private Rectangle windowRect;
@@ -51,7 +50,7 @@ public abstract class GameApp : Game
     public Rectangle Screen => boxingRect;
     public Rectangle WindowScreen => windowRect;
     private float aspect;
-#endregion
+
 
 #if ANDROID
     public GameApp(int width, int height, string windowTitle)

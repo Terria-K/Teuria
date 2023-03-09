@@ -1,8 +1,7 @@
 using System.IO;
 using Microsoft.Xna.Framework;
-using LightJson;
-using LightJson.Serialization;
-using System.Collections.Generic;
+using TeuJson;
+using TeuJson.Attributes;
 
 namespace Teuria.Level;
 
@@ -54,27 +53,26 @@ public class OgmoLevel
 
 #nullable disable
 
-[JsonSerializable]
+[TeuJsonSerializable(Deserializable = true)]
 public partial class OgmoLevelData 
 {
-    [JName("width")]
+    [Name("width")]
     public int Width { get; set; }
-    [JName("height")]
+    [Name("height")]
     public int Height { get; set; }
-    [JName("offsetX")]
+    [Name("offsetX")]
     public int OffsetX { get; set; }
-    [JName("offsetY")]
+    [Name("offsetY")]
     public int OffsetY { get; set; }
-    [JName("layers")]
-    [JArray(SupportedTypes.Other)]
+    [Name("layers")]
     public OgmoLayer[] Layers { get; set; }
-    [JName("values")]
+    [Name("values")]
     public JsonValue Values { get; set; }
 
 
     public int GetValueInt(string valueName) 
     {
-        return Values[valueName].AsInteger;
+        return Values[valueName].AsInt32;
     }
 
     public bool GetValueBoolean(string valueName) 
@@ -84,12 +82,12 @@ public partial class OgmoLevelData
 
     public float GetValueFloat(string valueName) 
     {
-        return Values[valueName].AsNumberReal;
+        return Values[valueName].AsSingle;
     }
 
     public Vector2 GetValueVector2(string x, string y) 
     {
-        return new Vector2(Values[x].AsNumberReal, Values[y].AsNumberReal);
+        return new Vector2(Values[x].AsSingle, Values[y].AsSingle);
     }
 
     public string GetValueString(string valueName) 
@@ -99,49 +97,45 @@ public partial class OgmoLevelData
 
 }
 
-[JsonSerializable]
+[TeuJsonSerializable(Deserializable = true)]
 public partial class OgmoLayer 
 {
-    [JName("name")]
+    [Name("name")]
     public string Name { get; set; }
-    [JName("offsetX")]
+    [Name("offsetX")]
     public int OffsetX { get; set; }
-    [JName("offsetY")]
+    [Name("offsetY")]
     public int OffsetY { get; set; }
-    [JName("gridCellWidth")]
+    [Name("gridCellWidth")]
     public int GridCellWidth { get; set; }
-    [JName("gridCellHeight")]
+    [Name("gridCellHeight")]
     public int GridCellHeight { get; set; }
-    [JName("gridCellsX")]
+    [Name("gridCellsX")]
     public int GridCellsX { get; set; }
-    [JName("gridCellsY")]
+    [Name("gridCellsY")]
     public int GridCellsY { get; set; }
-    [JName("tileset")]
+    [Name("tileset")]
     public string Tileset { get; set; }
 
-    [JName("data2D")]
-    [JArray(SupportedTypes.Int2D)]
+    [Name("data2D")]
     public int[,] Data { get; set; }
 
-    [JName("grid2D")]
-    [JArray(SupportedTypes.String2D)]
+    [Name("grid2D")]
     public string[,] Grid2D { get; set; }
 
-    [JName("grid")]
-    [JArray(SupportedTypes.String)]
+    [Name("grid")]
     public string[] Grid { get; set; }
 
-    [JName("entities")]
-    [JArray(SupportedTypes.Other)]
+    [Name("entities")]
     public OgmoEntity[] Entities { get; set; }
 }
 
-[JsonSerializable]
+[TeuJsonSerializable(Deserializable = true)]
 public partial class OgmoNode 
 {
-    [JName("x")]
+    [Name("x")]
     public float X { get; set; }
-    [JName("y")]
+    [Name("y")]
     public float Y { get; set; }
 
     public Vector2 ToVector2() 
@@ -150,64 +144,111 @@ public partial class OgmoNode
     }
 }
 
-[JsonSerializable]
+[TeuJsonSerializable(Deserializable = true)]
 public partial class OgmoEntity 
 {
-    [JName("name")]
+    [Name("name")]
     public string Name { get; set; }
-    [JName("id")]
+    [Name("id")]
     public int ID { get; set; }
-    [JName("x")]
+    [Name("x")]
     public int X { get; set; }
-    [JName("y")]
+    [Name("y")]
     public int Y { get; set; }
-    [JName("originX")]
+    [Name("originX")]
     public int OriginX { get; set; }
-    [JName("originY")]
+    [Name("originY")]
     public int OriginY { get; set; }
-    [JName("width")]
+    [Name("width")]
     public int Width { get; set; }
-    [JName("height")]
+    [Name("height")]
     public int Height { get; set; }
-    [JName("flippedX")]
+    [Name("flippedX")]
     public bool FlippedX { get; set; }
-    [JName("flippedY")]
+    [Name("flippedY")]
     public bool FlippedY { get; set; }
-    [JName("nodes")]
-    [JArray(SupportedTypes.Other)]
+    [Name("nodes")]
     public OgmoNode[] Nodes { get; set; }
-    [JName("values")]
+    [Name("values")]
     public JsonValue Values { get; set; }
-
-    [JIgnore]
+    [Ignore]
     public Vector2 Position => new Vector2(X, Y);
-    [JIgnore]
+    [Ignore]
     public Rectangle Size => new Rectangle(OriginX, OriginY, Width, Height);
 
 
-    public int GetValueInt(string valueName) 
+    public int Int(string valueName) 
     {
-        return Values[valueName].AsInteger;
+        return Values[valueName].AsInt32;
     }
 
-    public bool GetValueBoolean(string valueName) 
+    public bool Boolean(string valueName) 
     {
         return Values[valueName].AsBoolean;
     }
 
-    public float GetValueFloat(string valueName) 
+    public float Float(string valueName) 
     {
-        return Values[valueName].AsNumberReal;
+        return Values[valueName].AsSingle;
     }
 
-    public Vector2 GetValueVector2(string x, string y) 
-    {
-        return new Vector2(Values[x].AsNumberReal, Values[y].AsNumberReal);
-    }
-
-    public string GetValueString(string valueName) 
+    public string String(string valueName) 
     {
         return Values[valueName].AsString;
+    }
+
+    public Color Color(string r, string g, string b)
+    {
+        var red = Float(r);
+        var green = Float(g);
+        var blue = Float(b);
+        return new Color(red, green, blue);
+    }
+
+    public Color Color(string r, string g, string b, string a)
+    {
+        var red = Float(r);
+        var green = Float(g);
+        var blue = Float(b);
+        var alpha = Float(a);
+        return new Color(red, green, blue, alpha);
+    }
+
+    public Color Color(string value)
+    {
+        var val = String(value).Split(",");
+        if (val.Length == 4) 
+        {
+            var red = Float(val[0]);
+            var green = Float(val[1]);
+            var blue = Float(val[2]);
+            var alpha = Float(val[3]);
+            return new Color(red, green, blue, alpha);
+        }
+        var r = Float(val[0]);
+        var g = Float(val[1]);
+        var b = Float(val[2]);
+        return new Color(r, g, b);
+    }
+
+    public Vector2 Vector2(string x, string y) 
+    {
+        return new Vector2(Values[x].AsSingle, Values[y].AsSingle);
+    }
+
+    public Point Point(string x, string y) 
+    {
+        return new Point(Values[x].AsInt32, Values[y].AsInt32);
+    }
+
+    public T Enum<T>(string val) 
+    where T : struct 
+    {
+        if (System.Enum.TryParse<T>(Values[val].AsString, true, out T result)) 
+        {
+            return result;
+        }
+        return default;
     }
 
 }

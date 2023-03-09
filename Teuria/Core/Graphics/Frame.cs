@@ -1,15 +1,15 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
-using LightJson;
-using LightJson.Serialization;
+using TeuJson;
+using TeuJson.Attributes;
 
 
 namespace Teuria;
 
 public readonly ref struct SpriteFrameLoader 
 {
-    internal TextureAtlas Atlas { get; init; }
+    internal Spritesheet Sheet { get; init; }
     internal SpriteTexture Texture { get; init; }
     internal Vector2 Size { get; init; }
     internal Dictionary<string, SFCyclesFrame> CycleFrame { get; init; }
@@ -21,7 +21,7 @@ public readonly ref struct SpriteFrameLoader
 
         Texture = SpriteTexture.FromContent(content, contentTexturePath);
         var atlas = result.SFAtlas;
-        Atlas = new TextureAtlas(Texture, atlas.RegionWidth, atlas.RegionHeight);
+        Sheet = new Spritesheet(Texture, atlas.RegionWidth, atlas.RegionHeight);
         Size = new Vector2(atlas.RegionWidth, atlas.RegionHeight);
         CycleFrame = result.SFCycles;
     }
@@ -33,39 +33,37 @@ public readonly ref struct SpriteFrameLoader
         
         var atlas = result.SFAtlas;
         Texture = texture;
-        Atlas = new TextureAtlas(Texture, atlas.RegionWidth, atlas.RegionHeight);
+        Sheet = new Spritesheet(Texture, atlas.RegionWidth, atlas.RegionHeight);
         Size = new Vector2(atlas.RegionWidth, atlas.RegionHeight);
         CycleFrame = result.SFCycles;
     }
 }
 
-[JsonSerializable]
+[TeuJsonSerializable(Deserializable = true)]
 internal partial struct SpriteFactory
 {
-    [JName("textureAtlas")]
+    [Name("textureAtlas")]
     public SFAtlas SFAtlas { get; set; }
-    [JName("cycles")]
-    [JDictionary()]
+    [Name("cycles")]
     public Dictionary<string, SFCyclesFrame> SFCycles { get; set; }
 }
 
-[JsonSerializable]
+[TeuJsonSerializable(Deserializable = true)]
 internal partial struct SFAtlas 
 {
-    [JName("texture")]
+    [Name("texture")]
     public string Texture { get; set; }
-    [JName("regionWidth")]
+    [Name("regionWidth")]
     public int RegionWidth { get; set; }
-    [JName("regionHeight")]
+    [Name("regionHeight")]
     public int RegionHeight { get; set; }
 }
 
-[JsonSerializable]
+[TeuJsonSerializable(Deserializable = true)]
 internal partial struct SFCyclesFrame 
 {
-    [JName("frames")]
-    [JArray(SupportedTypes.Int)]
+    [Name("frames")]
     public int[] Frames { get; set; }
-    [JName("isLooping")]
+    [Name("isLooping")]
     public bool IsLooping { get; set; }
 }

@@ -19,14 +19,8 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="../LightJson/Sources/LightJson/LightJson.csproj">
-      <PrivateAssets>false</PrivateAssets>
-    </ProjectReference>
-    <ProjectReference Include="../LightJson/Sources/LightJson.Generator/LightJson.Generator.csproj"
-      OutputItemType="Analyzer" 
-      ReferenceOutputAssembly="false">
-      <PrivateAssets>true</PrivateAssets>
-    </ProjectReference>
+    <PackageReference Include="TeuJson" Version="1.2.3" />
+    <PackageReference Include="TeuJson.Generator" Version="1.2.3" />
   </ItemGroup>
 
 

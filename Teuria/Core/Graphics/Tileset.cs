@@ -1,9 +1,8 @@
 using System.IO;
 using System.Collections.Generic;
-using System;
 using System.Linq;
-using LightJson;
-using LightJson.Serialization;
+using TeuJson;
+using TeuJson.Attributes;
 using Microsoft.Xna.Framework;
 
 namespace Teuria;
@@ -12,46 +11,26 @@ namespace Teuria;
 public class Tileset 
 {
     public List<Terrain> Terrains = new List<Terrain>();
-    public TextureAtlas TilesetAtlas;
+    public Spritesheet Sheet;
     public int Width { get; private set; }
     public int Height { get; private set ; }
-    private List<Rules> rules = new List<Rules>();    
 
     private Tileset(string path, SpriteTexture texture) 
     {
         using var fs = TitleContainer.OpenStream(path);
         var result = JsonConvert.DeserializeFromStream<TeuriaTileset>(fs);
 
-        var textureAtlas = new TextureAtlas(texture, result.Width, result.Height);
-        TilesetAtlas = textureAtlas;
+        var textureAtlas = new Spritesheet(texture, result.Width, result.Height);
+        Sheet = textureAtlas;
         Width = result.Width;
         Height = result.Height;
-        var terrain = new Terrain(result.Name);
-
-        for (int i = 0; i < result.Rules.Length; i++) 
-        {
-            var rule = new Rules();
-            var teuriaRule = result.Rules[i];
-            var tile = teuriaRule.Tiles;
-
-            if (teuriaRule.Mask == null) { continue; }
-            for (int mask = 0; mask < teuriaRule.Mask.Length; mask++) 
-            {
-                rule.Mask[mask] = ((byte)teuriaRule.Mask[mask]);
-            }
-            for (int j = 0; j < tile.GetLength(0); j++) 
-            {
-                rule.Textures.Add(TilesetAtlas[tile[j, 0] - 1, tile[j, 1] - 1]);
-            }
-            rules.Add(rule);
-            terrain.RulesList.Add(rule);
-        }
+        var terrain = CreateTerrain(result);
         Terrains.Add(terrain);
     }
 
     private Tileset(SpriteTexture texture, int width, int height) 
     {
-        TilesetAtlas = new TextureAtlas(texture, width, height);
+        Sheet = new Spritesheet(texture, width, height);
         Width = width;
         Height = height;
     }
@@ -61,12 +40,16 @@ public class Tileset
         using var fs = TitleContainer.OpenStream(path);
         var result = JsonConvert.DeserializeFromStream<TeuriaTileset>(fs);
 
-        var textureAtlas = new TextureAtlas(texture, result.Width, result.Height);
-        TilesetAtlas = textureAtlas;
+        Sheet = new Spritesheet(texture, result.Width, result.Height);
         Width = result.Width;
         Height = result.Height;
-        var terrain = new Terrain(result.Name);
+        var terrain = CreateTerrain(result);
+        Terrains.Add(terrain);
+    }
 
+    private Terrain CreateTerrain(TeuriaTileset result) 
+    {
+        var terrain = new Terrain(result.Name);
         for (int i = 0; i < result.Rules.Length; i++) 
         {
             var rule = new Rules();
@@ -80,12 +63,11 @@ public class Tileset
             }
             for (int j = 0; j < tile.GetLength(0); j++) 
             {
-                rule.Textures.Add(TilesetAtlas[tile[j, 0] - 1, tile[j, 1] - 1]);
+                rule.Textures.Add(Sheet[tile[j, 0] - 1, tile[j, 1] - 1]);
             }
-            rules.Add(rule);
             terrain.RulesList.Add(rule);
         }
-        Terrains.Add(terrain);
+        return terrain;
     }
 
     public void AddTerrain(string tilesetPath, SpriteTexture texture) 
@@ -107,22 +89,20 @@ public class Tileset
 
     public Dictionary<byte, Rules> GetTerrainRules(string terrainName) 
     {
-        ReadOnlySpan<int> directionalValues = stackalloc int[9]     
-        {
-            0x001, 0x002, 0x004,
-            0x008, 0x000, 0x010,
-            0x020, 0x040, 0x080,
-        };
         var dict = new Dictionary<byte, Rules>();
         var terrain = Terrains.Where(x => x.Name == terrainName).First();
+
         foreach (var rule in terrain.RulesList) 
         {
             byte bit = 0;
-            for (int i = 0; i < rule.Mask.Length; i++) 
-            {
-                var mask = rule.Mask[i];
-                bit += (byte)((int)mask * directionalValues[i]);
-            }
+            bit += (byte)(rule.Mask[0] * 1 << 0);
+            bit += (byte)(rule.Mask[1] * 1 << 1);
+            bit += (byte)(rule.Mask[2] * 1 << 2);
+            bit += (byte)(rule.Mask[3] * 1 << 3);
+            bit += (byte)(rule.Mask[5] * 1 << 4);
+            bit += (byte)(rule.Mask[6] * 1 << 5);
+            bit += (byte)(rule.Mask[7] * 1 << 6);
+            bit += (byte)(rule.Mask[8] * 1 << 7);
             dict.Add(bit, rule);
         }
         return dict;
@@ -146,33 +126,30 @@ public class Tileset
     }
 }
 
-[JsonSerializable]
+[TeuJsonSerializable(Deserializable = true)]
 partial struct TeuriaTileset
 {
-    [JName("name")]
+    [Name("name")]
     public string Name { get; set; }
-    [JName("path")]
+    [Name("path")]
     public string Path { get; set; }
-    [JName("rules")]
-    [JArray(SupportedTypes.Other)]
+    [Name("rules")]
     public TeuriaRules[] Rules { get; set; }
-    [JName("width")]
+    [Name("width")]
     public int Width { get; set; }
-    [JName("height")]
+    [Name("height")]
     public int Height { get; set; }
 }
 
-[JsonSerializable]
+[TeuJsonSerializable(Deserializable = true)]
 partial struct TeuriaRules 
 {
-    [JName("name")]
+    [Name("name")]
     public string Name { get; set; }
-    [JName("mask")]
-    [JArray(SupportedTypes.Int)]
+    [Name("mask")]
     public int[] Mask { get; set; }
-    [JName("tiles")]
-    [JArray(SupportedTypes.Int2D)]
+    [Name("tiles")]
     public int[,] Tiles { get; set; }
-    [JName("maskType")]
+    [Name("maskType")]
     public string MaskType { get; set; }
 }

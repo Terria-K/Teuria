@@ -88,15 +88,7 @@ public class TileMap : Entity
         spriteBatch.Begin();
         foreach (var layer in this.Layers) 
         {
-            switch (layer.Value.LayerType) 
-            {
-                case LayerType.Tiles:
-                    layer.Value.Draw(spriteBatch);
-                    break;
-                case LayerType.Grid:
-                    layer.Value.Draw(spriteBatch);
-                    break;
-            }
+            layer.Value.Draw(spriteBatch);
         }
         spriteBatch.End();
         dirty = false;
@@ -114,6 +106,7 @@ public class TileMap : Entity
         base.ExitScene(scene);
     }
 
+    // TODO Decals
     public abstract class Layer 
     {
         public string LayerName;
@@ -253,7 +246,7 @@ public class TileMap : Entity
                     if (gid < 0)
                         continue;
                    
-                    var texture = Tileset.TilesetAtlas[gid];
+                    var texture = Tileset.Sheet[gid];
                     texture.DrawTexture(
                         spriteBatch, 
                         new Vector2(y * Tileset.Height, x * Tileset.Width),

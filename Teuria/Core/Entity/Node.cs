@@ -6,6 +6,7 @@ namespace Teuria;
 
 public class Node 
 {
+    public static int InternalID { get; internal set; }
     public string Name;
     private Dictionary<string, Node> childs = new Dictionary<string, Node>();
     public bool Active { get; set; } = true;
@@ -16,8 +17,8 @@ public class Node
     public Node(string name = "Node") 
     {
         this.Name = name;
-        NodeID = GameApp.InternalID;
-        GameApp.InternalID++;
+        NodeID = InternalID;
+        InternalID++;
     }
 
     public void AddChild(string name, Node node) 
@@ -87,8 +88,7 @@ public class Node
     public virtual void Ready() {}
     public virtual void Update() {}
     public virtual void Draw(SpriteBatch spriteBatch) {}
-    // TODO Handle it with InputEvent
-    public virtual void Input() {}
+
 
     public override string ToString()
     {
