@@ -10,11 +10,15 @@ namespace Teuria;
 public class TileMap : Entity
 {
     public Point LevelSize { get; private set; }
-    public Dictionary<string, Layer> Layers = new Dictionary<string, Layer>();
+    public Dictionary<string, Layer> Layers = new();
     
     public enum LayerType { Tiles, Entities, Decal, Grid }
-    private RenderTarget2D renderTiles;
-    public bool Dirty => dirty;
+    private readonly RenderTarget2D renderTiles;
+    public bool Dirty 
+    {
+        get => dirty;
+        set => dirty = value;
+    }
     private bool dirty = true;
 
     public TileMap(
@@ -28,29 +32,32 @@ public class TileMap : Entity
         Depth = 3;
         Active = false;
         LevelSize = level.LevelSize;
+        if (level.LevelData.Layers is null)
+            return;
         for (int i = level.LevelData.Layers.Length - 1; i >= 0; i--) 
         {
             var layer = level.LevelData.Layers[i];
-            LayerType layerType = LayerType.Tiles;
+            var layerName = layer.Name ?? "Layer " + i;
+            LayerType layerType;
             if (layer.Entities != null) 
             {
                 layerType = LayerType.Entities;   
                 var newLayer = new EntityLayer(layer, layerType);
-                this.Layers[layer.Name] = newLayer;
+                Layers[layerName] = newLayer;
             }
             else if (layer.Data != null) 
             {
                 layerType = LayerType.Tiles;
-                var tileset = tilesets[layer.Name];
+                var tileset = tilesets[layerName];
                 var newLayer = new TileLayer(layer, tileset, layerType);
-                this.Layers[layer.Name] = newLayer;
+                Layers[layerName] = newLayer;
             }
             else if (layer.Grid2D != null || layer.Grid != null) 
             {
                 layerType = LayerType.Grid;
-                var tileset = tilesets[layer.Name];
+                var tileset = tilesets[layerName];
                 var newLayer = new GridLayer(layer, tileset, layerType);
-                this.Layers[layer.Name] = newLayer;
+                Layers[layerName] = newLayer;
             }
         }
     }
@@ -60,7 +67,7 @@ public class TileMap : Entity
         Active = true;
         foreach (var layer in Layers.Values) 
         {
-            if (layer is EntityLayer entityLayer) 
+            if (layer is EntityLayer entityLayer && entityLayer.Entities != null) 
             {
                 foreach (var entity in entityLayer.Entities) 
                     spawnEntities?.Invoke(entity); 
@@ -115,7 +122,7 @@ public class TileMap : Entity
 
         public Layer(OgmoLayer layer, LayerType layerType) 
         {
-            LayerName = layer.Name;
+            LayerName = layer.Name ?? "No layer named";
             LevelSize = new Point(layer.GridCellsX, layer.GridCellsY);
             LayerType = layerType;
         }
@@ -125,7 +132,7 @@ public class TileMap : Entity
 
     public class EntityLayer : Layer
     {
-        public OgmoEntity[] Entities;
+        public OgmoEntity[]? Entities;
 
         public EntityLayer(OgmoLayer layer, LayerType layerType) : base(layer, layerType) 
         {
@@ -154,11 +161,11 @@ public class TileMap : Entity
             var picker = new Picker<SpriteTexture>();
             if (layer.Grid2D != null) 
             {
-                StringData2D = layer.Grid2D;
+                StringData2D = layer.Grid2D ?? new string[0,0];
                 ApplyAutotile(StringData2D, picker);
                 return;
             }
-            StringData = layer.Grid;
+            StringData = layer.Grid ?? Array.Empty<string>();
             ApplyAutotile(Array2D<string>.FromArray(Columns, Rows, StringData), picker);
         }
 
@@ -232,8 +239,8 @@ public class TileMap : Entity
             LayerType = layerType;
             LevelSize = new Point(layer.GridCellsX, layer.GridCellsY);
             Tileset = tileset;
-            LayerName = layer.Name;
-            data = layer.Data; 
+            LayerName = layer.Name ?? "NoNamed Layer";
+            data = layer.Data ?? new int[0, 0]; 
         }
 
         public override void Draw(SpriteBatch spriteBatch) 

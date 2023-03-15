@@ -41,6 +41,14 @@ public sealed class TileGrid : Shape
             }
     }
 
+    public TileGrid(int cellWidth, int cellHeight, Array2D<bool> grid) 
+    {
+        BoundingArea = new AABB(0, 0, grid.Rows * 8, grid.Columns * 8);
+        CollisionGrid = grid;
+        CellWidth = cellWidth;
+        CellHeight = cellHeight;
+    }
+
     public TileGrid(int cellWidth, int cellHeight, int columns, int rows, string[] characters) 
     {
         var characters2D = StackArray2D<string>.FromArray(columns, rows, characters);
@@ -148,5 +156,15 @@ public sealed class TileGrid : Shape
 
     public override void DebugDraw(SpriteBatch spriteBatch)
     {
+    }
+
+    public override bool Collide(Colliders other, Vector2 offset = default)
+    {
+        return other.Collide(this);
+    }
+
+    public override Shape Clone()
+    {
+        return new TileGrid(CellWidth, CellHeight, CollisionGrid.Clone());
     }
 }

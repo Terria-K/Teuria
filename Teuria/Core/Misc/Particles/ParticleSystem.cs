@@ -23,19 +23,19 @@ public class ParticleSystem : Entity
 
     public void Emit(ParticleMaterial material, Vector2 position) 
     {
-        material.Create(ref particles[slot], position);
+        material.Create(ref particles[slot], Position + position);
         Slot += 1;
     }
 
     public void Emit(ParticleMaterial material, Entity entity) 
     {
-        material.Create(ref particles[slot], entity, Vector2.Zero);
+        material.Create(ref particles[slot], entity, Position);
         Slot += 1;
     }
 
     public void Emit(ParticleMaterial material, Entity entity, Vector2 position) 
     {
-        material.Create(ref particles[slot], entity, position);
+        material.Create(ref particles[slot], entity, Position + position);
         Slot += 1;
     }
 
@@ -43,7 +43,7 @@ public class ParticleSystem : Entity
     {
         for (int i = 0; i < amount; i++) 
         {
-            material.Create(ref particles[slot], entity, Vector2.Zero);
+            material.Create(ref particles[slot], entity, Position);
             Slot += 1;
         }
     }
@@ -52,7 +52,7 @@ public class ParticleSystem : Entity
     {
         for (int i = 0; i < amount; i++) 
         {
-            material.Create(ref particles[slot], position);
+            material.Create(ref particles[slot], Position + position);
             Slot += 1;
         }
     }
@@ -61,7 +61,7 @@ public class ParticleSystem : Entity
     {
         for (int i = 0; i < amount; i++) 
         {
-            material.Create(ref particles[slot], entity, position);
+            material.Create(ref particles[slot], entity, Position + position);
             Slot += 1;
         }
     }

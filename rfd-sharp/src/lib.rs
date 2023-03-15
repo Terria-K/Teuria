@@ -1,105 +1,39 @@
-use std::os::raw::c_char;
-use std::ffi::CStr;
+use rnet::net;
 
-#[repr(C)]
-struct PathHandler {
-    pub error: u8,
-    pub path: *const u8
+rnet::root!();
+
+
+#[net]
+fn save_file(directory: String) -> Option<String> {
+    open_file_inner_net(&directory, Vec::new(), true)
 }
 
-impl PathHandler {
-    const fn fail(error: u8) -> Self {
-        PathHandler { error, path: std::ptr::null() }
-    }
-
-    const fn success(path: *const u8) -> Self {
-        PathHandler { error: 64, path }
-    }
+#[net]
+fn save_file_with_filter(
+    directory: String, 
+    filters: Vec<String>
+) -> Option<String> {
+    open_file_inner_net(&directory, filters, true)
 }
 
-#[no_mangle]
-unsafe extern fn save_file(directory: *const c_char) -> PathHandler {
-    let str_path = to_string_inner(directory)
-        .unwrap_or("/");
-
-    open_file_inner(str_path, Vec::new(), true)
+#[net]
+fn open_file(directory: String) -> Option<String> {
+    open_file_inner_net(&directory, Vec::new(), false)
 }
 
-#[no_mangle]
-unsafe extern fn save_file_with_filter(
-    directory: *const c_char, 
-    filters: *const *const c_char,
-    length: usize
-) -> PathHandler {
-    let str_path = to_string_inner(directory)
-        .unwrap_or("/");
-
-    let filter_data: &[*const c_char] = std::slice::from_raw_parts(filters, length);
-
-    let filter_vec = filter_data_inner(filter_data, length);
-    let filter_vec = match filter_vec {
-        Ok(filter_vec) => filter_vec,
-        Err(error) => return error
-    };
-
-    open_file_inner(str_path, filter_vec, true)
+#[net]
+fn open_file_with_filter(
+    directory: String, 
+    filters: Vec<String>
+) -> Option<String> {
+    open_file_inner_net(&directory, filters, false)
 }
 
-#[no_mangle]
-unsafe extern fn open_file(directory: *const c_char) -> PathHandler {
-    let str_path = to_string_inner(directory)
-        .unwrap_or("/");
-
-    open_file_inner(str_path, Vec::new(), false)
-}
-
-#[no_mangle]
-unsafe extern fn open_file_with_filter(
-    directory: *const c_char, 
-    filters: *const *const c_char,
-    length: usize
-) -> PathHandler {
-    let str_path = to_string_inner(directory)
-        .unwrap_or("/");
-
-    let filter_data: &[*const c_char] = std::slice::from_raw_parts(filters, length);
-
-    let filter_vec = filter_data_inner(filter_data, length);
-    let filter_vec = match filter_vec {
-        Ok(filter_vec) => filter_vec,
-        Err(error) => return error
-    };
-
-    open_file_inner(str_path, filter_vec, false)
-}
-
-fn to_string_inner<'a>(str_ptr: *const c_char) -> Option<&'a str> {
-    let c_str = unsafe { CStr::from_ptr(str_ptr) };
-    let c_str = c_str.to_str();
-    
-    let Ok(str_path) = c_str else { 
-        return None;
-    };
-    Some(str_path)
-}
-
-fn filter_data_inner(filter_data: &[*const c_char], length: usize) -> Result<Vec<&str>, PathHandler> {
-    let mut filter_vec = Vec::new();
-    for i in filter_data.iter().take(length) {
-        let c_str = unsafe {
-            CStr::from_ptr(*i).to_str()
-        };
-        let Ok(str_filter) = c_str else { return Err(PathHandler::fail(0)) };
-        filter_vec.push(
-            str_filter
-        );
-    }
-    Ok(filter_vec)
-}
-
-fn open_file_inner(directory: &str, filters: Vec<&str>, is_save: bool) -> PathHandler {
+fn open_file_inner_net(directory: &str, filters: Vec<String>, is_save: bool) 
+-> Option<String> {
     let mut rfd = rfd::FileDialog::new()
         .set_directory(directory);
+    let filters = filters.iter().map(|x| x.as_str()).collect::<Vec<&str>>();
     
     if !filters.is_empty() {
         rfd = rfd.add_filter("Supported", &filters);
@@ -114,10 +48,10 @@ fn open_file_inner(directory: &str, filters: Vec<&str>, is_save: bool) -> PathHa
     
     if let Some(files) = files {
         let Some(files) = files.to_str() else { 
-            return PathHandler::fail(0)
+            return None
         };
-        PathHandler::success(files.as_ptr())
+        Some(files.into())
     } else {
-        PathHandler::fail(1)
+        None
     }
 }

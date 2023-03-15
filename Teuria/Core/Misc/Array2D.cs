@@ -68,6 +68,15 @@ public sealed class Array2D<T>
     {
         return array;
     }
+
+    public Array2D<T> Clone()
+    {
+        var array = new Array2D<T>(numRows, numColumns)
+        {
+            array = this.array
+        };
+        return array;
+    }
 }
 
 public ref struct StackArray2D<T> 

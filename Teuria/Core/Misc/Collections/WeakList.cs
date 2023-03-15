@@ -116,6 +116,11 @@ public class WeakList<T>
         Array.Clear(buffer, 0, Count);
         Count = 0;
     }
+
+    public T[] ToArray() 
+    {
+        return buffer;
+    }
 }
 
 internal struct WeakComparer<T> : IComparer<T>

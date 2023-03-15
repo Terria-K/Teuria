@@ -5,7 +5,9 @@ edition = "2021"
 
 [lib]
 name = "rfd_sharp"
-crate-type = ["dylib"]
+crate-type = ["cdylib"]
 
 [dependencies]
 rfd = "0.10.0"
+rnet = "0.2.0"
+linkme = "0.2.7"

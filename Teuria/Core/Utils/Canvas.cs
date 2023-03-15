@@ -39,6 +39,16 @@ public static partial class Canvas
         spriteBatch.Draw(Pixel, rectangle, color);
     }
 
+
+    // public static void DrawRectangle(SpriteBatch spriteBatch, float x, float y, float width, float height, float rotation, Color color) 
+    // {
+    //     rectangle.X = (int)x;
+    //     rectangle.Y = (int)y;
+    //     rectangle.Width = (int)width;
+    //     rectangle.Height = (int)height;
+    //     spriteBatch.Draw(Pixel, new Vector2(x, y), null, color, rotation, -new Vector2(8, 8), new Vector2(width, height), SpriteEffects.None, 1f);
+    // }
+
     public static void DrawRect(SpriteBatch spriteBatch, Rectangle rect, int thickness, Color color) 
     {
         spriteBatch.Draw(Pixel, new Rectangle(rect.X, rect.Y, rect.Width, thickness), color);
@@ -64,10 +74,10 @@ public static partial class Canvas
             Vector2 at = MathUtils.DegToVec(i * MathHelper.PiOver2 / resolution, radius);
             Vector2 atP = new Vector2(-at.Y, at.X);
 
-            DrawLine(spriteBatch, position + last, position + at, color);
-            DrawLine(spriteBatch, position - last, position - at, color);
-            DrawLine(spriteBatch, position + lastP, position + atP, color);
-            DrawLine(spriteBatch, position - lastP, position - atP, color);
+            DrawLine(spriteBatch, position + last, position + at, color); // Right-Bottom
+            DrawLine(spriteBatch, position - last, position - at, color); // Left-Top
+            DrawLine(spriteBatch, position + lastP, position + atP, color); //Left-Bottom
+            DrawLine(spriteBatch, position - lastP, position - atP, color); // Right-Top
 
             last = at;
             lastP = atP;

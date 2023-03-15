@@ -76,4 +76,14 @@ public class CircleShape : Shape
         }
         Canvas.DrawCircle(spriteBatch, Position, Radius, Color.Red, 4);
     }
+
+    public override bool Collide(Colliders other, Vector2 offset = default)
+    {
+        return other.Collide(this);
+    }
+
+    public override Shape Clone()
+    {
+        return new CircleShape(Radius, Position);
+    }
 }

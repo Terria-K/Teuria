@@ -14,7 +14,7 @@ public struct Matrix2D : IEquatable<Matrix2D>
 
     public float M31; // x
     public float M32; // y
-    private static Matrix2D identity = new Matrix2D(1f, 0f, 0f, 1f, 0f, 0f);
+    private static Matrix2D identity = new(1f, 0f, 0f, 1f, 0f, 0f);
 
     public Matrix2D(float m11, float m12, float m21, float m22, float m31, float m32) 
     {
@@ -26,7 +26,7 @@ public struct Matrix2D : IEquatable<Matrix2D>
 
     public Vector2 Translation 
     {
-        get => new Vector2(M31, M32);
+        get => new(M31, M32);
         set { M31 = value.X; M32 = value.Y; } 
     }
 
@@ -53,7 +53,7 @@ public struct Matrix2D : IEquatable<Matrix2D>
 
     public Vector2 Scale 
     {
-        get => new Vector2(M11, M22);
+        get => new(M11, M22);
         set { M11 = value.X; M22 = value.Y; }
     }
 
@@ -364,14 +364,14 @@ public struct Matrix2D : IEquatable<Matrix2D>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Matrix2D Lerp(Matrix2D m1, Matrix2D m2, float delta)
     {
-        m1.M11 = m1.M11 + ((m2.M11 - m1.M11) * delta);
-        m1.M12 = m1.M12 + ((m2.M12 - m1.M12) * delta);
+        m1.M11 += (m2.M11 - m1.M11) * delta;
+        m1.M12 += (m2.M12 - m1.M12) * delta;
 
-        m1.M21 = m1.M21 + ((m2.M21 - m1.M21) * delta);
-        m1.M22 = m1.M22 + ((m2.M22 - m1.M22) * delta);
+        m1.M21 += (m2.M21 - m1.M21) * delta;
+        m1.M22 += (m2.M22 - m1.M22) * delta;
 
-        m1.M31 = m1.M31 + ((m2.M31 - m1.M31) * delta);
-        m1.M32 = m1.M32 + ((m2.M32 - m1.M32) * delta);
+        m1.M31 += (m2.M31 - m1.M31) * delta;
+        m1.M32 += (m2.M32 - m1.M32) * delta;
         return m1;
     }
 
@@ -419,14 +419,14 @@ public struct Matrix2D : IEquatable<Matrix2D>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Matrix2D operator +(Matrix2D m1, Matrix2D m2)
     {
-        m1.M11 = m1.M11 + m2.M11;
-        m1.M12 = m1.M12 + m2.M12;
+        m1.M11 += m2.M11;
+        m1.M12 += m2.M12;
 
-        m1.M21 = m1.M21 + m2.M21;
-        m1.M22 = m1.M22 + m2.M22;
+        m1.M21 += m2.M21;
+        m1.M22 += m2.M22;
 
-        m1.M31 = m1.M31 + m2.M31;
-        m1.M32 = m1.M32 + m2.M32;
+        m1.M31 += m2.M31;
+        m1.M32 += m2.M32;
         return m1;
     }
 
@@ -434,14 +434,14 @@ public struct Matrix2D : IEquatable<Matrix2D>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Matrix2D operator -(Matrix2D m1, Matrix2D m2)
     {
-        m1.M11 = m1.M11 - m2.M11;
-        m1.M12 = m1.M12 - m2.M12;
+        m1.M11 -= m2.M11;
+        m1.M12 -= m2.M12;
 
-        m1.M21 = m1.M21 - m2.M21;
-        m1.M22 = m1.M22 - m2.M22;
+        m1.M21 -= m2.M21;
+        m1.M22 -= m2.M22;
 
-        m1.M31 = m1.M31 - m2.M31;
-        m1.M32 = m1.M32 - m2.M32;
+        m1.M31 -= m2.M31;
+        m1.M32 -= m2.M32;
         return m1;
     }
 

@@ -13,23 +13,23 @@ public struct Circle
         Radius = radius;
     }
 
-    public bool Contains(float x, float y) 
+    public readonly bool Contains(float x, float y) 
     {
         return Vector2.DistanceSquared(Position, new Vector2(x, y)) <= Radius * Radius;
     }
 
-    public bool Contains(Vector2 from, Vector2 to) 
+    public readonly bool Contains(Vector2 from, Vector2 to) 
     {
         return Vector2.DistanceSquared(Position, MathUtils.ClosestPointOnLine(from, to, Position)) < Radius * Radius;
     }
 
-    public bool Contains(float rX, float rY, float rW, float rH) 
+    public readonly bool Contains(float rX, float rY, float rW, float rH) 
     {
         if (Position.X >= rX && Position.Y >= rY && Position.X < rX + rW && Position.Y < rY + rH)
             return true;
-        
-        var from = Vector2.Zero;
-        var to = Vector2.Zero;
+        Vector2 from;
+        Vector2 to;
+
         var sector = MathUtils.GetSector(rX, rY, rW, rH, Position);
 
         if ((sector & MathUtils.SectorTop) != 0)
@@ -67,17 +67,17 @@ public struct Circle
         return false;
     }
 
-    public bool Contains(AABB aabb) 
+    public readonly bool Contains(AABB aabb) 
     {
         return Contains(aabb.X, aabb.Y, aabb.Width, aabb.Height);
     }
 
-    public bool Contains(Rectangle aabb) 
+    public readonly bool Contains(Rectangle aabb) 
     {
         return Contains(aabb.X, aabb.Y, aabb.Width, aabb.Height);
     }
 
     public static implicit operator Rectangle(Circle circ) => 
-        new Rectangle((int)(circ.Position.X - circ.Radius), (int)(circ.Position.Y - circ.Radius),
+        new((int)(circ.Position.X - circ.Radius), (int)(circ.Position.Y - circ.Radius),
                     (int)(circ.Radius * 2), (int)(circ.Radius * 2));
 }

@@ -86,4 +86,14 @@ public class RectangleShape : Shape
     {
         Canvas.DrawRect(spriteBatch, (int)GlobalX, (int)GlobalY, (int)Width, (int)Height, 1, Color.Red);
     }
+
+    public override bool Collide(Colliders other, Vector2 offset = default)
+    {
+        return other.Collide(this);
+    }
+
+    public override Shape Clone()
+    {
+        return new RectangleShape(Width, Height, Position);
+    }
 }

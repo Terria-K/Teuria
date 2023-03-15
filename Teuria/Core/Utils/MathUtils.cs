@@ -84,19 +84,34 @@ public static class MathUtils
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2 MoveTowards(Vector2 current, Vector2 target, float maxDelta)
     {
-        var vecX = target.X - current.X;
-        var vecY = target.Y - current.Y;
+        Vector2 velocityDistance = target - current;
+        float len = velocityDistance.Length();
+        if (len <= maxDelta || len < Epsilon)
+            return target;
+        return current + (velocityDistance / len * maxDelta);
+    }
 
-        var dist = vecX * vecX * vecY * vecY;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2 Slerp(Vector2 current, Vector2 target, float maxDelta) 
+    {
+        var start = current.LengthSquared();
+        var end = target.LengthSquared();
 
-        if (dist != 0 && (maxDelta < 0 || dist > maxDelta * maxDelta))
-        {
-            float squaredDist = (float)Math.Sqrt(dist);
+        if (start == 0.0f || end == 0.0f)
+            return Vector2.Lerp(current, target, maxDelta);
+        
+        var startLength = (float)Math.Sqrt(start);
+        var endLength = (float)Math.Sqrt(end);
+        var result = MathHelper.LerpPrecise(startLength, endLength, maxDelta);
+        var angle = Angle(current, target);
+        return Rotated(current, angle * maxDelta * (result / startLength));
+    }
 
-            return new Vector2(current.X + vecY / dist * maxDelta, current.Y + vecY / dist * maxDelta);
-        }
-
-        return target;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2 Rotated(this Vector2 value, float angle) 
+    {
+        (double sin, double cos) = Math.SinCos(angle);
+        return new Vector2(value.X * (float)cos - value.Y * (float)sin , value.X * (float)sin + value.Y * (float)cos);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -142,7 +157,6 @@ public static class MathUtils
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2 ToInt(this Vector2 vec) 
     {
-        var (x, y) = vec;
         return new Vector2((int)vec.X, (int)vec.Y);
     }
 

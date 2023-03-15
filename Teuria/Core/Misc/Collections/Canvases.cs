@@ -4,10 +4,10 @@ namespace Teuria;
 
 public sealed class Canvases
 {
-    public List<CanvasLayer> CanvasList = new List<CanvasLayer>();
-    private List<CanvasLayer> adding = new List<CanvasLayer>();
-    private List<CanvasLayer> removing = new List<CanvasLayer>();
-    private Scene scene;
+    public readonly List<CanvasLayer> CanvasList = new();
+    private readonly List<CanvasLayer> adding = new();
+    private readonly List<CanvasLayer> removing = new();
+    private readonly Scene scene;
 
     internal Canvases(Scene scene) 
     {

@@ -20,8 +20,7 @@ public class Picker<T>
 
     public void AddOption(T option, float weight) 
     {
-        var w = weight;
-        w = Math.Max(weight, 0);
+        float w = Math.Max(weight, 0);
         EvaluatedWeight += weight;
         options.Add(new Option(option, w));
     }

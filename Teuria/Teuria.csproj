@@ -20,14 +20,15 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="TeuJson" Version="1.2.3" />
-    <PackageReference Include="TeuJson.Generator" Version="1.2.3" />
+    <PackageReference Include="TeuJson" Version="1.4.1" />
+    <PackageReference Include="TeuJson.Generator" Version="1.4.1" />
   </ItemGroup>
 
 
   <ItemGroup>
     <Content Include="../runtimes/**" PackagePath="runtimes" Visible="true"/>
-    <Content Include="rfd_sharp.dll">
+    <Content Include="../rfd-sharp/target/release/rfd_sharp.dll">
+      <Link>rfd_sharp.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -13,31 +13,31 @@ public struct AABB : IEqualityComparer<AABB>
 
     public float Left 
     {
-        get => X;
+        readonly get => X;
         set => X = value;
     }
 
     public float Right 
     {
-        get => X + Width;
+        readonly get => X + Width;
         set => X = value - Width;
     }
 
     public float Top 
     {
-        get => Y;
+        readonly get => Y;
         set => Y = value;
     }
 
     public float Bottom 
     {
-        get => Y + Height;
+        readonly get => Y + Height;
         set => Y = value - Height;
     }
 
     public Vector2 Position 
     {
-        get => new Vector2(X, Y);
+        readonly get => new(X, Y);
         set 
         {
             X = value.X;
@@ -47,7 +47,7 @@ public struct AABB : IEqualityComparer<AABB>
 
     public Vector2 Size 
     {
-        get => new Vector2(Width, Height);
+        readonly get => new(Width, Height);
         set 
         {
             Width = value.X;
@@ -71,36 +71,36 @@ public struct AABB : IEqualityComparer<AABB>
         Height = size.Y;
     }
 
-    public bool Contains(AABB other, Vector2 offset = default) => 
+    public readonly bool Contains(AABB other, Vector2 offset = default) => 
         Left + offset.X < other.Right &&
         Right > other.Left &&
         Bottom > other.Top &&
         Top + offset.Y < other.Bottom;
 
 
-    public bool Contains(Vector2 value) => 
+    public readonly bool Contains(Vector2 value) => 
         X <= value.X &&
         value.X < X + Width &&
         Y <= value.Y &&
         value.Y < Y + Height;
     
-    public bool Contains(float x, float y) => 
+    public readonly bool Contains(float x, float y) => 
         X <= x &&
         x < X + Width &&
         Y <= y &&
         y < Y + Height;
 
-    public bool Contains(ref Vector2 value) => 
+    public readonly bool Contains(ref Vector2 value) => 
         X <= value.X &&
         value.X < X + Width &&
         Y <= value.Y &&
         value.Y < Y + Height;
 
-    public bool Overlaps(AABB other) =>
+    public readonly bool Overlaps(AABB other) =>
         !(Width < X || X > other.Width) && 
         !(Height < other.Y || Y > other.Height);
 
-    public bool Equals(AABB one, AABB two) =>
+    public readonly bool Equals(AABB one, AABB two) =>
         one.X == two.X && 
         one.Y == two.Y &&
         one.Width == two.Width &&

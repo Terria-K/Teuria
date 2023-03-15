@@ -12,8 +12,8 @@ public class Tween : Component
 {
     public enum TweenMode { Persistent, OneShot, Loop, YoyoLoop }
 
+    public Ease.Easer? Easer { get; set; }
     public TweenMode Mode { get; private set; }
-    public Ease.Easer? Easer { get; private set; }
     public float Duration { get; private set; }
     public float TimeLeft { get; private set; }
     public float Progress { get; private set; }

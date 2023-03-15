@@ -37,13 +37,17 @@ public abstract class Shape
         RectangleShape rect => Collide(rect, offset),
         TileGrid tileGrid => Collide(tileGrid, offset),
         CircleShape circle => Collide(circle, offset),
+        Colliders colliders => Collide(colliders, offset),
         _ => throw new System.Exception("No Collider were implemented")
     };
+
+    public abstract Shape Clone();
 
     public abstract bool Collide(float x, float y, float width, float height, Vector2 offset = default);
     public abstract bool Collide(RectangleShape other, Vector2 offset = default);
     public abstract bool Collide(TileGrid grid, Vector2 offset = default);
     public abstract bool Collide(CircleShape other, Vector2 offset = default);
+    public abstract bool Collide(Colliders other, Vector2 offset = default);
 
     public abstract bool Collide(Rectangle rect, Vector2 offset = default);
     public abstract bool Collide(AABB aabb, Vector2 offset = default);
