@@ -187,12 +187,16 @@ public abstract class GameApp : Game
 
     protected override sealed void Update(GameTime gameTime)
     {   
+        Time.UpdateGameTime = gameTime;
         Time.Delta = (float)gameTime.ElapsedGameTime.TotalSeconds * Time.DeltaScale;
         TInput.Update();
         Process(gameTime);
 
 #if DEBUG
-        Shape.DebugRender = Keyboard.GetState().IsKeyDown(Keys.F1);
+        if (TInput.Keyboard.JustPressed(Keys.F1)) 
+        {
+            Shape.DebugRender = !Shape.DebugRender;
+        }
 #endif
         
         if (scene != nextScene) 
@@ -212,6 +216,7 @@ public abstract class GameApp : Game
 
     protected override sealed void Draw(GameTime gameTime)
     {
+        Time.DrawGameTime = gameTime;
         Draw();
         Scene?.BeforeRender();
 

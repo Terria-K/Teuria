@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -11,7 +10,7 @@ public class Scene
 {
     private Entities entityList;
     private Canvases canvasList;
-    protected ContentManager Content;
+    public ContentManager Content;
     public Camera? Camera;
     public float TimeActive;
     private bool paused;

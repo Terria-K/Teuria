@@ -53,6 +53,8 @@ public static class TInput
 
     internal static void Update() 
     {
+        if (Disabled)
+            return;
         foreach (var input in InputList) 
         {
             input.Update();

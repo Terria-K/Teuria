@@ -115,6 +115,12 @@ public static class MathUtils
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2 Ceil(this Vector2 value) 
+    {
+        return new Vector2((float)Math.Ceiling(value.X), (float)Math.Ceiling(value.Y));
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2 DegToVec(float radians, float length) 
     {
         return new Vector2((float)Math.Cos(radians) * length, (float)Math.Sin(radians) * length);
