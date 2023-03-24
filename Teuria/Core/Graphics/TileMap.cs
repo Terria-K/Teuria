@@ -113,9 +113,20 @@ public class TileMap : Entity
         base.ExitScene(scene);
     }
 
+    public void SetLayerActive(string layer, bool active)
+    {
+        var targetLayer = Layers[layer];
+        if (targetLayer.Active == active)
+            return;
+        
+        targetLayer.Active = active;
+        dirty = true;
+    }
+
     // TODO Decals
     public abstract class Layer 
     {
+        public bool Active = true;
         public string LayerName;
         public Point LevelSize;
         public LayerType LayerType;
@@ -171,6 +182,8 @@ public class TileMap : Entity
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+            if (!Active)
+                return;
             for (int y = 0; y < LevelSize.Y; y++) 
             {
                 for (int x = 0; x < LevelSize.X; x++) 
@@ -245,6 +258,8 @@ public class TileMap : Entity
 
         public override void Draw(SpriteBatch spriteBatch) 
         {
+            if (!Active)
+                return;
             for (int y = 0; y < LevelSize.X; y++) 
             {
                 for (int x = 0; x < LevelSize.Y; x++)

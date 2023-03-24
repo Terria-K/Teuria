@@ -51,4 +51,18 @@ public class AxisButton : BindableInput
             }
         }
     }
+
+    public void InterceptButton(int button) 
+    {
+        for (int i = 0; i < AxisBindings.Count; i++) 
+        {
+            AxisBindings[i].Intercept(button);
+            var value = AxisBindings[i].GetValue();
+            if (value != 0) 
+            {
+                Value = value;
+                break;
+            }
+        }
+    }
 }

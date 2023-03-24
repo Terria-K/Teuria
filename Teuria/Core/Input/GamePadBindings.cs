@@ -82,6 +82,11 @@ public class GamePadRightStickHorizontalAxisBinding : IAxisBinding
         return 0;
     }
 
+    public void Intercept(int button)
+    {
+        throw new NotImplementedException();
+    }
+
     public void Update() {}
 }
 
@@ -102,6 +107,11 @@ public class GamePadLeftStickHorizontalAxisBinding : IAxisBinding
         if (Math.Abs(hori) >= Deadzone)
             return Math.Sign(hori);
         return 0;
+    }
+
+    public void Intercept(int button)
+    {
+        throw new NotImplementedException();
     }
 
     public void Update() {}
@@ -126,6 +136,11 @@ public class GamePadRightStickVerticalAxisBinding : IAxisBinding
         return 0;
     }
 
+    public void Intercept(int button)
+    {
+        throw new NotImplementedException();
+    }
+
     public void Update() {}
 }
 
@@ -146,6 +161,11 @@ public class GamePadLeftStickVerticalAxisBinding : IAxisBinding
         if (Math.Abs(hori) >= Deadzone)
             return Math.Sign(hori);
         return 0;
+    }
+
+    public void Intercept(int button)
+    {
+        throw new NotImplementedException();
     }
 
     public void Update() {}

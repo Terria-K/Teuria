@@ -1,7 +1,9 @@
+using System;
 using Microsoft.Xna.Framework;
 
 namespace Teuria;
 
+[Obsolete]
 public class TouchBinding : IBinding
 {
     internal Rectangle Rect;

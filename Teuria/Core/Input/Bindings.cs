@@ -11,4 +11,5 @@ public interface IAxisBinding
 {
     void Update();
     int GetValue();
+    void Intercept(int button);
 }

@@ -2,12 +2,22 @@ namespace Teuria;
 
 public abstract class BindableInput
 {
+    protected bool InterceptedOnPress;
     public BindableInput() 
     {
         TInput.BindableInputs.Add(this);
     }
+    internal void UpdateInternal() 
+    {
+        Update();
+    }
     public abstract void Update();
     public abstract void Delete();
+
+    public void InterceptPress() 
+    {
+        InterceptedOnPress = true;
+    }
 }
 
 public class InputButton : BindableInput 
@@ -22,6 +32,12 @@ public class InputButton : BindableInput
         {
             if (TInput.Disabled)
                 return false;
+            if (InterceptedOnPress || buffer > 0f) 
+            {
+                InterceptedOnPress = false;
+                return true;
+            }
+
 
             for (int i = 0; i < Bindings.Count; i++) 
             {
@@ -38,6 +54,13 @@ public class InputButton : BindableInput
         {
             if (TInput.Disabled)
                 return false;
+
+            if (InterceptedOnPress) 
+            {
+                InterceptedOnPress = false;
+                return true;
+            }
+
 
             for (int i = 0; i < Bindings.Count; i++) 
             {

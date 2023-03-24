@@ -5,6 +5,7 @@
     <TargetFramework>net7.0-android</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>11</LangVersion>
+    <Nullable>enable</Nullable>
 
     <DefineConstants>SYSTEMTEXTJSON;MonoGame</DefineConstants>
   </PropertyGroup>
@@ -19,8 +20,8 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="TeuJson" Version="1.2.3" />
-    <PackageReference Include="TeuJson.Generator" Version="1.2.3" />
+    <PackageReference Include="TeuJson" Version="2.1.0" />
+    <PackageReference Include="TeuJson.Generator" Version="2.1.0" />
   </ItemGroup>
 
 

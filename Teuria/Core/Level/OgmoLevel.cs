@@ -36,6 +36,7 @@ public class OgmoLevel
         {
             levelPath += ".json";
         }
+// This is pretty ugly, but I can't get the File watcher to work without this.
 #if DEBUG
         try 
         {
@@ -51,8 +52,7 @@ public class OgmoLevel
     }
 }
 
-[TeuJsonSerializable(Deserializable = true)]
-public sealed partial class OgmoLevelData 
+public sealed partial class OgmoLevelData : IDeserialize
 {
     [Name("width")]
     public int Width { get; set; }
@@ -105,8 +105,7 @@ public sealed partial class OgmoLevelData
 
 }
 
-[TeuJsonSerializable(Deserializable = true)]
-public sealed partial class OgmoLayer 
+public sealed partial class OgmoLayer : IDeserialize
 {
     [Name("name")]
     public string? Name { get; set; }
@@ -138,8 +137,7 @@ public sealed partial class OgmoLayer
     public OgmoEntity[]? Entities { get; set; }
 }
 
-[TeuJsonSerializable(Deserializable = true)]
-public sealed partial class OgmoNode 
+public sealed partial class OgmoNode : IDeserialize
 {
     [Name("x")]
     public float X { get; set; }
@@ -152,8 +150,7 @@ public sealed partial class OgmoNode
     }
 }
 
-[TeuJsonSerializable(Deserializable = true)]
-public sealed partial class OgmoEntity 
+public sealed partial class OgmoEntity : IDeserialize
 {
     [Name("name")]
     public string? Name { get; set; }
@@ -272,5 +269,4 @@ public sealed partial class OgmoEntity
         }
         return default;
     }
-
 }

@@ -126,8 +126,7 @@ public class Tileset
     }
 }
 
-[TeuJsonSerializable(Deserializable = true)]
-partial struct TeuriaTileset
+partial struct TeuriaTileset : IDeserialize
 {
     [Name("name")]
     public string Name { get; set; }
@@ -141,8 +140,7 @@ partial struct TeuriaTileset
     public int Height { get; set; }
 }
 
-[TeuJsonSerializable(Deserializable = true)]
-partial struct TeuriaRules 
+partial struct TeuriaRules : IDeserialize
 {
     [Name("name")]
     public string Name { get; set; }

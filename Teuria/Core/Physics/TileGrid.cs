@@ -141,7 +141,13 @@ public sealed class TileGrid : Shape
 
     public override bool Collide(Vector2 value)
     {
-        throw new System.NotImplementedException();
+        if (value.X >= GlobalLeft && value.Y >= GlobalTop && value.X < GlobalRight && value.Y < GlobalBottom) 
+        {
+            var indexX = (int)((value.X - GlobalLeft) / CellWidth);
+            var indexY = (int)((value.Y - GlobalTop) / CellHeight);
+            return CollisionGrid[indexX, indexY];
+        }
+        return false;
     }
 
     public override bool Collide(TileGrid grid, Vector2 offset)

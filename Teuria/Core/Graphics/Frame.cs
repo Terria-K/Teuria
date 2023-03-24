@@ -39,8 +39,7 @@ public readonly ref struct SpriteFrameLoader
     }
 }
 
-[TeuJsonSerializable(Deserializable = true)]
-internal partial struct SpriteFactory
+internal partial struct SpriteFactory : IDeserialize
 {
     [Name("textureAtlas")]
     public SFAtlas SFAtlas { get; set; }
@@ -48,8 +47,7 @@ internal partial struct SpriteFactory
     public Dictionary<string, SFCyclesFrame> SFCycles { get; set; }
 }
 
-[TeuJsonSerializable(Deserializable = true)]
-internal partial struct SFAtlas 
+internal partial struct SFAtlas : IDeserialize
 {
     [Name("texture")]
     public string Texture { get; set; }
@@ -59,8 +57,7 @@ internal partial struct SFAtlas
     public int RegionHeight { get; set; }
 }
 
-[TeuJsonSerializable(Deserializable = true)]
-internal partial struct SFCyclesFrame 
+internal partial struct SFCyclesFrame : IDeserialize
 {
     [Name("frames")]
     public int[] Frames { get; set; }

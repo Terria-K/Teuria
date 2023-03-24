@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Input.Touch;
 
 namespace Teuria;
 
@@ -24,6 +25,10 @@ public static class TInput
         GamePads = new GamePadInput[4];
 #if ANDROID || IOS
         Touch = new TouchInput();
+#endif
+#if DEBUG
+        TouchPanel.EnableMouseGestures = true;
+        TouchPanel.EnableMouseTouchPoint = true;
 #endif
     }
 
@@ -62,7 +67,7 @@ public static class TInput
 
         foreach (var bindableInput in BindableInputs) 
         {
-            bindableInput.Update();
+            bindableInput.UpdateInternal();
         }
     }
 
