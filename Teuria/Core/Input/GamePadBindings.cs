@@ -165,7 +165,6 @@ public class GamePadLeftStickVerticalAxisBinding : IAxisBinding
 
     public void Intercept(int button)
     {
-        throw new NotImplementedException();
     }
 
     public void Update() {}

@@ -25,6 +25,7 @@ public class InputButton : BindableInput
     public WeakList<IBinding> Bindings = new WeakList<IBinding>();
     public float BufferTime;
     private float buffer;
+    private bool intercepted;
 
     public bool JustPressed 
     {
@@ -34,7 +35,7 @@ public class InputButton : BindableInput
                 return false;
             if (InterceptedOnPress || buffer > 0f) 
             {
-                InterceptedOnPress = false;
+                intercepted = true;
                 return true;
             }
 
@@ -57,7 +58,7 @@ public class InputButton : BindableInput
 
             if (InterceptedOnPress) 
             {
-                InterceptedOnPress = false;
+                intercepted = true;
                 return true;
             }
 
@@ -119,6 +120,12 @@ public class InputButton : BindableInput
         }
         if (!pressed) 
             buffer = 0;
+        if (intercepted) 
+        {
+            InterceptedOnPress = false;
+            intercepted = false;
+        }
+
     }
 
     public override void Delete()

@@ -1,7 +1,9 @@
+using System;
 using Microsoft.Xna.Framework;
 
 namespace Teuria;
 
+[Obsolete]
 public class TouchButton : InputButton
 {
     public TouchBinding Binding;
