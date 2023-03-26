@@ -41,6 +41,7 @@ public class Scene
     public Scene(ContentManager content)
     {
         Content = content;
+        Camera = new Camera();
         entityList = new Entities(this);
         canvasList = new Canvases(this);
     }
@@ -117,17 +118,10 @@ public class Scene
     {
         if (!Paused)
             TimeActive += Time.Delta;
-        // if (QueueToFree.Count > 0)
-        //     QueueToFree.Dequeue().Free();
+
         canvasList.UpdateLists();
         entityList.UpdateSystem();
         entityList.Update();
-
-        // foreach(var entity in nodeList) 
-        // {
-        //     if (!entity.Active) continue;
-        //     entity.Update();
-        // }
     }
 
     public virtual void BeforeRender() 
@@ -137,12 +131,6 @@ public class Scene
 
     public virtual void Render() 
     {
-        // entityList.Draw(SpriteBatch);
-        // foreach(var entity in nodeList) 
-        // {
-        //     if (!entity.Active) continue;
-        //     entity.Draw(SpriteBatch);
-        // }
         canvasList.Draw();
     }
 
@@ -154,11 +142,6 @@ public class Scene
     public virtual void Exit() 
     {
         canvasList.Unload();
-    }
-
-    internal ContentManager GetContent() 
-    {
-        return Content;
     }
 
     public void SortEntities() 

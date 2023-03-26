@@ -21,6 +21,28 @@ public sealed class TileGrid : Shape
         CellHeight = cellHeight;
     }
 
+    public TileGrid(int cellWidth, int cellHeight, Array2D<string> characters) 
+    {
+        var columns = characters.Columns;
+        var rows = characters.Rows;
+        BoundingArea = new AABB(0, 0, columns * 8, rows * 8);
+        CellWidth = cellWidth;
+        CellHeight = cellHeight;
+        CollisionGrid = new Array2D<bool>(columns, rows);
+        for (int y = 0; y < rows; y++) 
+        {
+            for (int x = 0; x < columns; x++) 
+            {
+                if (characters[y, x] == "0") 
+                {
+                    CollisionGrid[x, y] = false;
+                    continue;
+                }
+                CollisionGrid[x, y] = true;
+            }
+        }
+    }
+
     public TileGrid(int cellWidth, int cellHeight, string[,] characters) 
     {
         var columns = characters.GetLength(0);
@@ -172,5 +194,10 @@ public sealed class TileGrid : Shape
     public override Shape Clone()
     {
         return new TileGrid(CellWidth, CellHeight, CollisionGrid.Clone());
+    }
+
+    public void UpdateTile(Point pixel, bool collidable) 
+    {
+        CollisionGrid[pixel.X, pixel.Y] = collidable;
     }
 }

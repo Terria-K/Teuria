@@ -30,22 +30,20 @@ public static class TeuriaImporter
         return InternalLoadTexture(fs);
     }
 
-    private static Texture2D InternalLoadTexture(Stream fs) 
+    private unsafe static Texture2D InternalLoadTexture(Stream fs) 
     {
         var device = GameApp.Instance.GraphicsDevice;
         var tex = Texture2D.FromStream(device, fs);
         var size = tex.Width * tex.Height;
         Color[] texColor = new Color[size];
         tex.GetData<Color>(texColor, 0, size);
-        unsafe {
-            fixed (Color* ptr = &texColor[0]) 
+        fixed (Color* ptr = &texColor[0]) 
+        {
+            for (int i = 0; i < size; i++) 
             {
-                for (int i = 0; i < size; i++) 
-                {
-                    ptr[i].R = (byte)(ptr[i].R * (ptr[i].A / 255f));
-                    ptr[i].G = (byte)(ptr[i].G * (ptr[i].A / 255f));
-                    ptr[i].B = (byte)(ptr[i].B * (ptr[i].A / 255f));
-                }
+                ptr[i].R = (byte)(ptr[i].R * (ptr[i].A / 255f));
+                ptr[i].G = (byte)(ptr[i].G * (ptr[i].A / 255f));
+                ptr[i].B = (byte)(ptr[i].B * (ptr[i].A / 255f));
             }
         }
         tex.SetData<Color>(texColor, 0, size);

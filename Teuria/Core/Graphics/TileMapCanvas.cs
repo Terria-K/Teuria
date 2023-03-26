@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using static Teuria.TileMap;
@@ -8,24 +9,22 @@ namespace Teuria;
 //TODO Work on this
 public class TileMapCanvas : CanvasLayer, IDisposable
 {
-    public LayerRender[] renderers;
-    public TileMap tileMap;
-    private int width;
-    private int height;
+    private TileMap tileMap;
+    private Dictionary<string, int> lookup;
+    private WeakList<LayerRender> renderers;
     private bool dirty;
 
-    public TileMapCanvas(TileMap tileMap, int width, int height) 
+    public TileMapCanvas(TileMap tileMap) 
     {
+        lookup = new Dictionary<string, int>();
         this.tileMap = tileMap;
         var count = tileMap.Layers.Count;
+        renderers = new WeakList<LayerRender>(count);
         var i = 0;
-        renderers = new LayerRender[count];
-        this.width = width;
-        this.height = height;
         foreach (var layer in tileMap.Layers.Values) 
         {
-            var rt = new RenderTarget2D(GameApp.Instance.GraphicsDevice, width, height);
-            renderers[i] = new LayerRender(layer, rt);
+            renderers.Add(new LayerRender(layer));
+            lookup.Add(layer.LayerName, i);
             i++;
         }
         dirty = true;
@@ -36,27 +35,58 @@ public class TileMapCanvas : CanvasLayer, IDisposable
         if (!dirty)
             return;
         
-        foreach (var layerRT in renderers) 
+        for (int i = 0; i < renderers.Count; i++) 
         {
+            var layerRT = renderers[i];
+            if (!layerRT.Active)
+                return;
             layerRT.Start(batch);
         }
     }
 
     public override void Draw(Scene scene, SpriteBatch batch)
     {
-        foreach (var layerRenderer in renderers) 
+        for (int i = 0; i < renderers.Count; i++) 
         {
-            batch.Draw(layerRenderer.Texture, Vector2.Zero, Color.White);
+            var layerRT = renderers[i];
+            if (!layerRT.Active)
+                return;
+            batch.Draw(layerRT.Texture, Vector2.Zero, Color.White);
         }
     }
 
 
     public void Dispose()
     {
-        foreach (var layerRT in renderers) 
+        for (int i = 0; i < renderers.Count; i++) 
         {
+            var layerRT = renderers[i];
             layerRT.Dispose();
         }
+    }
+
+    public LayerRender GetLayer(string name) 
+    {
+        var idx = lookup[name];
+        return renderers[idx];
+    }
+
+    public Texture2D GetLayerTexture(string name) 
+    {
+        var layer = GetLayer(name);
+        return layer.Texture;
+    }
+
+    public void SetActive(string name, bool active) 
+    {
+        var layer = GetLayer(name);
+        layer.SetActive(this, active);
+    }
+
+    public void Remove(string name) 
+    {
+        var layer = GetLayer(name);
+        renderers.Remove(layer);
     }
 
     public class LayerRender : IDisposable
@@ -65,11 +95,13 @@ public class TileMapCanvas : CanvasLayer, IDisposable
         private Layer layer;
 
         public RenderTarget2D Texture => layerRT;
+        public bool Active => active;
+        private bool active;
 
-        public LayerRender(Layer layer, RenderTarget2D rt) 
+        public LayerRender(Layer layer) 
         {
+            layerRT = new RenderTarget2D(GameApp.Instance.GraphicsDevice, layer.LevelSize.X, layer.LevelSize.Y);
             this.layer = layer;
-            layerRT = rt;
         }
 
         public void Start(SpriteBatch spriteBatch) 
@@ -84,6 +116,12 @@ public class TileMapCanvas : CanvasLayer, IDisposable
         public void Dispose()
         {
             layerRT.Dispose();
+        }
+
+        public void SetActive(TileMapCanvas ctx, bool active) 
+        {
+            ctx.dirty = true;
+            this.active = active;
         }
     }
 }

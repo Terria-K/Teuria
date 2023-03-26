@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
 
+[Obsolete]
 public class Container<T> : Entity 
 where T : Entity 
 {

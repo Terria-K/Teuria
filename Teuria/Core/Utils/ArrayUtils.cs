@@ -5,7 +5,6 @@ namespace Teuria;
 // TODO Get Neighbour
 public static class ArrayUtils 
 {
-
     public const int NorthWest = 1 << 0;
     public const int North = 1 << 1;
     public const int NorthEast = 1 << 2;

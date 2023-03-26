@@ -47,7 +47,7 @@ public sealed class Entities : IEnumerable<Entity>
                     current.Add(entity);
                     entities.Add(entity);
                     if (Scene == null) { continue; }
-                    entity.EnterScene(Scene, Scene.GetContent());
+                    entity.EnterScene(Scene, Scene.Content);
                     Scene.OnEntityCreated?.Invoke(entity);
                 }
             }
