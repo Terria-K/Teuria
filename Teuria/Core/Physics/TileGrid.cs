@@ -184,6 +184,16 @@ public sealed class TileGrid : Shape
 
     public override void DebugDraw(SpriteBatch spriteBatch)
     {
+        for (int x = 0; x < CellY; x++)
+            for (int y = 0; y < CellX; y++)
+            {
+                if (!CollisionGrid[x, y])
+                    continue;
+                Canvas.DrawRect(
+                    spriteBatch,
+                    (int)GlobalLeft + x * CellWidth, (int)GlobalTop + y * CellHeight,
+                    CellWidth, CellHeight, 1, Color.Red);
+            }
     }
 
     public override bool Collide(Colliders other, Vector2 offset = default)
