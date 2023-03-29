@@ -7,7 +7,6 @@ namespace Teuria;
 
 public sealed class TouchInput : BaseInput
 {
-    private bool isTouch;
     public TouchCollection CurrentState;
     public TouchCollection PreviousState;
     private List<Button> buttons;
@@ -99,7 +98,7 @@ public sealed class TouchInput : BaseInput
     [Obsolete]
     public bool Pressed(Rectangle rectangle) 
     {
-        return !Disabled && isTouch;
+        return !Disabled;
     }
 
     [Obsolete]

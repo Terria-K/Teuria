@@ -43,8 +43,7 @@ public class MouseInput : BaseInput
         return new Vector2(mousePosX, mousePosY);
     }
 
-    public Vector2 GetCanvasMousePosition(Camera camera) => GetPosition(GetViewportMousePosition(), camera);
-
+    public Vector2 ScreenToWorld(Camera camera) => GetPosition(GetViewportMousePosition(), camera);
 
     public Vector2 GetPosition(Vector2 position, Camera camera) 
     {

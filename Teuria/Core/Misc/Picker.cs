@@ -5,15 +5,18 @@ namespace Teuria;
 
 public class Picker<T>
 {
-    private List<Option> options = new List<Option>();
+    private WeakList<Option> options;
 
     public float EvaluatedWeight { get; private set; }
     public bool CanPick => EvaluatedWeight > 0;
     public int Count => options.Count;
 
-    public Picker() {}
+    public Picker() 
+    {
+        options = new WeakList<Option>();
+    }
 
-    public Picker(T firstOption, float weight) 
+    public Picker(T firstOption, float weight) : this()
     {
         AddOption(firstOption, weight);
     }
@@ -64,7 +67,7 @@ public class Picker<T>
 
         var w = 0f;
         var roll = MathUtils.Randomizer.NextDouble() * EvaluatedWeight;
-        var optionCount = options.Count - 1;
+        var optionCount = options.Count;
 
         for (int i = 0; i < optionCount; i++)
         {
@@ -78,14 +81,17 @@ public class Picker<T>
 
     public T? Pick()
     {
-        if (options.Count == 1)
+        if (options.Count == 1) 
+        {
             return options[0].Value;
+        }
+
         if (!CanPick)
             return default;
         
         var w = 0f;
         var roll = MathUtils.Randomizer.NextDouble() * EvaluatedWeight;
-        var optionCount = options.Count - 1;
+        var optionCount = options.Count;
 
         for (int i = 0; i < optionCount; i++)
         {
@@ -103,7 +109,7 @@ public class Picker<T>
         options.Clear();
     }
 
-    private class Option 
+    private struct Option 
     {
         public T Value;
         public float Weight;

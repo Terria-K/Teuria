@@ -261,7 +261,7 @@ public class TileMap : Entity
 
         public void UpdateAutotile(int x, int y) 
         {
-            if (x < 0 || x > 39 || y < 0 || y > 67)
+            if (x < 0 || x >= Data.Rows || y < 0 || y >= Data.Columns)
                 return;    
             var id = Data[x, y];
             if (id == "0") 
