@@ -1,24 +1,37 @@
-using System.IO;
 using TeuJson;
 using Microsoft.Xna.Framework;
+using System.IO;
+using System;
 
 namespace Teuria;
 
 public static class JsonLoader 
 {
-    public static JsonValue Load(string path)
+    public enum DeserializationMode 
     {
-        var fullPath = path + ".bin";
-        if (File.Exists(fullPath))
+        Json,
+        Binary
+    }
+    public static JsonValue LoadBinDynamic(string path, out DeserializationMode mode) 
+    {
+        mode = DeserializationMode.Binary;
+        if (!File.Exists(path)) 
         {
-            return LoadBin(fullPath);
+            path = path.Replace(".bin", ".json");
+            mode = DeserializationMode.Json;
         }
-        fullPath = path + ".json";
-        if (!File.Exists(fullPath))
+        using var container = TitleContainer.OpenStream(path);
+        return mode switch 
         {
-            throw new FileNotFoundException("File not found", path);
-        }
-        return LoadText(fullPath);
+            DeserializationMode.Binary => JsonBinaryReader.FromStream(container),
+            DeserializationMode.Json => JsonTextReader.FromStream(container),
+            _ => throw new InvalidOperationException()
+        };
+    }
+
+    public static JsonValue LoadBinDynamic(string path) 
+    {
+        return LoadBinDynamic(path, out _);
     }
 
     public static JsonValue LoadText(string path) 

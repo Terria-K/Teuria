@@ -137,6 +137,7 @@ public abstract class GameApp : Game
         else 
         {
             graphics.PreferredBackBufferWidth = windowRect.Width;
+            graphics.PreferredBackBufferHeight = windowRect.Height;
         }
         graphics.ApplyChanges();
     }

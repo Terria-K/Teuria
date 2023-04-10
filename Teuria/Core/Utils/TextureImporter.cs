@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework;
@@ -37,7 +36,7 @@ public static class TeuriaImporter
         var size = tex.Width * tex.Height;
         Color[] texColor = new Color[size];
         tex.GetData<Color>(texColor, 0, size);
-        fixed (Color* ptr = &texColor[0]) 
+        fixed (Color *ptr = &texColor[0]) 
         {
             for (int i = 0; i < size; i++) 
             {

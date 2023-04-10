@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using FontStashSharp;
+using FontStashSharp.Interfaces;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -11,9 +12,12 @@ public static partial class Canvas
 {
     public static Dictionary<string, FontSystem> FontSystems = new();
 
-    public static void CreateFontSystem(string name) 
+    public static void CreateFontSystem(string name, IFontLoader fontLoader) 
     {
-        var system = new FontSystem();
+        var system = new FontSystem(new()
+        {
+            FontLoader = fontLoader
+        });
         FontSystems.Add(name, system);
     }
 

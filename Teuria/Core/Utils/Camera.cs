@@ -78,6 +78,16 @@ public class Camera
         }
     }
 
+    public float Angle 
+    {
+        get => angle;
+        set 
+        {
+            needChanges = true;
+            angle = value;
+        }
+    }
+
     public Matrix Transform 
     { 
         get 

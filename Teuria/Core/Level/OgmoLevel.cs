@@ -15,7 +15,11 @@ public class OgmoLevel
     private OgmoLevel(string path) 
     {
         using var fs = TitleContainer.OpenStream(path);
-        var result = JsonConvert.DeserializeFromStream<OgmoLevelData>(fs);
+        OgmoLevelData result;
+        if (path.EndsWith(".json"))
+            result = JsonConvert.DeserializeFromStream<OgmoLevelData>(fs);
+        else 
+            result = JsonConvert.DeserializeFromStreamBinary<OgmoLevelData>(fs);
 
         LevelData = result;
 
@@ -32,10 +36,6 @@ public class OgmoLevel
 
     public static OgmoLevel LoadLevel(string levelPath) 
     {
-        if (!levelPath.EndsWith(".json")) 
-        {
-            levelPath += ".json";
-        }
 // This is pretty ugly, but I can't get the File watcher to work without this.
 #if DEBUG
         try 

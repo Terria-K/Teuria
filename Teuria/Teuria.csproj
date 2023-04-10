@@ -13,15 +13,20 @@
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
+
+  </ItemGroup>
+
+  <ItemGroup Condition="$(DefineConstants.Contains(FontStashSharp))">
     <PackageReference Include="FontStashSharp.MonoGame" Version="1.2.8" />
+    <PackageReference Include="FontStashSharp.Rasterizers.FreeType" Version="1.1.8" />
   </ItemGroup>
 
   <ItemGroup Condition="$(DefineConstants.Contains(NEWTONSOFTJSON))">
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="TeuJson" Version="2.1.1" />
-    <PackageReference Include="TeuJson.Generator" Version="2.1.1" />
+    <PackageReference Include="TeuJson" Version="2.2.1" />
+    <PackageReference Include="TeuJson.Generator" Version="2.2.1" />
   </ItemGroup>
 
 
