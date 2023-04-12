@@ -1,15 +1,16 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using TeuJson;
 
 namespace Teuria;
 
-public class Panel : Control 
+public partial class Panel : Control, IDeserialize 
 {
     public override void Draw(SpriteBatch spriteBatch)
     {
         Canvas.DrawRectangle(
-            spriteBatch, PosX + RectSize.X, PosY + RectSize.Y, 
-            RectSize.Width, RectSize.Height, currentStyle.BackgroundColor);
+            spriteBatch, PosX, PosY, 
+            RectSize.X, RectSize.Y, currentStyle.BackgroundColor);
         base.Draw(spriteBatch);
     }
 }

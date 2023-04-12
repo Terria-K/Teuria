@@ -2,11 +2,14 @@ using System.Text;
 using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using TeuJson;
+using TeuJson.Attributes;
 
 namespace Teuria;
 
-public class TextLabel : Control 
+public partial class TextLabel : Control, IDeserialize 
 {
+    [Ignore]
     public required SpriteFontBase Font 
     {
         get => font;
@@ -44,7 +47,7 @@ public class TextLabel : Control
         }
     }
     private int fontSize;
-    public FontStyle? FontStyle 
+    public Style? FontStyle 
     {
         get => fontStyle;
         set 
@@ -55,7 +58,7 @@ public class TextLabel : Control
             dirty = true;
         }
     }
-    private FontStyle? fontStyle;
+    private Style? fontStyle;
     
 
     public override void Draw(SpriteBatch spriteBatch)
@@ -64,7 +67,7 @@ public class TextLabel : Control
         if (!dirty && Text != string.Empty)
         {
             var text = this.text;
-            if (RectSize.Width > 0) 
+            if (RectSize.X > 0) 
             {
                 text = WrapText();
             }
@@ -99,20 +102,20 @@ public class TextLabel : Control
         {
         case HorizontalAlignment.Left: 
         {
-            alignmentPosition.X = position.X + size.X;
+            alignmentPosition.X = position.X;
             break;
         }
 
         case HorizontalAlignment.Right: 
         {
-            var sizeX = size.Width - size.X;
+            var sizeX = size.X;
             alignmentPosition.X = position.X + (sizeX - measured.X);
             break;
         }
 
         case HorizontalAlignment.Center: 
         {
-            var sizeX = size.Width / 2;
+            var sizeX = size.X / 2;
             alignmentPosition.X = position.X + (sizeX - (measured.X / 2));
             break;
         }
@@ -122,16 +125,16 @@ public class TextLabel : Control
         switch (fontStyle.TextVerticalAlignment) 
         {
         case VerticalAlignment.Top: {
-            alignmentPosition.Y = position.Y + (size.Y);
+            alignmentPosition.Y = position.Y;
             break;
         }
         case VerticalAlignment.Bottom: {
-            var sizeY = size.Height - position.Y;
+            var sizeY = size.Y;
             alignmentPosition.Y = position.Y + (sizeY - measured.Y);
             break;
         }
         case VerticalAlignment.Center: {
-            var sizeY = size.Height / 2;
+            var sizeY = size.Y / 2;
             alignmentPosition.Y = position.Y + (sizeY - (measured.Y / 2));
             break;
         }
@@ -152,7 +155,7 @@ public class TextLabel : Control
         {
             var size = Font.MeasureString(word);
 
-            if (lineWidth + size.X < RectSize.Width) 
+            if (lineWidth + size.X < RectSize.X) 
             {
                 sb.Append(word + " ");
                 lineWidth += size.X + spaceWidth;

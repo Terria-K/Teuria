@@ -13,6 +13,17 @@ public static class MathUtils
     public static Random Randomizer = new Random();
 
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int Lerp(int a, int b, float t)
+    {
+        if (t > 0.9999f)
+        {
+            return b;
+        }
+
+        return a + (int)(((float)b - (float)a) * t);
+    }
+
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float MoveTowards(float current, float target, float maxDelta)

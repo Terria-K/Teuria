@@ -1,53 +1,55 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
 
-[Obsolete]
-public class Container<T> : Entity 
-where T : Entity 
+public abstract class Container : Control
 {
-    private List<T> items = new List<T>();
-    private readonly float offset = 0;
-    public new bool Active 
-    { 
-        get => base.Active; 
-        set 
+    public float Offset;
+    public override void Update()
+    {
+        UpdateChildrens();
+        base.Update();
+    }
+
+    protected abstract void UpdateChildrens();
+}
+
+public class HBoxContainer : Container
+{
+    protected override void UpdateChildrens() 
+    {
+        if (!dirty)
+            return;
+        float lastWidth = 0;
+
+        foreach (Control child in Childrens)
         {
-            foreach(var entity in items) 
+            child.RectPosition = new Vector2(child.RectPosition.X + lastWidth, child.RectPosition.Y);
+            if (child.RectSize.Y > RectSize.Y) 
             {
-                entity.Active = value;
+                child.RectSize = new Vector2(child.RectSize.X, RectSize.Y);
             }
-            base.Active = value;
-        } 
-    }
-
-    public Container(Vector2 position, float alignOffset = 0) 
-    {
-        Position = position;
-        this.offset = alignOffset;
-    }
-
-    public override void Ready()
-    {
-        var dynamicOffset = offset;
-        foreach (var entity in items) 
-        {
-            entity.Position = new Vector2(Position.X, Position.Y - dynamicOffset);
-            dynamicOffset += offset;
+            lastWidth = child.RectSize.X + Offset;
         }
-        base.Ready();
     }
+}
 
-    public void AddItem(T item) 
+public class VBoxContainer : Container
+{
+    protected override void UpdateChildrens()
     {
-        items.Add(item);
-    }
+        if (!dirty)
+            return;
+        float lastHeight = 0;
 
-    public void RemoveItem(T item) 
-    {
-        items.Remove(item);
+        foreach (var child in Childrens)
+        {
+            child.RectPosition = new Vector2(child.RectPosition.X, child.RectPosition.Y + lastHeight);
+            if (child.RectSize.X > RectSize.X) 
+            {
+                child.RectSize = new Vector2(RectSize.X, child.RectSize.Y);
+            }
+            lastHeight = child.RectSize.Y + Offset;
+        }
     }
 }
