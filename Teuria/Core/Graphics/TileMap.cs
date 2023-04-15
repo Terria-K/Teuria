@@ -10,7 +10,10 @@ namespace Teuria;
 public class TileMap : Entity
 {
     public Point LevelSize { get; private set; }
-    public Dictionary<string, Layer> Layers = new();
+    public IReadOnlyList<Layer> Layers => layers;
+    private List<ITextureMap> drawableLayer = new();
+    private List<Layer> layers = new();
+    private Dictionary<string, int> layerIdx = new();
     
     public enum LayerType { Tiles, Entities, Decal, Grid }
     private readonly RenderTarget2D renderTiles;
@@ -38,33 +41,36 @@ public class TileMap : Entity
         {
             var layer = level.LevelData.Layers[i];
             var layerName = layer.Name ?? "Layer " + i;
+            layerIdx.Add(layerName, layers.Count);
             LayerType layerType;
             if (layer.Entities != null) 
             {
                 layerType = LayerType.Entities;
                 var newLayer = new EntityLayer(layer, layerType);
-                Layers[layerName] = newLayer;
+                layers.Add(newLayer);
             }
             else if (layer.Data != null) 
             {
                 layerType = LayerType.Tiles;
                 var tileset = tilesets[layerName];
                 var newLayer = new TileLayer(layer, tileset, layerType);
-                Layers[layerName] = newLayer;
+                layers.Add(newLayer);
+                drawableLayer.Add(newLayer);
             }
             else if (layer.Grid2D != null || layer.Grid != null) 
             {
                 layerType = LayerType.Grid;
                 var tileset = tilesets[layerName];
                 var newLayer = new GridLayer(layer, tileset, layerType);
-                Layers[layerName] = newLayer;
+                layers.Add(newLayer);
+                drawableLayer.Add(newLayer);
             }
         }
     }
 
     public void Begin(Action<OgmoEntity>? spawnEntities = null) 
     {
-        foreach (var layer in Layers.Values) 
+        foreach (var layer in Layers) 
         {
             if (layer is EntityLayer entityLayer && entityLayer.Entities != null) 
             {
@@ -76,7 +82,7 @@ public class TileMap : Entity
 
     public void InitGrid(Action<Layer> gridLayer) 
     { 
-        foreach (var layer in Layers.Values) 
+        foreach (var layer in Layers) 
         {
             if (layer is GridLayer gl) 
             {
@@ -89,12 +95,22 @@ public class TileMap : Entity
     {
         if (!dirty)
             return;
+        foreach (var layer in drawableLayer) 
+        {
+            if (!layer.Dirty)
+                continue;
+            GameApp.Instance.GraphicsDevice.SetRenderTarget(layer.Texture);
+            GameApp.Instance.GraphicsDevice.Clear(Color.Transparent);
+            spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+            layer.Draw(spriteBatch);
+            spriteBatch.End();
+        }
         GameApp.Instance.GraphicsDevice.SetRenderTarget(renderTiles);
         GameApp.Instance.GraphicsDevice.Clear(Color.Transparent);
-        spriteBatch.Begin();
-        foreach (var layer in this.Layers) 
+        spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+        foreach (var layer in drawableLayer) 
         {
-            layer.Value.Draw(spriteBatch);
+            spriteBatch.Draw(layer.Texture, Vector2.Zero, Color.White);
         }
         spriteBatch.End();
         dirty = false;
@@ -114,7 +130,8 @@ public class TileMap : Entity
 
     public void SetLayerActive(string layer, bool active)
     {
-        var targetLayer = Layers[layer];
+        var idx = layerIdx[layer];
+        var targetLayer = layers[idx];
         if (targetLayer.Active == active)
             return;
         
@@ -123,12 +140,15 @@ public class TileMap : Entity
     }
     public Layer GetLayer(string layer) 
     {
-        return Layers[layer];
+        var idx = layerIdx[layer];
+        var targetLayer = layers[idx];
+        return targetLayer;
     }
 
     public void SetTile(string layer, Point pixel, string id) 
     {
-        var targetLayer = Layers[layer];
+        var idx = layerIdx[layer];
+        var targetLayer = layers[idx];
         if (!targetLayer.Active)
             return;
         targetLayer.SetTile(pixel, id);
@@ -145,12 +165,11 @@ public class TileMap : Entity
 
         public Layer(OgmoLayer layer, LayerType layerType) 
         {
-            LayerName = layer.Name ?? "No layer named";
+            LayerName = layer.Name;
             LevelSize = new Point(layer.GridCellsX, layer.GridCellsY);
             LayerType = layerType;
         }
 
-        public abstract void Draw(SpriteBatch spriteBatch);
         public virtual void SetTile(Point pixelPoint, string id) {}
     }
 
@@ -163,10 +182,9 @@ public class TileMap : Entity
             Entities = layer.Entities;
         }
 
-        public override void Draw(SpriteBatch spriteBatch) {}
     }
 
-    public class GridLayer : Layer 
+    public class GridLayer : Layer, ITextureMap
     {
         public Array2D<string> Data;
         public readonly Tileset Tileset;
@@ -174,9 +192,20 @@ public class TileMap : Entity
         public readonly int Columns;
         private readonly Array2D<SpriteTexture?> textureGridData;
         private readonly Picker<SpriteTexture> picker;
+        private readonly RenderTarget2D texture; 
+        private bool dirty = true;
+
+
+        public RenderTarget2D Texture => texture;
+        public bool Dirty => dirty;
 
         public GridLayer(OgmoLayer layer, Tileset tileset, LayerType layerType) : base(layer, layerType) 
         {
+            texture = new RenderTarget2D(
+                GameApp.Instance.GraphicsDevice, 
+                layer.GridCellsX * layer.GridCellWidth, 
+                layer.GridCellsY * layer.GridCellHeight
+            );
             textureGridData = new Array2D<SpriteTexture?>(LevelSize.X, LevelSize.Y);
             Tileset = tileset;
             Rows = LevelSize.X;
@@ -185,16 +214,19 @@ public class TileMap : Entity
             if (layer.Grid2D != null) 
             {
                 Data = Array2D<string>.FromArray2D(Columns, Rows, layer.Grid2D);
-                // StringData2D = layer.Grid2D ?? new string[0,0];
                 ApplyAutotile(Data, picker);
                 return;
             }
-            Data = Array2D<string>.FromArray(Columns, Rows, layer.Grid ?? Array.Empty<string>());
-            // StringData = layer.Grid ?? Array.Empty<string>();
-            ApplyAutotile(Data, picker);
+            if (layer.Grid != null) 
+            {
+                Data = Array2D<string>.FromArray(Columns, Rows, layer.Grid);
+                ApplyAutotile(Data, picker);
+                return;
+            }
+            Data = Array2D<string>.Empty;
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch)
         {
             if (!Active)
                 return;
@@ -233,8 +265,13 @@ public class TileMap : Entity
 
         public override void SetTile(Point pixelPoint, string id) 
         {
-            MathUtils.StartRandScope(28);
             var (y, x) = pixelPoint;
+            if (Data[x, y] == id) 
+                return;
+
+            dirty = true;
+
+            MathUtils.StartRandScope(28);
             Data[x, y] = id;
 
             // Center
@@ -280,21 +317,32 @@ public class TileMap : Entity
         }
     }
 
-    public class TileLayer : Layer
+    public class TileLayer : Layer, ITextureMap
     {
         public readonly Tileset Tileset;
         public readonly int[,] data;
+        private readonly RenderTarget2D texture;
+        private bool dirty = true;
 
         public TileLayer(OgmoLayer layer, Tileset tileset, LayerType layerType) : base(layer, layerType)
         {
+            texture = new RenderTarget2D(
+                GameApp.Instance.GraphicsDevice, 
+                layer.GridCellsX * layer.GridCellWidth, 
+                layer.GridCellsY * layer.GridCellHeight
+            );
             LayerType = layerType;
             LevelSize = new Point(layer.GridCellsX, layer.GridCellsY);
             Tileset = tileset;
-            LayerName = layer.Name ?? "NoNamed Layer";
+            LayerName = layer.Name;
             data = layer.Data ?? new int[0, 0]; 
         }
 
-        public override void Draw(SpriteBatch spriteBatch) 
+        public RenderTarget2D Texture => texture;
+
+        public bool Dirty => dirty;
+
+        public void Draw(SpriteBatch spriteBatch) 
         {
             if (!Active)
                 return;
@@ -315,4 +363,11 @@ public class TileMap : Entity
             }
         }
     }
+}
+
+public interface ITextureMap
+{
+    bool Dirty { get; }
+    RenderTarget2D Texture { get; }
+    void Draw(SpriteBatch spriteBatch);
 }

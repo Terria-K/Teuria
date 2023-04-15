@@ -12,6 +12,8 @@ public sealed class Array2D<T>
 
     public int Rows => numRows;
     public int Columns => numColumns;
+    public static Array2D<T> Empty => empty;
+    private static readonly Array2D<T> empty = new Array2D<T>();
 
     public T this[int x, int y] 
     {
@@ -29,6 +31,11 @@ public sealed class Array2D<T>
                 throw new IndiciesOutOfBoundsException(x, y);
             array[index] = value;
         }
+    }
+
+    internal Array2D() 
+    {
+        array = Array.Empty<T>();
     }
 
     public Array2D(int numRows, int numColumns)  

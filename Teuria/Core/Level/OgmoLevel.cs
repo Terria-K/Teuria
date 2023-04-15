@@ -108,7 +108,7 @@ public sealed partial class OgmoLevelData : IDeserialize
 public sealed partial class OgmoLayer : IDeserialize
 {
     [Name("name")]
-    public string? Name { get; set; }
+    public string Name { get; set; } = "";
     [Name("offsetX")]
     public int OffsetX { get; set; }
     [Name("offsetY")]

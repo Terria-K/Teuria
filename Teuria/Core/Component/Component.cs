@@ -5,6 +5,8 @@ namespace Teuria;
 
 public class Component
 {
+    internal static ulong id;
+    public ulong ID;
     public Scene? Scene
     {
         get
@@ -18,8 +20,11 @@ public class Component
     public Entity? Entity;
     public bool Active { get; set; }
 
+    public Component() {}
+
     public virtual void Added(Entity entity) 
     {
+        ID = id++;
         Entity = entity;
         Active = true;
     }
@@ -42,6 +47,12 @@ public class Component
     public void DetachSelf() 
     {
         Entity?.RemoveComponent(this);
+    }
+
+    public override string ToString()
+    {
+        var typeName = GetType().Name;
+        return $"[{typeName} {ID}]";
     }
 }
 

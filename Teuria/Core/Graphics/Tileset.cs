@@ -13,7 +13,7 @@ public class Tileset
     public List<Terrain> Terrains = new List<Terrain>();
     public Spritesheet Sheet;
     public int Width { get; private set; }
-    public int Height { get; private set ; }
+    public int Height { get; private set; }
 
     private Tileset(string path, SpriteTexture texture) 
     {

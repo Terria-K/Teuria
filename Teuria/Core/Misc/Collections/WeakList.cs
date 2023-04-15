@@ -121,6 +121,13 @@ public class WeakList<T>
     {
         return buffer;
     }
+
+    public List<T> ToList() 
+    {
+        var list = new List<T>(buffer);
+        list.RemoveAll(t => t is null);
+        return list;
+    }
 }
 
 internal struct WeakComparer<T> : IComparer<T>

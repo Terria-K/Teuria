@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace Teuria;
 
-public class Coroutine : Component 
+public sealed class Coroutine : Component 
 {
     private Stack<IEnumerator> coroutines = new Stack<IEnumerator>();
     private float timer;

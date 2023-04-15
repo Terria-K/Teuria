@@ -61,8 +61,17 @@ public class Atlas
 
     public bool Contains(string id) => sprites.ContainsKey(id);
     public SpriteTexture GetTexture(string id) => sprites[id];
+
+    public SpriteTexture? GetTextureOrNull(string id) 
+    {
+        var texture = CollectionsMarshal.GetValueRefOrNullRef(sprites, id);
+        if (System.Runtime.CompilerServices.Unsafe.IsNullRef(ref texture)) 
+            return null;
+
+        return texture;
+    }
     
-    public SpriteTexture GetTextureUnchecked(string id) 
+    public unsafe SpriteTexture GetTextureUnchecked(string id) 
     {
         return CollectionsMarshal.GetValueRefOrNullRef(sprites, id);
     }

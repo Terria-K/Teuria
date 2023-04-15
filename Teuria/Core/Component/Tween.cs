@@ -13,13 +13,13 @@ public class Tween : Component
     public enum TweenMode { Persistent, OneShot, Loop, YoyoLoop }
 
     public Ease.Easer? Easer { get; set; }
-    public TweenMode Mode { get; private set; }
-    public float Duration { get; private set; }
-    public float TimeLeft { get; private set; }
-    public float Progress { get; private set; }
-    public float Delay { get; private set; }
-    public float Value { get; private set; }
-    public bool Reverse { get; private set; }
+    public TweenMode Mode { get; internal set; }
+    public float Duration { get; internal set; }
+    public float Delay { get; internal set; }
+    public bool Reverse { get; internal set; }
+    public float TimeLeft { get; internal set; }
+    public float Progress { get; internal set; }
+    public float Value { get; internal set; }
     private float lastDelay;
 
 
@@ -168,19 +168,28 @@ public static class Ease
     public static readonly Easer BigBackOut = Invert(BigBackIn);
     public static readonly Easer BigBackInOut = Follow(BigBackIn, BigBackOut);
 
-    public static readonly Easer ElasticIn = (float t) =>
-    {
-        var ts = t * t;
-        var tc = ts * t;
-        return (33 * tc * ts + -59 * ts * ts + 32 * tc + -5 * ts);
+    public static readonly Easer ElasticIn = (float x) => {
+        float x2 = x * x;
+        return x2 * x2 * (float)Math.Sin(x * MathHelper.Pi * 4.5f);
     };
-    public static readonly Easer ElasticOut = (float t) =>
-    {
-        var ts = t * t;
-        var tc = ts * t;
-        return (33 * tc * ts + -106 * ts * ts + 126 * tc + -67 * ts + 15 * t);
+
+    public static readonly Easer ElasticOut = (float x) => {
+        float x2 = (x - 1f) * (x - 1f);
+        return 1f - x2 * x2 * (float)Math.Cos(x * MathHelper.Pi * 4.5f);
     };
-    public static readonly Easer ElasticInOut = Follow(ElasticIn, ElasticOut);
+
+    public static readonly Easer ElasticInOut = (float x) => {
+        float x2;
+        if (x < 0.45) {
+            x2 = x * x;
+            return 8f * x2 * x2 * (float)Math.Sin(x * 28.27433466f);
+        } else if (x < 0.55) {
+            return 0.5f + 0.75f * (float)Math.Sin(x * 12.56637096f);
+        } else {
+            x2 = (x - 1f) * (x - 1f);
+            return 1f - 8f * x2 * x2 * (float)Math.Sin(x * 28.27433466f);
+        }
+    };
 
     private const float B1 = 1f / 2.75f;
     private const float B2 = 2f / 2.75f;

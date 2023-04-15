@@ -6,12 +6,14 @@ using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using TeuJson;
 
 namespace Teuria;
 
 public class Entity : Node, IEnumerable<Component>
 {
     private List<Component> componentList = new List<Component>();
+    public IReadOnlyList<Component> Components => componentList;
     public Transform Transform = new Transform();
     public Vector2 Position 
     {
@@ -170,5 +172,64 @@ public class Entity : Node, IEnumerable<Component>
     
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    
+
+    public virtual JsonValue Import() 
+    {
+        var jsonObj = new JsonObject() 
+        {
+            ["position"] = new JsonObject 
+            {
+                ["x"] = PosX,
+                ["y"] = PosY
+            },
+            ["localPosition"] = new JsonObject 
+            {
+                ["x"] = LocalPosition.X,
+                ["y"] = LocalPosition.Y
+            },
+            ["rotation"] = Rotation,
+            ["scale"] = new JsonObject 
+            {
+                ["x"] = Scale.X,
+                ["y"] = Scale.Y
+            },
+            ["modulate"] = new JsonObject 
+            {
+                ["r"] = Modulate.R,
+                ["g"] = Modulate.G,
+                ["b"] = Modulate.B,
+                ["a"] = Modulate.A
+            },
+            ["flipH"] = FlipH,
+            ["flipV"] = FlipV,
+            ["depth"] = Depth,
+            ["tags"] = Tags,
+            ["visible"] = Visible,
+            ["active"] = Active
+        };
+        return jsonObj;
+    }
+
+    public virtual void Export(JsonValue val) 
+    {
+        var position = val["position"];
+        Position = new Vector2(position["x"], position["y"]);
+
+        var localPosition = val["localPosition"];
+        LocalPosition = new Vector2(localPosition["x"], localPosition["y"]);
+
+        Rotation = val["rotation"];
+        var scale = val["scale"];
+        Scale = new Vector2(scale["x"], scale["y"]);
+
+        var modulate = val["modulate"];
+        Modulate = new Color(modulate["r"], modulate["g"], modulate["b"], modulate["a"]);
+
+        FlipH = val["flipH"];
+        FlipV = val["flipV"];
+        Depth = val["depth"];
+        Tags = val["tags"];
+        Visible = val["visible"];
+        Active = val["active"];
+    }
 }

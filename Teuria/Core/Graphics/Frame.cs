@@ -7,11 +7,10 @@ using TeuJson.Attributes;
 
 namespace Teuria;
 
-public readonly ref struct SpriteFrameLoader 
+internal readonly ref struct SpriteFrameLoader 
 {
     internal Spritesheet Sheet { get; init; }
     internal SpriteTexture Texture { get; init; }
-    internal Vector2 Size { get; init; }
     internal Dictionary<string, SFCyclesFrame> CycleFrame { get; init; }
     
     public SpriteFrameLoader(string contentTexturePath, ContentManager content) 
@@ -22,7 +21,6 @@ public readonly ref struct SpriteFrameLoader
         Texture = SpriteTexture.FromContent(content, contentTexturePath);
         var atlas = result.SFAtlas;
         Sheet = new Spritesheet(Texture, atlas.RegionWidth, atlas.RegionHeight);
-        Size = new Vector2(atlas.RegionWidth, atlas.RegionHeight);
         CycleFrame = result.SFCycles;
     }
 
@@ -34,7 +32,17 @@ public readonly ref struct SpriteFrameLoader
         var atlas = result.SFAtlas;
         Texture = texture;
         Sheet = new Spritesheet(Texture, atlas.RegionWidth, atlas.RegionHeight);
-        Size = new Vector2(atlas.RegionWidth, atlas.RegionHeight);
+        CycleFrame = result.SFCycles;
+    }
+
+    public SpriteFrameLoader(string sfPath, Atlas textureAtlas) 
+    {
+        using var fs = TitleContainer.OpenStream($"Content/{sfPath}.sf");
+        var result = JsonConvert.DeserializeFromStream<SpriteFactory>(fs);
+        
+        var atlas = result.SFAtlas;
+        Texture = textureAtlas[result.SFAtlas.Texture];
+        Sheet = new Spritesheet(Texture, atlas.RegionWidth, atlas.RegionHeight);
         CycleFrame = result.SFCycles;
     }
 }

@@ -4,7 +4,7 @@ using System.Collections;
 namespace Teuria;
 
 
-public class StateMachine : Component 
+public sealed class StateMachine : Component 
 {
     private Func<IEnumerator>?[] coroutineList;
     private Action?[] readyList;

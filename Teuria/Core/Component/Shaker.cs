@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace Teuria;
 
-public class Shaker : Component 
+public sealed class Shaker : Component 
 {
     public float Timer { get; private set; }
     public Vector2 Value { get; private set; }

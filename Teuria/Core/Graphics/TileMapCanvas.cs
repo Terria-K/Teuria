@@ -21,7 +21,7 @@ public class TileMapCanvas : CanvasLayer, IDisposable
         var count = tileMap.Layers.Count;
         renderers = new WeakList<LayerRender>(count);
         var i = 0;
-        foreach (var layer in tileMap.Layers.Values) 
+        foreach (var layer in tileMap.Layers) 
         {
             renderers.Add(new LayerRender(layer));
             lookup.Add(layer.LayerName, i);
@@ -109,7 +109,7 @@ public class TileMapCanvas : CanvasLayer, IDisposable
             GameApp.Instance.GraphicsDevice.SetRenderTarget(layerRT);
             GameApp.Instance.GraphicsDevice.Clear(Color.Transparent);
             spriteBatch.Begin();
-            layer.Draw(spriteBatch);
+            // layer.Draw(spriteBatch);
             spriteBatch.End();
         }
 

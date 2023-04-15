@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
@@ -9,26 +10,22 @@ public class AnimatedSprite : Component
     public float FPS { get; set; } = 0.09f;
     public bool IsFinished { get; private set; } = true;
     public bool Loop { get; set; }
-    public string Animation 
-    { 
-        get 
-        {
-            return currentAnimation ?? "";  
-        }
-    }
+    public string Animation => currentAnimation;
+    public Spritesheet Atlas => atlas;
+    public SpriteEffects SpriteEffects => spriteEffects;
+
+    
     public float Rotation { get; set; }
     public Vector2 Scale { get; set; }
     private float timer;
     private Spritesheet atlas;
     private Dictionary<string, SFCyclesFrame> cycleFrame;
-    private string? currentAnimation;
+    private string currentAnimation = string.Empty;
     private int index;
     private int frameIndex;
     private Vector2 position;
     private SpriteEffects spriteEffects = SpriteEffects.None;
 
-    public Spritesheet Atlas => atlas;
-    public SpriteEffects SpriteEffects => spriteEffects;
 
     public bool FlipH
     {
@@ -83,7 +80,7 @@ public class AnimatedSprite : Component
     public int Height { get; private set; }
 
     // Since SpriteFrameLoader is readonly ref struct, we can use 'in' here
-    public AnimatedSprite(in SpriteFrameLoader loader) 
+    internal AnimatedSprite(scoped in SpriteFrameLoader loader) 
     {
         atlas = loader.Sheet;
         cycleFrame = loader.CycleFrame;
@@ -93,6 +90,8 @@ public class AnimatedSprite : Component
     }
 
     public AnimatedSprite(string path, SpriteTexture texture) : this(new SpriteFrameLoader(path, texture)) {}
+    public AnimatedSprite(string path, Atlas atlasTexture) : this(new SpriteFrameLoader(path, atlasTexture)) {}
+    public AnimatedSprite(string path, ContentManager content) : this(new SpriteFrameLoader(path, content)) {}
 
     public void Play(string animationName) 
     {
@@ -143,7 +142,7 @@ public class AnimatedSprite : Component
         Stop();
     }
 
-    public SpriteTexture? GetSpriteTexture(int id) => atlas[frameIndex];
+    public SpriteTexture GetSpriteTexture(int id) => atlas[frameIndex];
 
     public override void Draw(SpriteBatch spriteBatch)
     {

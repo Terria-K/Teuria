@@ -146,6 +146,13 @@ public sealed class Entities : IEnumerable<Entity>
         }
     }
 
+    public List<Entity> GetEntitiesAndSortedByID() 
+    {
+        var sortedEntities = entities.ToList();
+        sortedEntities.Sort(CompareID);
+        return sortedEntities;
+    }
+
 
     public List<T> GetEntities<T>() 
     where T : Entity
@@ -283,4 +290,5 @@ public sealed class Entities : IEnumerable<Entity>
     }
 
     public static Comparison<Entity> CompareDepth = (a, b) => Math.Sign(b.Depth - a.Depth);
+    public static Comparison<Entity> CompareID = (a, b) => Math.Sign(a.NodeID - b.NodeID);
 }

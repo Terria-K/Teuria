@@ -326,8 +326,8 @@ public partial class Control : Entity, IDeserialize
         ) 
         {
             Canvas.DrawRect(spriteBatch, new Rectangle(
-                (int)PosX + RectSizeWithPadding.X, (int)PosY + RectSizeWithPadding.Y, 
-                RectSizeWithPadding.Width, RectSizeWithPadding.Height), 1, Color.Blue);
+                (int)PosX + currentStyle.PaddingLeft, (int)PosY + currentStyle.PaddingTop, 
+                (int)RectSize.X - currentStyle.PaddingRight, (int)RectSize.Y - currentStyle.PaddingBottom), 1, Color.Blue);
         }
     }
 
