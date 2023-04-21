@@ -9,6 +9,8 @@ namespace Teuria;
 
 public partial class Control : Entity, IDeserialize
 {
+    [TeuObject]
+    public int RectDepth;
     [Custom("Teuria.TeuriaCustomConverter")]
     public Vector2 RectSize 
     {
@@ -87,7 +89,7 @@ public partial class Control : Entity, IDeserialize
         base.EnterScene(scene, content);
         foreach (var child in childs) 
         {
-            child.Depth = Depth - 1;
+            child.Depth = (child.RectDepth + Depth) - 1;
             scene.Add(child);
         }
         if (hAlignmentSetup)
@@ -103,7 +105,7 @@ public partial class Control : Entity, IDeserialize
         control.Parent = this;
         if (Scene != null) 
         {
-            control.Depth = Depth - 1;
+            control.Depth = (control.RectDepth + Depth) - 1;
             Scene.Add(control);
         }
 

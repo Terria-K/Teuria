@@ -290,5 +290,14 @@ public sealed class Entities : IEnumerable<Entity>
     }
 
     public static Comparison<Entity> CompareDepth = (a, b) => Math.Sign(b.Depth - a.Depth);
-    public static Comparison<Entity> CompareID = (a, b) => Math.Sign(a.NodeID - b.NodeID);
+    public static Comparison<Entity> CompareID = (a, b) => 
+    {
+        var aN = a.NodeID;
+        var bN = b.NodeID;
+        if (aN > bN)
+            return 1;
+        if (aN < bN)
+            return -1;
+        return 0;
+    };
 }

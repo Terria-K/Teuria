@@ -6,12 +6,12 @@ namespace Teuria;
 
 public class Node 
 {
-    public static int InternalID { get; internal set; }
+    public static ulong InternalID { get; internal set; }
     public string Name;
     private Dictionary<string, Node> childs = new Dictionary<string, Node>();
     public bool Active { get; set; } = true;
     public PauseMode PauseMode = PauseMode.Inherit;
-    public int NodeID { get; internal set; }
+    public ulong NodeID { get; internal set; }
     public Scene? Scene;
 
     public Node(string name = "Node") 

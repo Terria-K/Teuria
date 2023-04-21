@@ -6,7 +6,7 @@ namespace Teuria;
 public class Component
 {
     internal static ulong id;
-    public ulong ID;
+    public ulong ID { get; internal set; }
     public Scene? Scene
     {
         get

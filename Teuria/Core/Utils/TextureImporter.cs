@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -58,5 +60,34 @@ public static class TeuriaImporter
             return;
         }
         texture.Dispose();
+    }
+
+    public static Texture2D LoadQoiImage(string path) 
+    {
+        using var fs = TitleContainer.OpenStream(path);
+        return LoadQoiImage(fs);
+    }
+
+    public static Texture2D LoadQoiImage(Stream fs) 
+    {
+        using var ms = new MemoryStream();
+        fs.CopyTo(ms);
+        var qoi = Qoi.QoiDecoder.Decode(ms.ToArray());
+        return qoi.ToTexture2D();
+    }
+
+    [Conditional("DEBUG")]
+    public static void AssertQoiImageWithPNG(string qoi, string png) 
+    {
+        var qoiData = LoadQoiImage(qoi);
+        var device = GameApp.Instance.GraphicsDevice;
+        using var fs = TitleContainer.OpenStream(png);
+        var tex = Texture2D.FromStream(device, fs);
+        byte[] b = new byte[tex.Width * tex.Height * 4];
+        tex.GetData<byte>(b);
+        byte[] c = new byte[qoiData.Width * qoiData.Height * 4];
+        qoiData.GetData<byte>(c);
+
+        SkyLog.Assert(b.SequenceEqual(c), "Qoi Encoding messed up some Pixels");
     }
 }

@@ -38,6 +38,11 @@ public sealed class Array2D<T>
         array = Array.Empty<T>();
     }
 
+    public void Fill(T value) 
+    {
+        Array.Fill(array, value);
+    }
+
     public Array2D(int numRows, int numColumns)  
     {
         this.numRows = numRows;
@@ -71,9 +76,13 @@ public sealed class Array2D<T>
         return -1;
     }
 
+    public T[] AsArray() => array;
+
     public T[] ToArray() 
     {
-        return array;
+        var arr = new T[array.Length];
+        Array.Copy(array, arr, array.Length);
+        return arr;
     }
 
     public Array2D<T> Clone()
@@ -83,6 +92,28 @@ public sealed class Array2D<T>
             array = this.array
         };
         return array;
+    }
+
+    public void Resize(int rows, int columns) 
+    {
+        Resize(rows, columns, default(T)!);
+    }
+
+    public void Resize(int rows, int columns, T filler) 
+    {
+        var stackedArray = new StackArray2D<T>(rows, columns);
+        stackedArray.Fill(filler);
+        int minRows = Math.Min(rows, numRows);
+        int minCols = Math.Min(columns, numColumns);
+        for (int i = 0; i < minRows; i++)
+            for (int j = 0; j < minCols; j++) 
+            {
+                stackedArray[i, j] = this[i, j];
+            }
+        
+        numRows = rows;
+        numColumns = columns;
+        array = stackedArray.ToArray();
     }
 }
 
@@ -118,6 +149,11 @@ public ref struct StackArray2D<T>
         this.numRows = numRows;
         this.numColumns = numColumns;
         array = new T[numRows * numColumns];
+    }
+
+    public void Fill(T value) 
+    {
+        array.Fill(value);
     }
 
     public static StackArray2D<T> FromArray(int numRows, int numColumns, T[] grid) 

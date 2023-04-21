@@ -16,13 +16,66 @@ public class TileMap : Entity
     private Dictionary<string, int> layerIdx = new();
     
     public enum LayerType { Tiles, Entities, Decal, Grid }
-    private readonly RenderTarget2D renderTiles;
+    private RenderTarget2D renderTiles;
     public bool Dirty 
     {
         get => dirty;
         set => dirty = value;
     }
     private bool dirty = true;
+    private int width, height, gridX, gridY;
+
+    public int Width 
+    {
+        get => width;
+        set 
+        {
+            width = value;
+            SizeChanged();
+            dirty = true;
+        }
+    }
+
+    public int Height 
+    {
+        get => height;
+        set 
+        {
+            height = value;
+            SizeChanged();
+            dirty = true;
+        }
+    }
+
+    public Action<int, int, int, int>? OnSizeChanged;
+
+    private void SizeChanged() 
+    {
+        renderTiles.Dispose();
+        renderTiles = new RenderTarget2D(GameApp.Instance.GraphicsDevice, width * gridX, height * gridY);
+        OnSizeChanged?.Invoke(width, height, gridX, gridY);
+    }
+
+    public TileMap(int width, int height, int gridX, int gridY) 
+    {
+        this.width = width;
+        this.height = height;
+        this.gridX = gridX;
+        this.gridY = gridY;
+        renderTiles = new RenderTarget2D(GameApp.Instance.GraphicsDevice, width * gridX, height * gridY);
+        Depth = 3;
+        Active = true;
+        LevelSize = new Point(width, height);
+    }
+
+    public void AddGridLayer(string layerName, Tileset tileset) 
+    {
+        var gridLayer = new GridLayer(width, height, gridX, gridY, tileset, LayerType.Grid);
+        OnSizeChanged += gridLayer.OnSizeChanged;
+        layerIdx.Add(layerName, layers.Count);
+        layers.Add(gridLayer);
+        drawableLayer.Add(gridLayer);
+    }
 
     public TileMap(
         OgmoLevel level, 
@@ -31,6 +84,8 @@ public class TileMap : Entity
         Dictionary<string, Tileset> tilesets
     ) 
     {
+        this.width = width;
+        this.height = height;
         renderTiles = new RenderTarget2D(GameApp.Instance.GraphicsDevice, width, height);
         Depth = 3;
         Active = true;
@@ -54,6 +109,7 @@ public class TileMap : Entity
                 layerType = LayerType.Tiles;
                 var tileset = tilesets[layerName];
                 var newLayer = new TileLayer(layer, tileset, layerType);
+                OnSizeChanged += newLayer.OnSizeChanged;
                 layers.Add(newLayer);
                 drawableLayer.Add(newLayer);
             }
@@ -62,6 +118,7 @@ public class TileMap : Entity
                 layerType = LayerType.Grid;
                 var tileset = tilesets[layerName];
                 var newLayer = new GridLayer(layer, tileset, layerType);
+                OnSizeChanged += newLayer.OnSizeChanged;
                 layers.Add(newLayer);
                 drawableLayer.Add(newLayer);
             }
@@ -99,6 +156,7 @@ public class TileMap : Entity
         {
             if (!layer.Dirty)
                 continue;
+            
             GameApp.Instance.GraphicsDevice.SetRenderTarget(layer.Texture);
             GameApp.Instance.GraphicsDevice.Clear(Color.Transparent);
             spriteBatch.Begin(samplerState: SamplerState.PointClamp);
@@ -118,7 +176,7 @@ public class TileMap : Entity
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(renderTiles, Vector2.Zero, Color.White);
+        spriteBatch.Draw(renderTiles, Position, Color.White);
         base.Draw(spriteBatch);
     }
 
@@ -163,14 +221,21 @@ public class TileMap : Entity
         public Point LevelSize;
         public LayerType LayerType;
 
-        public Layer(OgmoLayer layer, LayerType layerType) 
+        public Layer(OgmoLayer? layer, LayerType layerType) 
         {
+            if (layer == null) 
+            {
+                LayerName = string.Empty;
+                LayerType = layerType;
+                return;
+            }
             LayerName = layer.Name;
             LevelSize = new Point(layer.GridCellsX, layer.GridCellsY);
             LayerType = layerType;
         }
 
         public virtual void SetTile(Point pixelPoint, string id) {}
+        public virtual void OnSizeChanged(int width, int height, int gridWidth, int gridHeight) {}
     }
 
     public class EntityLayer : Layer
@@ -186,18 +251,34 @@ public class TileMap : Entity
 
     public class GridLayer : Layer, ITextureMap
     {
-        public Array2D<string> Data;
         public readonly Tileset Tileset;
-        public readonly int Rows;
-        public readonly int Columns;
-        private readonly Array2D<SpriteTexture?> textureGridData;
         private readonly Picker<SpriteTexture> picker;
-        private readonly RenderTarget2D texture; 
+
+        public Array2D<string> Data;
+        public int Rows;
+        public int Columns;
+        private Array2D<SpriteTexture?> textureGridData;
+        private RenderTarget2D texture; 
         private bool dirty = true;
 
 
         public RenderTarget2D Texture => texture;
         public bool Dirty => dirty;
+
+        public GridLayer(
+            int width, int height,
+            int gridWidth, int gridHeight, Tileset tileset, LayerType layerType) : base(null, layerType)
+        {
+            texture = new RenderTarget2D(GameApp.Instance.GraphicsDevice, width * gridWidth, height * gridHeight);
+            Tileset = tileset;
+            LevelSize = new Point(width, height);
+            textureGridData = new Array2D<SpriteTexture?>(LevelSize.X, LevelSize.Y);
+            Rows = LevelSize.X;
+            Columns = LevelSize.Y;
+            picker = new Picker<SpriteTexture>();
+            Data = new Array2D<string>(Columns, Rows);
+            Data.Fill("0");
+        }
 
         public GridLayer(OgmoLayer layer, Tileset tileset, LayerType layerType) : base(layer, layerType) 
         {
@@ -224,6 +305,19 @@ public class TileMap : Entity
                 return;
             }
             Data = Array2D<string>.Empty;
+        }
+
+        public override void OnSizeChanged(int width, int height, int gridWidth, int gridHeight) 
+        {
+            texture.Dispose();
+            texture = new RenderTarget2D(GameApp.Instance.GraphicsDevice, width * gridWidth, height * gridHeight);
+            LevelSize = new Point(width, height);
+            textureGridData = new Array2D<SpriteTexture?>(LevelSize.X, LevelSize.Y);
+            Rows = LevelSize.X;
+            Columns = LevelSize.Y;
+            Data.Resize(Columns, Rows, "0");
+            ApplyAutotile(Data, picker);
+            dirty = true;
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -268,10 +362,9 @@ public class TileMap : Entity
             var (y, x) = pixelPoint;
             if (Data[x, y] == id) 
                 return;
-
+            
             dirty = true;
 
-            MathUtils.StartRandScope(28);
             Data[x, y] = id;
 
             // Center
@@ -292,8 +385,6 @@ public class TileMap : Entity
             // SouthWest and SouthEast
             UpdateAutotile(x - 1, y + 1);
             UpdateAutotile(x + 1, y + 1);
-
-            MathUtils.EndRandScope();
         }
 
         public void UpdateAutotile(int x, int y) 

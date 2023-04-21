@@ -72,31 +72,30 @@ public sealed class Sequence : Component
     }
 }
 
-public sealed class Tweener 
+public sealed class Tweener : IPoolable<Tweener>
 {
-    internal Tween TweenComponent;
+    internal Tween? TweenComponent;
     internal Action<Tween>? OnReadyCallback;
     internal Action<Tween>? OnUpdateCallback;
     internal Action<Tween>? OnCompletedCallback;
 
-    public bool Active => TweenComponent.TimeLeft > 0;
+    public bool Active => TweenComponent!.TimeLeft > 0;
     
     
-    internal Tweener(Entity entity) 
+    public Tweener() 
     {
-        TweenComponent = Tween.Create(entity, Tween.TweenMode.OneShot, null);
     }
 
 
     public Tweener SetEase(Ease.Easer easing) 
     {
-        TweenComponent.Easer = easing;
+        TweenComponent!.Easer = easing;
         return this;
     }
 
     public Tweener SetDelay(float delay) 
     {
-        TweenComponent.Delay = delay;
+        TweenComponent!.Delay = delay;
         return this;
     }
 
@@ -120,14 +119,14 @@ public sealed class Tweener
 
     public Tweener Play() 
     {
-        TweenComponent.Start();
+        TweenComponent!.Start();
         return this;
     }
 
     public IEnumerator Wait() 
     {
 #if DEBUG
-        if (!TweenComponent.Active) 
+        if (!TweenComponent!.Active) 
         {
             SkyLog.Log("Waited while the Tween is not running.", SkyLog.LogLevel.Assert);
             SkyLog.Log("Make sure to play the tween first.", SkyLog.LogLevel.Warning);
@@ -138,18 +137,18 @@ public sealed class Tweener
 
     public Tweener SetMode(Tween.TweenMode mode) 
     {
-        TweenComponent.Mode = mode;
+        TweenComponent!.Mode = mode;
         return this;
     }
 
     public void Destroy() 
     {
-        TweenComponent.DetachSelf();
+        TweenComponent!.DetachSelf();
     }
 
     internal void AddToTween(Action<Tween> tween, float duration) 
     {
-        TweenComponent.Duration = duration;
+        TweenComponent!.Duration = duration;
         TweenComponent.OnReady = t => 
         {
             OnReadyCallback?.Invoke(t);
@@ -162,6 +161,7 @@ public sealed class Tweener
         TweenComponent.OnEnd = t => 
         {
             OnCompletedCallback?.Invoke(t);
+            Pool<Tweener>.Destroy(this);
         };
     }
 }
@@ -171,7 +171,8 @@ public static class TweenUtils
 #region Rotation
     public static Tweener TWRotation(this Entity entity, float targetRotation, float duration) 
     {
-        var ctx = new Tweener(entity);
+        var ctx = Pool<Tweener>.Create();
+        ctx.TweenComponent = Tween.Create(entity, Tween.TweenMode.OneShot, null, duration);
         var cachedRotation = entity.Rotation;
         ctx.AddToTween(t => 
         {
@@ -183,7 +184,8 @@ public static class TweenUtils
 #region GlobalMove
     public static Tweener TWGlobalMove(this Entity entity, Vector2 targetPosition, float duration) 
     {
-        var ctx = new Tweener(entity);
+        var ctx = Pool<Tweener>.Create();
+        ctx.TweenComponent = Tween.Create(entity, Tween.TweenMode.OneShot, null, duration);
         var cachedPosition = entity.Position;
         ctx.AddToTween(t => 
         {
@@ -195,7 +197,8 @@ public static class TweenUtils
 
     public static Tweener TWGlobalMoveX(this Entity entity, float targetPosition, float duration) 
     {
-        var ctx = new Tweener(entity);
+        var ctx = Pool<Tweener>.Create();
+        ctx.TweenComponent = Tween.Create(entity, Tween.TweenMode.OneShot, null, duration);
         var cachedPosition = entity.Position;
         ctx.AddToTween(t => 
         {
@@ -206,7 +209,8 @@ public static class TweenUtils
 
     public static Tweener TWGlobalMoveY(this Entity entity, float targetPosition, float duration)
     {
-        var ctx = new Tweener(entity);
+        var ctx = Pool<Tweener>.Create();
+        ctx.TweenComponent = Tween.Create(entity, Tween.TweenMode.OneShot, null, duration);
         var cachedPosition = entity.Position;
         ctx.AddToTween(t => 
         {
@@ -219,7 +223,8 @@ public static class TweenUtils
 #region Move
     public static Tweener TWMove(this Entity entity, Vector2 targetPosition, float duration) 
     {
-        var ctx = new Tweener(entity);
+        var ctx = Pool<Tweener>.Create();
+        ctx.TweenComponent = Tween.Create(entity, Tween.TweenMode.OneShot, null, duration);
         var cachedPosition = entity.LocalPosition;
         ctx.AddToTween(t => 
         {
@@ -230,7 +235,8 @@ public static class TweenUtils
 
     public static Tweener TWMoveX(this Entity entity, float targetPosition, float duration) 
     {
-        var ctx = new Tweener(entity);
+        var ctx = Pool<Tweener>.Create();
+        ctx.TweenComponent = Tween.Create(entity, Tween.TweenMode.OneShot, null, duration);
         var cachedPosition = entity.LocalPosition;
         ctx.AddToTween(t => 
         {
@@ -245,7 +251,8 @@ public static class TweenUtils
 
     public static Tweener TWMoveY(this Entity entity, float targetPosition, float duration) 
     {
-        var ctx = new Tweener(entity);
+        var ctx = Pool<Tweener>.Create();
+        ctx.TweenComponent = Tween.Create(entity, Tween.TweenMode.OneShot, null, duration);
         var cachedPosition = entity.LocalPosition;
         ctx.AddToTween(t => 
         {
@@ -262,7 +269,8 @@ public static class TweenUtils
 #region Modulate
     public static Tweener TWModulate(this Entity entity, Color targetModulate, float duration) 
     {
-        var ctx = new Tweener(entity);
+        var ctx = Pool<Tweener>.Create();
+        ctx.TweenComponent = Tween.Create(entity, Tween.TweenMode.OneShot, null, duration);
         var cachedColor = entity.Modulate;
         ctx.AddToTween(t => 
         {
@@ -276,7 +284,8 @@ public static class TweenUtils
 #region Camera
     public static Tweener TWCameraZoom(this Entity entity, Camera camera, float zoomTo, float duration) 
     {
-        var ctx = new Tweener(entity);
+        var ctx = Pool<Tweener>.Create();
+        ctx.TweenComponent = Tween.Create(entity, Tween.TweenMode.OneShot, null, duration);
         var cachedZoom = camera.Zoom;
         ctx.AddToTween(t => 
         {
@@ -287,7 +296,8 @@ public static class TweenUtils
 
     public static Tweener TWCameraMove(this Entity entity, Camera camera, Vector2 targetPosition, float duration) 
     {
-        var ctx = new Tweener(entity);
+        var ctx = Pool<Tweener>.Create();
+        ctx.TweenComponent = Tween.Create(entity, Tween.TweenMode.OneShot, null, duration);
         var cachedPosition = camera.Position;
         ctx.AddToTween(t => 
         {
@@ -298,7 +308,8 @@ public static class TweenUtils
 
     public static Tweener TWCameraMoveX(this Entity entity, Camera camera, float targetPosition, float duration) 
     {
-        var ctx = new Tweener(entity);
+        var ctx = Pool<Tweener>.Create();
+        ctx.TweenComponent = Tween.Create(entity, Tween.TweenMode.OneShot, null, duration);
         var cachedPosition = camera.Position;
         ctx.AddToTween(t => 
         {
@@ -309,7 +320,8 @@ public static class TweenUtils
 
     public static Tweener TWCameraMoveY(this Entity entity, Camera camera, float targetPosition, float duration) 
     {
-        var ctx = new Tweener(entity);
+        var ctx = Pool<Tweener>.Create();
+        ctx.TweenComponent = Tween.Create(entity, Tween.TweenMode.OneShot, null, duration);
         var cachedPosition = camera.Position;
         ctx.AddToTween(t => 
         {
@@ -321,7 +333,8 @@ public static class TweenUtils
 
     public static Tweener TWCustom(this Entity entity, Action<Tween> onProcess, float duration) 
     {
-        var ctx = new Tweener(entity);
+        var ctx = Pool<Tweener>.Create();
+        ctx.TweenComponent = Tween.Create(entity, Tween.TweenMode.OneShot, null, duration);
         ctx.AddToTween(t => 
         {
             onProcess(t);
