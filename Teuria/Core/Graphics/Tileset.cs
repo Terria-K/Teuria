@@ -4,13 +4,16 @@ using System.Linq;
 using TeuJson;
 using TeuJson.Attributes;
 using Microsoft.Xna.Framework;
+using System.Runtime.InteropServices;
 
 namespace Teuria;
 
 
 public class Tileset 
 {
-    public List<Terrain> Terrains = new List<Terrain>();
+    private Dictionary<string, int> terrainLookup = new();
+    private List<Terrain> terrains = new();
+    public IReadOnlyList<Terrain> Terrains => terrains; 
     public Spritesheet Sheet;
     public int Width { get; private set; }
     public int Height { get; private set; }
@@ -25,7 +28,9 @@ public class Tileset
         Width = result.Width;
         Height = result.Height;
         var terrain = CreateTerrain(result);
-        Terrains.Add(terrain);
+        var count = terrains.Count;
+        terrainLookup.Add(terrain.Name, count);
+        terrains.Add(terrain);
     }
 
     private Tileset(SpriteTexture texture, int width, int height) 
@@ -44,7 +49,9 @@ public class Tileset
         Width = result.Width;
         Height = result.Height;
         var terrain = CreateTerrain(result);
-        Terrains.Add(terrain);
+        var count = terrains.Count;
+        terrainLookup.Add(terrain.Name, count);
+        terrains.Add(terrain);
     }
 
     private Terrain CreateTerrain(TeuriaTileset result) 
@@ -90,7 +97,12 @@ public class Tileset
     public Dictionary<byte, Rules> GetTerrainRules(string terrainName) 
     {
         var dict = new Dictionary<byte, Rules>();
-        var terrain = Terrains.Where(x => x.Name == terrainName).First();
+        var id = CollectionsMarshal.GetValueRefOrAddDefault(terrainLookup, terrainName, out bool isExist);
+#if DEBUG
+        if (!isExist)
+            SkyLog.Log($"Terrain ID {id} does not exists, falling back to 0", SkyLog.LogLevel.Error);
+#endif
+        var terrain = terrains[id];
 
         foreach (var rule in terrain.RulesList) 
         {
