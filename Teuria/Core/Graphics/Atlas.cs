@@ -18,6 +18,7 @@ public delegate Dictionary<string, SpriteTexture> AtlasDelegate(Stream fs, Textu
 
 public class Atlas 
 {
+    public enum Extension { Json, Bin }
     private Dictionary<string, SpriteTexture> sprites = new Dictionary<string, SpriteTexture>();
     public Texture2D? BaseTexture;
 
@@ -57,6 +58,32 @@ public class Atlas
         using var tc = TitleContainer.OpenStream(path);
         sprites = func(tc, baseTexture);
         BaseTexture = baseTexture;
+    }
+
+    public static Atlas LoadPng(string path, IAtlasLoader loader, Extension extension = Extension.Json) 
+    {
+        var atlasExtension = extension switch 
+        {
+            Extension.Bin => ".bin",
+            Extension.Json => ".json",
+            _ => throw new InvalidOperationException()
+        };
+        var baseTexture = TeuriaImporter.LoadImage(path + ".png");
+        using var tc = TitleContainer.OpenStream(path + atlasExtension);
+        return new Atlas(tc, baseTexture, loader);
+    }
+
+    public static Atlas LoadQoi(string path, IAtlasLoader loader, Extension extension = Extension.Json) 
+    {
+        var atlasExtension = extension switch 
+        {
+            Extension.Bin => ".bin",
+            Extension.Json => ".json",
+            _ => throw new InvalidOperationException()
+        };
+        var baseTexture = TeuriaImporter.LoadImage(path + ".qoi");
+        using var tc = TitleContainer.OpenStream(path + atlasExtension);
+        return new Atlas(tc, baseTexture, loader);
     }
 
     public bool Contains(string id) => sprites.ContainsKey(id);
@@ -162,8 +189,8 @@ public sealed class ClutterBinaryLoader : IAtlasLoader
 ///         [Key]: {
 ///             "x": [number]
 ///             "y": [number]
-///             "w": [number]
-///             "h": [number]
+///             "width": [number]
+///             "height": [number]
 ///         }
 ///     }
 /// }
