@@ -7,7 +7,6 @@ namespace Teuria;
 public class Coroutine : Component
 {
     private CoroutineContext scheduler = new();
-    private bool active = true;
 
 
     private async Task WrapCoroutine(Func<Task> coroutine)
@@ -52,7 +51,7 @@ internal struct WaitTimer
 {
     private float timer;
 
-    internal async Task WaitFor(float seconds) 
+    internal async ValueTask WaitFor(float seconds) 
     {
         timer = seconds;
         while (timer > 0) 

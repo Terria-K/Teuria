@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework.Audio;
 
 namespace Teuria;
@@ -61,4 +62,18 @@ public static class TeuriaExtension
 
         return array2D;
     }
+
+#region Coroutine Stuffs
+    public static ValueTaskAwaiter GetAwaiter(this int seconds) 
+    {
+        var timer = new WaitTimer();
+        return timer.WaitFor(seconds).GetAwaiter();
+    }
+
+    public static ValueTaskAwaiter GetAwaiter(this float seconds) 
+    {
+        var timer = new WaitTimer();
+        return timer.WaitFor(seconds).GetAwaiter();
+    }
+#endregion
 }
