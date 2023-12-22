@@ -2,14 +2,11 @@ using System.Text;
 using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using TeuJson;
-using TeuJson.Attributes;
 
 namespace Teuria;
 
-public partial class TextLabel : Control, IDeserialize 
+public class TextLabel : Control
 {
-    [Ignore]
     public required SpriteFontBase Font 
     {
         get => font;
@@ -102,14 +99,14 @@ public partial class TextLabel : Control, IDeserialize
         {
         case HorizontalAlignment.Left: 
         {
-            alignmentPosition.X = position.X;
+            var sizeX = size.X;
+            alignmentPosition.X = position.X - (sizeX + measured.X);
             break;
         }
 
         case HorizontalAlignment.Right: 
         {
-            var sizeX = size.X;
-            alignmentPosition.X = position.X + (sizeX - measured.X);
+            alignmentPosition.X = position.X;
             break;
         }
 

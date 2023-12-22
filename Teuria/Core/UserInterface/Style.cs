@@ -4,42 +4,18 @@ using TeuJson.Attributes;
 
 namespace Teuria;
 
-public partial class Style : IDeserialize
+public class Style
 {
-    [TeuObject]
-    [Custom("Teuria.TeuriaCustomConverter")]
     public Color BackgroundColor;
-
-    [TeuObject]
     public int PaddingLeft;
-
-    [TeuObject]
     public int PaddingRight;
-
-    [TeuObject]
     public int PaddingTop;
-
-    [TeuObject]
     public int PaddingBottom;
-
-    [TeuObject]
     public int TextOutlineStroke;
-
-    [TeuObject]
-    [Custom("Teuria.TeuriaCustomConverter")]
     public Color TextOutlineColor;
-
-    [TeuObject]
-    [Custom("Teuria.TeuriaCustomConverter")]
     public Color TextColor;
-
-    [TeuObject]
     public HorizontalAlignment TextHorizontalAlignment;
-
-    [TeuObject]
     public VerticalAlignment TextVerticalAlignment;
-
-    [Ignore]
     public Padding Padding => new Padding(PaddingLeft, PaddingTop, PaddingRight, PaddingBottom);
 
     public Style() {}
@@ -57,8 +33,6 @@ public partial class Style : IDeserialize
         TextHorizontalAlignment = style.TextHorizontalAlignment;
         TextVerticalAlignment = style.TextVerticalAlignment;
     }
-
-
 
     public static readonly Style Default = new Style() 
     {

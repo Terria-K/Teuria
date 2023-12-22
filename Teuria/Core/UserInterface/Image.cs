@@ -1,16 +1,37 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Teuria;
 
-
-public class UIImage : Control 
+public abstract class BaseImage : Control 
 {
     public required SpriteTexture Texture;
+}
+
+public class AnimatedImage : BaseImage
+{
+    public required string AnimationPath;
+    private AnimatedSprite? animSprite;
+
+    public override void EnterScene(Scene scene, ContentManager content)
+    {
+        base.EnterScene(scene, content);
+        if (RectSize != Vector2.Zero) 
+        {
+            animSprite = new AnimatedSprite(AnimationPath, Texture);
+        }
+    }
+}
+
+public class UIImage : BaseImage
+{
     private Sprite? sprite;
 
-    public override void Ready()
+
+    public override void EnterScene(Scene scene, ContentManager content)
     {
+        base.EnterScene(scene, content);
         if (RectSize != Vector2.Zero)
             sprite = new Sprite(Texture, (int)RectSize.X, (int)RectSize.Y, false, true);
         else 
@@ -20,7 +41,6 @@ public class UIImage : Control
         }
 
         AddComponent(sprite);
-        base.Ready();
     }
 
     public override void Draw(SpriteBatch spriteBatch)

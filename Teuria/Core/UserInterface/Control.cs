@@ -2,16 +2,12 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using TeuJson;
-using TeuJson.Attributes;
 
 namespace Teuria;
 
-public partial class Control : Entity, IDeserialize
+public class Control : Entity
 {
-    [TeuObject]
     public int RectDepth;
-    [Custom("Teuria.TeuriaCustomConverter")]
     public Vector2 RectSize 
     {
         get => rectSize;
@@ -21,15 +17,33 @@ public partial class Control : Entity, IDeserialize
             dirty = true;
         } 
     }
-
-    [Custom("Teuria.TeuriaCustomConverter")]
     public Vector2 RectPosition 
     {
-        get => rectPosition;
-        set => rectPosition = value;
+        get => LocalPosition;
+        set 
+        {
+            LocalPosition = value;
+        } 
     }
 
-    [Ignore]
+    public float RectPosX 
+    {
+        get => LocalPosX;
+        set 
+        {
+            LocalPosX = value;
+        }
+    }
+
+    public float RectPosY 
+    {
+        get => LocalPosY;
+        set 
+        {
+            LocalPosY = value;
+        }
+    }
+
     public Rectangle RectSizeWithPadding => new Rectangle(
         (int)rectSize.X + currentStyle.PaddingLeft, 
         (int)rectSize.Y + currentStyle.PaddingTop, 
@@ -49,16 +63,10 @@ public partial class Control : Entity, IDeserialize
         }
     }
 
-    [TeuObject]
     public Style BaseStyle;
-
-    [TeuObject]
     public Style? HoveredStyle;
-
-    [TeuObject]
     public Style? PressedStyle;
 
-    [Ignore]
     public IReadOnlyList<Control> Childrens => childs;
     public Control? Parent;
 
@@ -66,7 +74,6 @@ public partial class Control : Entity, IDeserialize
     private HorizontalAlignment horizontalAlignment;
     private bool vAlignmentSetup;
     private VerticalAlignment verticalAlignment;
-    private Vector2 rectPosition;
     private Vector2 rectSize;
     private Dictionary<string, int> indexLookup;
     private List<Control> childs;
@@ -98,6 +105,15 @@ public partial class Control : Entity, IDeserialize
             SetAlignVertical(verticalAlignment);
     }
 
+    public override void ExitScene(Scene scene)
+    {
+        base.ExitScene(scene);
+        foreach (var child in childs) 
+        {
+            scene.Remove(child);
+        }
+    }
+
     public Control AddChild(Control control) 
     {
         childs.Add(control);
@@ -108,6 +124,10 @@ public partial class Control : Entity, IDeserialize
             control.Depth = (control.RectDepth + Depth) - 1;
             Scene.Add(control);
         }
+        if (control.rectSize.X > rectSize.X)
+            rectSize.X = control.rectSize.X;
+        if (control.rectSize.Y > rectSize.Y)
+            rectSize.Y = control.rectSize.Y;
 
         dirty = true;
         return this;
@@ -169,7 +189,7 @@ public partial class Control : Entity, IDeserialize
             horizontalAlignment = alignment;
             return this;
         }
-        Padding parentPosition = Parent != null ? Parent.Padding : Padding.Empty;
+        Padding parentPadding = Parent != null ? Parent.Padding : Padding.Empty;
         Vector2 parentSize = Parent != null ? Parent.RectSize : Vector2.Zero;
 
         float alignmentPosition = 0f;
@@ -177,22 +197,22 @@ public partial class Control : Entity, IDeserialize
         switch (alignment) 
         {
         case HorizontalAlignment.Left: {
-            var sizeX = parentPosition.Left;
+            var sizeX = parentPadding.Left;
             alignmentPosition = sizeX;
             break;
         }
         case HorizontalAlignment.Right: {
-            var sizeX = parentSize.X - parentPosition.Right;
+            var sizeX = parentSize.X - parentPadding.Right;
             alignmentPosition = sizeX - rectSize.X;
             break;
         }
         case HorizontalAlignment.Center: {
-            var sizeX = ((parentSize.X / 2) - parentPosition.Right) + parentPosition.Left;
+            var sizeX = ((parentSize.X / 2) - parentPadding.Right) + parentPadding.Left;
             alignmentPosition = sizeX - (rectSize.X / 2);
             break;
         }
         }
-        rectPosition.X = alignmentPosition;
+        LocalPosX = alignmentPosition;
         return this;
     }
 
@@ -227,15 +247,12 @@ public partial class Control : Entity, IDeserialize
             break;
         }
         }
-        rectPosition.Y = alignmentPosition;
+        LocalPosY = alignmentPosition;
         return this;
     }
 
     private void StyleUpdate() 
     {
-        if (LocalPosition != rectPosition)
-            LocalPosition = rectPosition;
-
         if (!dirty)
             return;
         
@@ -251,7 +268,7 @@ public partial class Control : Entity, IDeserialize
     private void EventUpdate() 
     {
         // Clicked
-        if (GetFullSize().Contains(TInput.Mouse.ScreenToWorld(Scene!.Camera!)))
+        if (MouseDetectionArea().Contains(TInput.Mouse.ScreenToWorld(Scene!.Camera!)))
         {
             if (TInput.Mouse.LeftClicked()) 
             {
@@ -320,7 +337,7 @@ public partial class Control : Entity, IDeserialize
     {
         Canvas.DrawRect(spriteBatch, new Rectangle(
             (int)PosX, (int)PosY, 
-            (int)RectSize.X, (int)RectSize.Y), 1, Color.Red);
+            (int)rectSize.X, (int)rectSize.Y), 1, Color.Red);
         if (currentStyle.PaddingBottom > 0 || 
             currentStyle.PaddingLeft > 0 || 
             currentStyle.PaddingRight > 0 || 
@@ -333,7 +350,7 @@ public partial class Control : Entity, IDeserialize
         }
     }
 
-    private Rectangle GetFullSize() 
+    public virtual Rectangle MouseDetectionArea() 
     {
         return new Rectangle((int)PosX, (int)PosY, (int)rectSize.X, (int)rectSize.Y);
     }
@@ -357,14 +374,6 @@ public partial class Control : Entity, IDeserialize
 
     public virtual void OnHoveredEvent() {}
     public virtual void OnMouseEvent(MouseButton state) {}
-
-    public static T LoadTheme<T>(string jsonPath) 
-    where T : Control, new()
-    {
-        using var tc = TitleContainer.OpenStream(jsonPath);
-        var deserialized = JsonConvert.DeserializeFromStream<T>(tc);
-        return deserialized;
-    }
 }
 
 public enum MouseButton 
@@ -374,16 +383,12 @@ public enum MouseButton
     MiddleClicked
 }
 
-public partial struct Padding : IDeserialize
+public struct Padding
 {
     public static readonly Padding Empty = new Padding(0, 0, 0, 0);
-    [TeuObject]
     public int Left;
-    [TeuObject]
     public int Right;
-    [TeuObject]
     public int Top;
-    [TeuObject]
     public int Bottom;
 
     public Padding(int left, int right, int top, int bottom) 
@@ -392,71 +397,5 @@ public partial struct Padding : IDeserialize
         Right = right;
         Top = top;
         Bottom = bottom;
-    }
-}
-
-public static class TeuriaCustomConverter 
-{
-    public static JsonValue ToJson(this Color value) 
-    {
-        return new JsonObject 
-        {
-            ["r"] = value.R,
-            ["g"] = value.G,
-            ["b"] = value.B,
-            ["a"] = value.A
-        };
-    }
-
-    public static Color ToColor(this JsonValue value) 
-    {
-        if (value.IsObject) 
-        {
-            int r = value["r"];
-            int g = value["g"];
-            int b = value["b"];
-            int a = value["a"];
-            return new Color(r, g, b, a);
-        }
-        return Color.White;
-    }
-
-    public static JsonValue ToJson(this Vector2 value) 
-    {
-        return new JsonObject 
-        {
-            ["x"] = value.X,
-            ["y"] = value.Y
-        };
-    }
-
-    public static Vector2 ToVector2(this JsonValue value) 
-    {
-        if (value.IsObject) 
-        {
-            int x = value["x"];
-            int y = value["y"];
-            return new Vector2(x, y);
-        }
-        return Vector2.Zero;
-    }
-
-    public static Rectangle ToRectangle(this JsonValue value) 
-    {
-        if (value.IsNull)
-            return Rectangle.Empty;
-        
-        return new Rectangle(value["x"], value["y"], value["width"], value["height"]);
-    }
-
-    public static JsonValue ToJson(this Rectangle rectangle) 
-    {
-        return new JsonObject 
-        {
-            ["x"] = rectangle.X,
-            ["y"] = rectangle.Y,
-            ["width"] = rectangle.Width,
-            ["height"] = rectangle.Height
-        };
     }
 }
