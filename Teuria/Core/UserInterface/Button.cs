@@ -1,4 +1,5 @@
 using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using TeuJson;
 
@@ -21,6 +22,12 @@ public partial class Button : Control, IDeserialize
     public InputButton? InputDown;
     public InputButton? InputEnter;
     public bool Selected;
+    public int AreaPadding;
+
+    public override Rectangle MouseDetectionArea()
+    {
+        return new Rectangle((int)PosX + AreaPadding, (int)PosY + AreaPadding, (int)RectSize.X, (int)RectSize.Y);
+    }
 
     public override void Update()
     {
