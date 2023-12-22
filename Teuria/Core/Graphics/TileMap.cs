@@ -62,7 +62,7 @@ public class TileMap : Entity
         this.height = height;
         this.gridX = gridX;
         this.gridY = gridY;
-        renderTiles = new RenderTarget2D(GameApp.Instance.GraphicsDevice, width * gridX, height * gridY);
+        renderTiles = new RenderTarget2D(GameApp.Instance.GraphicsDevice, width, height);
         Depth = 3;
         Active = true;
         LevelSize = new Point(width, height);

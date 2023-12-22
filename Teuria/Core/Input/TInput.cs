@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
@@ -34,7 +32,6 @@ public static class TInput
 
     internal static void Initialize() 
     {
-
         AddInput(Keyboard);
         AddInput(Mouse);
         for (int i = 0; i < 4; i++) 
