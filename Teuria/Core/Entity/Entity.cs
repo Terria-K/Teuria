@@ -38,6 +38,18 @@ public class Entity : Node, IEnumerable<Component>
         set => Transform.LocalPosition = value;
     }
 
+    public float LocalPosX
+    {
+        get => Transform.LocalPosX;
+        set => Transform.LocalPosX = value;
+    }
+
+    public float LocalPosY
+    {
+        get => Transform.LocalPosY;
+        set => Transform.LocalPosY = value;
+    }
+
     public float Rotation 
     {
         get => Transform.Rotation;

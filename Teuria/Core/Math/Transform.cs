@@ -59,6 +59,18 @@ public class Transform
         }
     }
 
+    public float LocalPosX
+    {
+        get => localPosition.X;
+        set => LocalPosition = new Vector2(value, localPosition.Y);
+    }
+
+    public float LocalPosY
+    {
+        get => localPosition.Y;
+        set => LocalPosition = new Vector2(localPosition.X, value);
+    }
+
     public float PosX
     {
         get => Position.X;
