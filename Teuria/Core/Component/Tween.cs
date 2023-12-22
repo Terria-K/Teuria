@@ -63,6 +63,13 @@ public class Tween : Component
         Progress = 0;
     }
 
+    public void Stop() 
+    {
+        Reset();
+        Active = false;
+        OnEnd?.Invoke(this);
+    }
+
     public override void Update()
     {
         if (Delay > 0) 
