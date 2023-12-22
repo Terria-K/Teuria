@@ -1,3 +1,5 @@
+#nullable disable
+using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework;
 using TeuJson;
@@ -5,12 +7,22 @@ using TeuJson.Attributes;
 
 namespace Teuria.Level;
 
+public static class Ogmo
+{
+    public static TileMap CreateTilemap(OgmoLevel level, int width, int height, Dictionary<string, Tileset> tilesets) 
+    {
+        return new TileMap(level, width, height, tilesets);
+    }
+}
+
 public class OgmoLevel 
 {
     public OgmoLevelData LevelData { get; private set; }
     public Point LevelSize { get; private set; }
     public Point TileSize { get; private set; }
     public Point LevelPixelSize { get; private set; }
+
+    public OgmoLevel() {}
 
     private OgmoLevel(string path) 
     {
@@ -48,10 +60,10 @@ public class OgmoLevel
             return null!;
         }
 #endif
-
     }
 }
 
+#nullable enable
 public sealed partial class OgmoLevelData : IDeserialize
 {
     [Name("width")]
