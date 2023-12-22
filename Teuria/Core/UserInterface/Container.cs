@@ -29,7 +29,9 @@ public class HBoxContainer : Container
             {
                 child.RectSize = new Vector2(child.RectSize.X, RectSize.Y);
             }
-            lastWidth = child.RectSize.X + Offset;
+            lastWidth += child.RectSize.X + Offset;
+            if (lastWidth > RectSize.X)
+                RectSize = new Vector2(lastWidth, RectSize.Y);
         }
     }
 }
@@ -49,7 +51,9 @@ public class VBoxContainer : Container
             {
                 child.RectSize = new Vector2(RectSize.X, child.RectSize.Y);
             }
-            lastHeight = child.RectSize.Y + Offset;
+            lastHeight += child.RectSize.Y + Offset;
+            if (lastHeight > RectSize.Y)
+                RectSize = new Vector2(RectSize.X, lastHeight);
         }
     }
 }
