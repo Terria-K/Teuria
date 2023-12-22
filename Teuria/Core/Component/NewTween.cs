@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 
 namespace Teuria.Tweening;
@@ -123,7 +124,7 @@ public sealed class Tweener : IPoolable<Tweener>
         return this;
     }
 
-    public IEnumerator Wait() 
+    public async Task WaitAsync() 
     {
 #if DEBUG
         if (!TweenComponent!.Active) 
@@ -132,7 +133,7 @@ public sealed class Tweener : IPoolable<Tweener>
             SkyLog.Log("Make sure to play the tween first.", SkyLog.LogLevel.Warning);
         }
 #endif
-        yield return TweenComponent.Wait();
+        await TweenComponent.WaitAsync();
     }
 
     public Tweener SetMode(Tween.TweenMode mode) 

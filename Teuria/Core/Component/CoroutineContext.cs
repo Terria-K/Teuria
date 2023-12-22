@@ -10,6 +10,7 @@ namespace Teuria;
 public class CoroutineContext : SynchronizationContext
 {
     private IList<AsyncKey> continuations = new List<AsyncKey>();
+    public bool IsRunning => continuations.Count > 0;
 
     public override void Post(SendOrPostCallback d, object? state)
     {

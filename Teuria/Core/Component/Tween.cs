@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 
 namespace Teuria;
@@ -134,10 +135,10 @@ public class Tween : Component
         OnReady?.Invoke(this);
     }
 
-    public IEnumerator Wait() 
+    public async Task WaitAsync() 
     {
         while (Active)
-            yield return null;
+            await Task.Yield();
     }
 }
 

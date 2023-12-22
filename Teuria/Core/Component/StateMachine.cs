@@ -1,12 +1,13 @@
 using System;
 using System.Collections;
+using System.Threading.Tasks;
 
 namespace Teuria;
 
 
 public sealed class StateMachine : Component 
 {
-    private Func<IEnumerator>?[] coroutineList;
+    private Func<Task>?[] coroutineList;
     private Action?[] readyList;
     private Func<int>?[] updateList;
     private Action?[] endList;
@@ -26,7 +27,7 @@ public sealed class StateMachine : Component
             endList[currentState]?.Invoke();
             if (coroutineList[currentState] != null) 
             {
-                coroutine.Run(coroutineList[currentState]!());
+                coroutine.Run(coroutineList[currentState]!);
             }
         }
     }
@@ -41,7 +42,7 @@ public sealed class StateMachine : Component
         totalStates = amount;
         readyList = new Action[amount];
         updateList = new Func<int>[amount];
-        coroutineList = new Func<IEnumerator>[amount];
+        coroutineList = new Func<Task>[amount];
         endList = new Action[amount];
     }
 
@@ -52,7 +53,7 @@ public sealed class StateMachine : Component
         entity.AddComponent(coroutine);
     }
 
-    internal void AddState(int id, Func<int>? update, Action? ready, Func<IEnumerator>? coroutine, Action? end) 
+    internal void AddState(int id, Func<int>? update, Action? ready, Func<Task>? coroutine, Action? end) 
     {
         updateList[id] = update;
         readyList[id] = ready;
@@ -77,7 +78,7 @@ public sealed class StateMachine : Component
 public class StateBuilder 
 {
     private int id;
-    private Func<IEnumerator>? coroutine;
+    private Func<Task>? coroutine;
     private Action? ready;
     private Func<int>? update;
     private Action? end;
@@ -108,7 +109,7 @@ public class StateBuilder
         return this;
     }
 
-    public StateBuilder AddCoroutine(Func<IEnumerator> coroutineFunc) 
+    public StateBuilder AddCoroutine(Func<Task> coroutineFunc) 
     {
         coroutine = coroutineFunc;
         return this;

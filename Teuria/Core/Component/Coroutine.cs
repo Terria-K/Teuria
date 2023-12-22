@@ -1,103 +1,64 @@
-using System.Collections.Generic;
-using System.Collections;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Teuria;
 
-public sealed class Coroutine : Component 
+public class Coroutine : Component
 {
-    private Stack<IEnumerator> coroutines = new Stack<IEnumerator>();
-    private float timer;
-    private bool done;
-    private bool freeWhenDone;
+    private CoroutineContext scheduler = new();
+    private bool active = true;
 
-    public Coroutine() {}
 
-    public Coroutine(IEnumerator corou) 
+    private async Task WrapCoroutine(Func<Task> coroutine)
     {
-        coroutines.Push(corou);
+        await Task.Yield();
+        await coroutine();
     }
 
-    public static Coroutine Create(Entity entity, IEnumerator enumerator) 
+    public Task Run(Func<Task> coroutine) 
     {
-        var corou = new Coroutine(enumerator);
-        corou.freeWhenDone = true;
-        entity.AddComponent(corou);
-        return corou;
-    }
-
-    public RefCoroutine Run(IEnumerator coroutine) 
-    {
-        Active = true;
-        timer = 0f;
-        coroutines.Clear();
-        coroutines.Push(coroutine);
-        return new RefCoroutine(this, coroutine);
-    }
-
-    public bool IsYielding(IEnumerator coroutine) 
-    {
-        return coroutines.Contains(coroutine);
-    }
-
-    public bool IsYielding(in RefCoroutine coroutine) 
-    {
-        return coroutine.IsRunning;
-    }
-
-    public void Cancel() 
-    {
-        Active = false;
-        timer = 0;
-        coroutines.Clear();
-        done = true;
+        var oldContext = SynchronizationContext.Current;
+        try 
+        {
+            var syncContext = (SynchronizationContext)scheduler;
+            SynchronizationContext.SetSynchronizationContext(syncContext);
+            var task = WrapCoroutine(coroutine);
+            return task;
+        }
+        finally 
+        {
+            SynchronizationContext.SetSynchronizationContext(oldContext);
+        }
     }
 
     public override void Update()
     {
-        UpdateCoroutine();
+        scheduler.Update();
         base.Update();
     }
 
-    private void UpdateCoroutine() 
-    {
-        done = false;
+    public bool IsRunning() => scheduler.IsRunning;
+    
 
-        if (timer > 0) 
+    public static async ValueTask Wait(float seconds) 
+    {
+        var timer = new WaitTimer();
+        await timer.WaitFor(seconds);
+    }
+}
+
+internal struct WaitTimer 
+{
+    private float timer;
+
+    internal async Task WaitFor(float seconds) 
+    {
+        timer = seconds;
+        while (timer > 0) 
         {
             timer -= Time.Delta;
-            return;
-        }
-        if (coroutines.Count == 0) 
-            return;
-        IEnumerator current = coroutines.Peek();
-        if (current != null && current.MoveNext() && !done) 
-        {
-            // Check what's current
-            if (current.Current is float single) 
-            {
-                timer = single;
-                return;
-            }
-            if (current.Current is int integer) 
-            {
-                timer = integer;
-                return;
-            }
-            if (current.Current is IEnumerator corou) 
-            {
-                coroutines.Push(corou);
-            }
-            return;
-        }
-        if (!done) 
-        {
-            coroutines.Pop();
-            if (coroutines.Count == 0) 
-            {
-                Active = false;
-                if (freeWhenDone)
-                    DetachSelf();
-            }
+            await Task.Yield();
         }
     }
 }
