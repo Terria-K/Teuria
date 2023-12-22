@@ -37,4 +37,25 @@ public class AsyncCoroutine : Component
         scheduler.Update();
         base.Update();
     }
+
+    public static async ValueTask Wait(float seconds) 
+    {
+        var timer = new WaitTimer();
+        await timer.WaitFor(seconds);
+    }
+}
+
+internal struct WaitTimer 
+{
+    private float timer;
+
+    internal async Task WaitFor(float seconds) 
+    {
+        timer = seconds;
+        while (timer > 0) 
+        {
+            timer -= Time.Delta;
+            await Task.Yield();
+        }
+    }
 }
