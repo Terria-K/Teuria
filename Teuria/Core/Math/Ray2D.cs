@@ -17,7 +17,7 @@ public struct Ray2D
         Direction = direction;
     }
 
-    public Vector2 Cast(Vector2 from, Vector2 to) 
+    public readonly Vector2 Cast(Vector2 from, Vector2 to) 
     {
         var x = Position.X + Direction.X;
         var y = Position.Y + Direction.Y;
@@ -56,7 +56,7 @@ public struct Ray2D
     //     return true;
     // } 
 
-    public Vector2 Cast(RectangleShape rectShape, Vector2 from, Vector2 to) 
+    public readonly Vector2 Cast(RectangleShape rectShape, Vector2 from, Vector2 to) 
     {
         var aabb = new AABB(rectShape.GlobalX, rectShape.GlobalY, rectShape.Width, rectShape.Height);
         return Cast(aabb, from, to);
@@ -114,7 +114,7 @@ public struct Ray2D
     //     return false;
     // }
 
-    public Vector2 Cast(AABB rect, Vector2 from, Vector2 to) 
+    public readonly Vector2 Cast(AABB rect, Vector2 from, Vector2 to) 
     {
         var sector0 = ComputeSector(rect, from);
         var sector1 = ComputeSector(rect, to);

@@ -26,13 +26,13 @@ public struct Matrix2D : IEquatable<Matrix2D>
 
     public Vector2 Translation 
     {
-        get => new(M31, M32);
+        readonly get => new(M31, M32);
         set { M31 = value.X; M32 = value.Y; } 
     }
 
     public float Rotation 
     {
-        get => (float)Math.Atan2(M21, M11);
+        readonly get => (float)Math.Atan2(M21, M11);
         set 
         {
             var cos = (float)Math.Cos(value);
@@ -47,13 +47,13 @@ public struct Matrix2D : IEquatable<Matrix2D>
 
     public float RotationDegrees 
     {
-        get => Rotation * MathUtils.Degrees;
+        readonly get => Rotation * MathUtils.Degrees;
         set => Rotation = value * MathUtils.Radians;
     }
 
     public Vector2 Scale 
     {
-        get => new(M11, M22);
+        readonly get => new(M11, M22);
         set { M11 = value.X; M22 = value.Y; }
     }
 
@@ -343,7 +343,7 @@ public struct Matrix2D : IEquatable<Matrix2D>
 #endregion
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float Determinant() => M11 * M22 - M12 * M21;    
+    public readonly float Determinant() => M11 * M22 - M12 * M21;    
 
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -563,7 +563,7 @@ public struct Matrix2D : IEquatable<Matrix2D>
         );
     }
 
-    public bool Equals(Matrix2D other)
+    public readonly bool Equals(Matrix2D other)
     {
         return (
             M11 == other.M11 &&
@@ -575,14 +575,14 @@ public struct Matrix2D : IEquatable<Matrix2D>
         );
     }
 
-    public override string ToString()
+    public override readonly string ToString()
     {
         return "{ M11:" + M11 + " M12:" + M12 + " }"
                 + " { M21:" + M21 + " M22:" + M22 + " }"
                 + " { M31:" + M31 + " M32:" + M32 + " }";
     }
 
-    public override bool Equals(object? obj)
+    public override readonly bool Equals(object? obj)
     {
         if (obj is Matrix2D mat)
             return Equals(mat);
