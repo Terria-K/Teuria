@@ -61,6 +61,4 @@ public static class TeuriaExtension
 
         return array2D;
     }
-
-
 }
